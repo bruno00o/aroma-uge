@@ -1,9 +1,8 @@
-const { generateKeyPairSync } = require('crypto');
 const express = require('express');
 const { readFile } = require('fs');
 const router = express.Router();
 
-router.get('/apprenticeship', (req, res) => {
+router.get('/', (req, res) => {
     let fileName = './src/calendar/apprenticeship.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -14,7 +13,7 @@ router.get('/apprenticeship', (req, res) => {
     });
 });
 
-router.get('/apprenticeship/next', (req, res) => {
+router.get('/next/', (req, res) => {
     let fileName = './src/calendar/apprenticeship.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -45,7 +44,7 @@ router.get('/apprenticeship/next', (req, res) => {
     });
 });
 
-router.get('/apprenticeship/date/:date', (req, res) => {
+router.get('/date/:date/', (req, res) => {
     let params = req.params;
     if (params.date.match(/^\d{2}-\d{2}-\d{4}$/)) {
         let fileName = './src/calendar/apprenticeship.json';
@@ -54,14 +53,36 @@ router.get('/apprenticeship/date/:date', (req, res) => {
                 res.status(500).send({ error: 'Internal server error' });
             } else {
                 let date = params.date;
-                date = date.replaceAll("-", "/");
-                console.log(date);
                 let calendar = JSON.parse(data);
+                date = date.replaceAll("-", "/");
                 if (calendar.hasOwnProperty(date)) {
                     res.status(200).send({ date: date, event: calendar[date] });
                 } else {
                     res.status(404).send({ error: 'Not found' });
                 }
+            }
+        });
+    } else {
+        res.status(400).send({ error: 'Bad request' });
+    }
+});
+
+router.get('/count/:elem/', (req, res) => {
+    let params = req.params;
+    if (params.elem == 'Cours' || params.elem == 'Entreprise' || params.elem == 'F') {
+        let fileName = './src/calendar/apprenticeship.json';
+        readFile(fileName, (err, data) => {
+            if (err) {
+                res.status(500).send({ error: 'Internal server error' });
+            } else {
+                let calendar = JSON.parse(data);
+                let count = 0;
+                for (let key in calendar) {
+                    if (calendar[key].includes(params.elem)) {
+                        count++;
+                    }
+                }
+                res.status(200).send({ count: count });
             }
         });
     } else {
