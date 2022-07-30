@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const { readFile, writeFile } = require('fs');
 const nodemailer = require('nodemailer');
 const router = express.Router();
@@ -18,7 +19,6 @@ router.post('/', (req, res) => {
     let params = req.body;
     readFile('./src/users/users.json', (err, dataUsers) => {
         if (err) {
-            console.log(err);
             res.status(500).send({ error: 'Internal server error' });
         } else {
             let users = JSON.parse(dataUsers);
@@ -45,9 +45,8 @@ router.post('/', (req, res) => {
                                         validating = JSON.parse(dataValidating);
                                         validating[randomString] = {
                                             username: params.username,
-                                            password: params.password
+                                            password: crypto.createHash('md5').update(params.password).digest('hex')
                                         }
-                                        console.log(validating);
                                         writeFile('./src/users/validating.json', JSON.stringify(validating), (err) => {
                                             if (err) {
                                                 res.status(500).send({ error: 'Internal server error' });
@@ -64,11 +63,11 @@ router.post('/', (req, res) => {
                                                     from: 'Aroma UGE <vos.loulous.info@gmail.com>',
                                                     to: params.username + '@edu.univ-eiffel.fr',
                                                     subject: 'Validation de votre compte',
-                                                    html: "<h1>Bienvenue sur Aroma UGE !</h1><p>Vous avez demandé à créer un compte sur Aroma UGE. Pour valider votre compte, veuillez cliquer sur le lien suivant :<br><a href='http://mnfu4687.odns.fr/validate/" + randomString + "'>Valider mon compte</a></p><p>Si vous n'avez pas demandé à créer un compte, ignorez ce mail.</p>"
+                                                    /* html: "<h1>Bienvenue sur Aroma UGE !</h1><p>Vous avez demandé à créer un compte sur Aroma UGE. Pour valider votre compte, veuillez cliquer sur le lien suivant :<br><a href='http://mnfu4687.odns.fr/validate/" + randomString + "'>Valider mon compte</a></p><p>Si vous n'avez pas demandé à créer un compte, ignorez ce mail.</p>" */
+                                                    html: "<h1>Bienvenue sur Aroma UGE !</h1><p>Vous avez demandé à créer un compte sur Aroma UGE. Pour valider votre compte, veuillez cliquer sur le lien suivant :<br><br><a href='http://localhost:8080/validate/" + randomString + "'>Valider mon compte</a></p><p>Si vous n'avez pas demandé à créer un compte, ignorez ce mail.</p>"
                                                 }
                                                 transporter.sendMail(mailOptions, (err, info) => {
                                                     if (err) {
-                                                        console.log(err);
                                                         res.status(500).send({ error: 'Internal server error' });
                                                     } else {
                                                         res.status(200).send({ message: 'Mail sent' });
@@ -76,6 +75,24 @@ router.post('/', (req, res) => {
                                                 });
                                             }
                                         });
+                                        setTimeout(() => {
+                                            readFile('./src/users/validating.json', (err, dataValidating) => {
+                                                if (err) {
+                                                    res.status(500).send({ error: 'Internal server error' });
+                                                } else {
+                                                    validating = JSON.parse(dataValidating);
+                                                    if (validating.hasOwnProperty(randomString)) {
+                                                        delete validating[randomString];
+                                                        writeFile('./src/users/validating.json', JSON.stringify(validating), (err) => {
+                                                            if (err) {
+                                                                res.status(500).send({ error: 'Internal server error' });
+                                                            }
+                                                        }
+                                                        );
+                                                    }
+                                                }
+                                            });
+                                        }, 900000);
                                     }
                                 });
                             }

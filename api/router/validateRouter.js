@@ -31,7 +31,7 @@ router.get('/:token', (req, res) => {
                                         if (err) {
                                             res.status(500).send({ error: 'Internal server error' });
                                         } else {
-                                            res.status(200).send({ message: 'User created' });
+                                            res.status(200).send("<body style='font-family:Arial, sans-serif; margin:0; padding:0; box-sizing:border-box; display:flex; justify-content:center; align-items:center; flex-direction:column';><h1>Aroma UGE</h1><h2 style='text-align: center;'>Votre compte a bien été créé. Bienvenue sur Aroma UGE !</h2></body>");
                                         }
                                     }
                                     );
@@ -42,7 +42,7 @@ router.get('/:token', (req, res) => {
                     }
                 });
             } else {
-                res.status(400).send({ error: 'Invalid token' });
+                res.status(400).send("<body style='font-family:Arial, sans-serif; margin:0; padding:0; box-sizing:border-box; display:flex; justify-content:center; align-items:center; flex-direction:column';><h1>Aroma UGE</h1><h2 style='text-align: center; '>Lien de validation expiré ou invalide. Veuillez réessayer.</h2></body>");
             }
         }
     });
