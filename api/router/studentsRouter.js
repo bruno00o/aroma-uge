@@ -39,7 +39,7 @@ router.get('/groups/', (req, res) => {
                 let groups = students[user];
                 res.status(200).send(JSON.stringify(groups));
             } else {
-                res.status(404).send({ message: 'User not found' });
+                res.status(404).send({ error: 'User not found' });
             }
         }
     });
