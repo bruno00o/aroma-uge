@@ -31,13 +31,65 @@ router.get('/groups/', (req, res) => {
     let fileName = './src/students/students.json';
     readFile(fileName, (err, data) => {
         if (err) {
-            res.status(500).send('Internal server error');
+            res.status(500).send({ error: 'Internal server error' });
         } else {
             let students = JSON.parse(data);
             let user = req.auth.user;
             if (students.hasOwnProperty(user)) {
                 let groups = students[user];
                 res.status(200).send(JSON.stringify(groups));
+            } else {
+                res.status(404).send({ error: 'User not found' });
+            }
+        }
+    });
+});
+
+router.get('/classes/', (req, res) => {
+    let fileName = './src/students/classes.json';
+    readFile(fileName, (err, data) => {
+        if (err) {
+            res.status(500).send({ error: 'Internal server error' });
+        } else {
+            let classes = JSON.parse(data);
+            res.status(200).send(JSON.stringify(classes));
+        }
+    });
+});
+
+router.get('/timetable/', (req, res) => {
+    let user = req.auth.user;
+    let fileClasses = './src/students/classes.json';
+    let fileStudents = './src/students/students.json';
+    readFile(fileStudents, (err, data) => {
+        if (err) {
+            res.status(500).send({ error: 'Internal server error' });
+        } else {
+            let students = JSON.parse(data);
+            if (students.hasOwnProperty(user)) {
+                let student = students[user];
+                console.log(student);
+                let followedClasses = new Array();
+                let studentKeys = Object.keys(student);
+                for (let i = 0; i < studentKeys.length; i++) {
+                    followedClasses.push(studentKeys[i].toLowerCase().replaceAll(' ', '_') + '_' + student[studentKeys[i]]);
+                }
+                readFile(fileClasses, (err, data) => {
+                    if (err) {
+                        res.status(500).send({ error: 'Internal server error' });
+                    } else {
+                        let classes = JSON.parse(data);
+                        let timetable = new Array();
+                        let classesKeys = Object.keys(classes);
+                        for (let i = 0; i < classesKeys.length; i++) {
+                            let className = classesKeys[i]
+                            if (followedClasses.includes(className)) {
+                                timetable.push(className);
+                            }
+                        }
+                        res.status(200).send(JSON.stringify(timetable));
+                    }
+                });
             } else {
                 res.status(404).send({ error: 'User not found' });
             }
