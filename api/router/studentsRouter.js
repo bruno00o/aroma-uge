@@ -61,6 +61,7 @@ router.get('/timetable/', (req, res) => {
     let user = req.auth.user;
     let fileClasses = './src/students/classes.json';
     let fileStudents = './src/students/students.json';
+    let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     readFile(fileStudents, (err, data) => {
         if (err) {
             res.status(500).send({ error: 'Internal server error' });
@@ -68,7 +69,6 @@ router.get('/timetable/', (req, res) => {
             let students = JSON.parse(data);
             if (students.hasOwnProperty(user)) {
                 let student = students[user];
-                console.log(student);
                 let followedClasses = new Array();
                 let studentKeys = Object.keys(student);
                 for (let i = 0; i < studentKeys.length; i++) {
@@ -79,12 +79,14 @@ router.get('/timetable/', (req, res) => {
                         res.status(500).send({ error: 'Internal server error' });
                     } else {
                         let classes = JSON.parse(data);
-                        let timetable = new Array();
-                        let classesKeys = Object.keys(classes);
-                        for (let i = 0; i < classesKeys.length; i++) {
-                            let className = classesKeys[i]
-                            if (followedClasses.includes(className)) {
-                                timetable.push(className);
+                        let timetable = {};
+                        for (d in days) {
+                            timetable[days[d]] = {};
+                            for (elem in followedClasses) {
+                                if (classes[followedClasses[elem]] != undefined && classes[followedClasses[elem]]["day"] == days[d]) {
+                                    timetable[days[d]][followedClasses[elem]] = classes[followedClasses[elem]];
+
+                                }
                             }
                         }
                         res.status(200).send(JSON.stringify(timetable));
