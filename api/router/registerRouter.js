@@ -4,6 +4,7 @@ const { readFile, writeFile } = require('fs');
 const nodemailer = require('nodemailer');
 const router = express.Router();
 
+
 const random = (length = 8) => {
     let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -104,7 +105,7 @@ router.post('/', (req, res) => {
     });
 });
 
-/* router.get('/forgot/:username', (req, res) => {
+router.get('/forgot/:username', (req, res) => {
     let username = req.params.username;
     readFile('./src/users/users.json', (err, dataUsers) => {
         if (err) {
@@ -118,9 +119,7 @@ router.post('/', (req, res) => {
                         res.status(500).send({ error: 'Internal server error' });
                     } else {
                         let resetting = JSON.parse(dataResetting);
-                        resetting[randomString] = {
-                            username: username
-                        }
+                        resetting[randomString] = username;
                         writeFile('./src/users/resetting.json', JSON.stringify(resetting), (err) => {
                             if (err) {
                                 res.status(500).send({ error: 'Internal server error' });
@@ -129,18 +128,19 @@ router.post('/', (req, res) => {
                                     service: 'gmail',
                                     host: 'smtp.gmail.com',
                                     auth: {
-                                        user: 'vos.loulous.infos@gmail.com',
+                                        user: 'vos.loulous.info@gmail.com',
                                         pass: 'whkrdbjvzsmaflcb'
                                     }
                                 });
                                 let mailOptions = {
-                                    from: 'Aroma UGE <vos.loulous.infos@gmail.com>',
+                                    from: 'Aroma UGE <vos.loulous.info@gmail.com>',
                                     to: username + '@edu.univ-eiffel.fr',
                                     subject: 'Réinitialisation de votre mot de passe',
-                                    html: "<h1>Vous avez</h1><p>Vous avez demandé à réinitialiser votre mot de passe. Pour le réinitialiser, veuillez cliquer sur le lien suivant :<br><br><a href='http://localhost:8080/register/reset/" + randomString + "'>Réinitialiser mon mot de passe</a></p><p>Si vous n'avez pas demandé à réinitialiser votre mot de passe, ignorez ce mail.</p>"
+                                    html: "<h1>Vous avez demandé à réinitialiser votre mot de passe.</h1><p>Pour le réinitialiser, veuillez cliquer sur le lien suivant :<br><br><a href='http://localhost:8080/register/reset/" + randomString + "'>Réinitialiser mon mot de passe</a></p><p>Si vous n'avez pas demandé à réinitialiser votre mot de passe, ignorez ce mail.</p>"
                                 }
                                 transporter.sendMail(mailOptions, (err, info) => {
                                     if (err) {
+                                        console.log(err);
                                         res.status(500).send({ error: 'Internal server error' });
                                     }
                                     else {
@@ -175,6 +175,34 @@ router.post('/', (req, res) => {
             }
         }
     });
-}); */
+});
+
+router.get('/reset/:randomString', (req, res) => {
+    let randomString = req.params.randomString;
+    readFile('./src/users/resetting.json', (err, dataResetting) => {
+        if (err) {
+            res.status(500).send({ error: 'Internal server error' });
+        } else {
+            let resetting = JSON.parse(dataResetting);
+            if (resetting.hasOwnProperty(randomString)) {
+                let username = resetting[randomString];
+                readFile('./src/users/users.json', (err, dataUsers) => {
+                    if (err) {
+                        res.status(500).send({ error: 'Internal server error' });
+                    } else {
+                        let users = JSON.parse(dataUsers);
+                        if (users.hasOwnProperty(username)) {
+                            res.sendFile('./views/reset.html', { root: __dirname });
+                        } else {
+                            res.status(400).send({ error: 'Username does not exist' });
+                        }
+                    }
+                });
+            } else {
+                res.status(400).send({ error: 'Random string does not exist' });
+            }
+        }
+    });
+});
 
 module.exports = router;
