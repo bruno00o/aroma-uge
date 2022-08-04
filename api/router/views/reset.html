@@ -5,14 +5,23 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Demande de réinitialisation du mot de passe Aroma UGE">
     <title>Réinitialiser votre mot de passe</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
 </head>
 
 <body>
+    <h1>Aroma UGE</h1>
+    <h2>Demande de réinitialisation du mot de passe</h2>
     <form action="/" method="post">
-        <input type="password" name="password" placeholder="Nouveau mot de passe" required>
-        <input type="password" name="password_confirm" placeholder="Confirmer le mot de passe" required>
-        <input type="submit" value="Réinitialiser">
+        <label for="password">Nouveau mot de passe</label>
+        <input type="password" name="password" placeholder="Nouveau mot de passe" required
+            aria-label="Nouveau mot de passe" autofocus autocomplete="off">
+        <label for="password_confirm">Confirmer le mot de passe</label>
+        <input type="password" name="password_confirm" placeholder="Confirmer le mot de passe" required
+            aria-label="Confirmer le mot de passe" autocomplete="off">
+        <input id="submit-btn" type="submit" value="Réinitialiser">
     </form>
 </body>
 
@@ -22,13 +31,39 @@
     let token = url.split('/').pop();
     form.action = `/validate/changepass/${token}`;
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', function (e) {
         e.preventDefault();
         let password = form.password.value;
         let password_confirm = form.password_confirm.value;
-        if (password !== password_confirm) {
-            alert('Les mots de passe ne correspondent pas');
+        /* patern with letters and numbers */
+        let patern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+        if (!patern.test(password)) {
+            let firstLabel = form.querySelectorAll('label')[0];
+            let firstInput = form.querySelectorAll('input')[0];
+            firstInput.classList.add('error');
+            firstLabel.innerHTML = 'Nouveau mot de passe (plus sécurisé)';
+            firstLabel.classList.add('error-label');
             return;
+        } else {
+            let firstLabel = form.querySelectorAll('label')[0];
+            let firstInput = form.querySelectorAll('input')[0];
+            firstInput.classList.remove('error');
+            firstLabel.innerHTML = 'Nouveau mot de passe';
+            firstLabel.classList.remove('error-label');
+        }
+        if (password !== password_confirm) {
+            let secondInput = form.querySelectorAll('input')[1];
+            let secondLabel = form.querySelectorAll('label')[1];
+            secondInput.classList.add('error');
+            secondLabel.classList.add('error-label');
+            secondLabel.innerText = 'Le mot de passe ne correspond pas';
+            return;
+        } else {
+            let secondInput = form.querySelectorAll('input')[1];
+            let secondLabel = form.querySelectorAll('label')[1];
+            secondInput.classList.remove('error');
+            secondLabel.classList.remove('error-label');
+            secondLabel.innerText = 'Confirmer le mot de passe';
         }
         form.submit();
     });

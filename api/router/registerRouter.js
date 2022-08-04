@@ -16,6 +16,23 @@ const random = (length = 8) => {
 
 };
 
+router.get('/reset/style.css', (req, res) => {
+    res.sendFile(__dirname + '/views/src/css/style.css');
+});
+
+router.get('/reset/favicon.ico', (req, res) => {
+    res.sendFile(__dirname + '/views/src/img/favicon.ico');
+});
+
+router.get('/reset/fonts/tahoma.ttf', (req, res) => {
+    res.sendFile(__dirname + '/views/src/fonts/tahoma.ttf');
+});
+
+router.get('/reset/fonts/TAHOMABD.TTF', (req, res) => {
+    res.sendFile(__dirname + '/views/src/fonts/TAHOMABD.TTF');
+});
+
+
 router.post('/', (req, res) => {
     let params = req.body;
     readFile('./src/users/users.json', (err, dataUsers) => {
@@ -199,7 +216,7 @@ router.get('/reset/:randomString', (req, res) => {
                     }
                 });
             } else {
-                res.status(400).send({ error: 'Random string does not exist' });
+                res.status(400).sendFile('./views/passwordChangeFailed.html', { root: __dirname });
             }
         }
     });

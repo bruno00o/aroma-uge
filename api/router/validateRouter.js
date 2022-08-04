@@ -6,6 +6,38 @@ const router = express.Router();
 
 let encodeUrl = parseUrl.urlencoded({ extended: false });
 
+router.get('/style.css', (req, res) => {
+    res.sendFile(__dirname + '/views/src/css/style.css');
+});
+
+router.get('/favicon.ico', (req, res) => {
+    res.sendFile(__dirname + '/views/src/img/favicon.ico');
+});
+
+router.get('/fonts/tahoma.ttf', (req, res) => {
+    res.sendFile(__dirname + '/views/src/fonts/tahoma.ttf');
+});
+
+router.get('/fonts/TAHOMABD.TTF', (req, res) => {
+    res.sendFile(__dirname + '/views/src/fonts/TAHOMABD.TTF');
+});
+
+router.get('/changepass/style.css', (req, res) => {
+    res.sendFile(__dirname + '/views/src/css/style.css');
+});
+
+router.get('/changepass/favicon.ico', (req, res) => {
+    res.sendFile(__dirname + '/views/src/img/favicon.ico');
+});
+
+router.get('/changepass/fonts/tahoma.ttf', (req, res) => {
+    res.sendFile(__dirname + '/views/src/fonts/tahoma.ttf');
+});
+
+router.get('/changepass/fonts/TAHOMABD.TTF', (req, res) => {
+    res.sendFile(__dirname + '/views/src/fonts/TAHOMABD.TTF');
+});
+
 router.get('/:token', (req, res) => {
     let params = req.params;
     let token = params.token;
@@ -35,7 +67,7 @@ router.get('/:token', (req, res) => {
                                         if (err) {
                                             res.status(500).send({ error: 'Internal server error' });
                                         } else {
-                                            res.status(200).send("<body style='font-family:Arial, sans-serif; margin:0; padding:0; box-sizing:border-box; display:flex; justify-content:center; align-items:center; flex-direction:column';><h1>Aroma UGE</h1><h2 style='text-align: center;'>Votre compte a bien été créé. Bienvenue sur Aroma UGE !</h2></body>");
+                                            res.status(200).sendFile('./views/registrationSuccessful.html', { root: __dirname });
                                         }
                                     }
                                     );
@@ -46,7 +78,7 @@ router.get('/:token', (req, res) => {
                     }
                 });
             } else {
-                res.status(400).send("<body style='font-family:Arial, sans-serif; margin:0; padding:0; box-sizing:border-box; display:flex; justify-content:center; align-items:center; flex-direction:column';><h1>Aroma UGE</h1><h2 style='text-align: center; '>Lien de validation expiré ou invalide. Veuillez réessayer.</h2></body>");
+                res.status(400).sendFile('./views/registrationFailed.html', { root: __dirname });
             }
         }
     });
@@ -79,7 +111,7 @@ router.post('/changepass/:token', encodeUrl, (req, res) => {
                                         if (err) {
                                             res.status(500).send({ error: 'Internal server error' });
                                         } else {
-                                            res.status(200).send("<body style='font-family:Arial, sans-serif; margin:0; padding:0; box-sizing:border-box; display:flex; justify-content:center; align-items:center; flex-direction:column';><h1>Aroma UGE</h1><h2 style='text-align: center;'>Votre mot de passe a bien été changé.</h2></body>");
+                                            res.status(200).sendFile('./views/passwordChanged.html', { root: __dirname });
                                         }
                                     }
                                     );
@@ -92,7 +124,7 @@ router.post('/changepass/:token', encodeUrl, (req, res) => {
                     }
                 });
             } else {
-                res.status(400).send({ error: 'Link expired' });
+                res.status(400).sendFile('./views/passwordChangeFailed.html', { root: __dirname });
             }
         }
     });

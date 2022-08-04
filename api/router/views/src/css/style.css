@@ -1,0 +1,96 @@
+@font-face {
+    font-family: "Tahoma UGE";
+    src: url("./fonts/tahoma.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Tahoma Bold";
+    src: url("./fonts/TAHOMABD.TTF") format("truetype");
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Tahoma UGE", sans-serif;
+    background-color: #FFFCFF;
+    text-align: center;
+    color: #171C8F;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+h1 {
+    width: 100%;
+    background-color: #171C8F;
+    color: white;
+    padding: 1em 0;
+    text-align: center;
+    font-family: "Tahoma Bold";
+    border-radius: 0 0 20pt 20pt;
+    margin-bottom: 1em;
+}
+
+h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1em;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    width: 100%;
+}
+
+form label {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    align-self: flex-start;
+}
+
+form input {
+    background-color: #eeeeee;
+    border: 2px solid #171C8F;
+    padding: .5em .4em;
+    margin-bottom: .75em;
+    border-radius: 5px;
+}
+
+form input:focus {
+    outline: 2px solid #171C8F;
+}
+
+form #submit-btn {
+    width: 70%;
+    align-self: center;
+    font-family: "Tahoma Bold";
+    color: white;
+    background: #4CB944;
+    border: none;
+    border-radius: 20px;
+    padding: .75em;
+    margin-top: .5em;
+    cursor: pointer;
+}
+
+.error {
+    border: 3px solid #C73E1D;
+}
+
+.error-label {
+    color: #C73E1D;
+    align-self: flex-start;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #090A35;
+        color: white;
+    }
+}
