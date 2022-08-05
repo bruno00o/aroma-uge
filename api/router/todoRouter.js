@@ -58,29 +58,41 @@ router.post('/apprenticeship/add/', (req, res) => {
             });
         } else {
             let todo = JSON.parse(data);
-            if (todo.hasOwnProperty("active")) {
-                let newTodo = req.body;
-                let id = Object.keys(newTodo)[0];
-                todo.active[id] = newTodo[id];
-                writeFile(fileName, JSON.stringify(todo), (err) => {
-                    if (err) {
-                        console.log(err);
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        res.status(200).send({ success: 'Todo added' });
-                    }
-                });
+            let keys = Object.keys(todo);
+            let ids = [];
+            for (let i = 0; i < keys.length; i++) {
+                let idsKeys = Object.keys(todo[keys[i]]);
+                for (let j = 0; j < idsKeys.length; j++) {
+                    ids.push(idsKeys[j]);
+                }
+            }
+            let newTodo = req.body;
+            let id = Object.keys(newTodo)[0];
+            if (ids.includes(id)) {
+                res.status(400).send({ error: 'Id already used' });
             } else {
-                let newTodo = req.body;
-                todo.active = newTodo;
-                writeFile(fileName, JSON.stringify(todo), (err) => {
-                    if (err) {
-                        console.log(err);
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        res.status(200).send({ success: 'Todo added' });
-                    }
-                });
+                if (todo.hasOwnProperty("active")) {
+                    todo.active[id] = newTodo[id];
+                    writeFile(fileName, JSON.stringify(todo), (err) => {
+                        if (err) {
+                            console.log(err);
+                            res.status(500).send({ error: 'Internal server error' });
+                        } else {
+                            res.status(200).send({ success: 'Todo added' });
+                        }
+                    });
+                } else {
+                    let newTodo = req.body;
+                    todo.active = newTodo;
+                    writeFile(fileName, JSON.stringify(todo), (err) => {
+                        if (err) {
+                            console.log(err);
+                            res.status(500).send({ error: 'Internal server error' });
+                        } else {
+                            res.status(200).send({ success: 'Todo added' });
+                        }
+                    });
+                }
             }
         }
     });

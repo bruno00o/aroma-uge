@@ -7,6 +7,7 @@ const loginRouter = require('./router/loginRouter');
 const apprenticeshipRouter = require('./router/apprenticeshipRouter')
 const todoRouter = require('./router/todoRouter');
 const studentsRouter = require('./router/studentsRouter');
+const adminRouter = require('./router/adminRouter');
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -22,6 +23,7 @@ app.use('/login', loginRouter);
 app.use('/calendar/apprenticeship', apprenticeshipRouter);
 app.use('/todo', todoRouter);
 app.use('/students', studentsRouter);
+app.use('/admin', adminRouter);
 
 app.listen(port);
 
