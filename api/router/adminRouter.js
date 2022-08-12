@@ -67,7 +67,7 @@ router.get('/students/:id', (req, res) => {
     })
 });
 
-router.update('/students/:id', (req, res) => {
+router.post('/students/:id', (req, res) => {
     let fileName = './src/students/students.json'
     readFile(fileName, (err, data) => {
         if (err) {
@@ -166,7 +166,7 @@ router.get('/classes/:id', (req, res) => {
     })
 });
 
-router.update('/classes/:id', (req, res) => {
+router.post('/classes/:id', (req, res) => {
     let fileName = './src/students/classes.json'
     readFile(fileName, (err, data) => {
         if (err) {
