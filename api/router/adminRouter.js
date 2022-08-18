@@ -26,7 +26,7 @@ function checkPassword(username, password, cb) {
                     } else {
                         let users = JSON.parse(data);
                         if (users.hasOwnProperty(username)) {
-                            return cb(null, basicAuth.safeCompare(passHash, users[username]));
+                            return cb(null, basicAuth.safeCompare(passHash, users[username]["password"]));
                         } else {
                             return cb(null, false);
                         }
@@ -67,6 +67,9 @@ router.get('/students/:id', (req, res) => {
     })
 });
 
+/**
+ * change data from student but can't post new student
+ */
 router.post('/students/:id', (req, res) => {
     let fileName = './src/students/students.json'
     readFile(fileName, (err, data) => {
@@ -90,6 +93,9 @@ router.post('/students/:id', (req, res) => {
     })
 });
 
+/**
+ * Delete a student from json
+ */
 router.delete('/students/:id', (req, res) => {
     let fileName = './src/students/students.json'
     readFile(fileName, (err, data) => {
@@ -120,17 +126,24 @@ router.post('/students/', (req, res) => {
             res.status(500).send({ error: 'Internal server error' });
         } else {
             let students = JSON.parse(data);
-            let body = JSON.parse(req.body);
-            let id = Object.keys(body)[0];
-            if (students.hasOwnProperty(id)) {
-                res.status(409).send({ error: 'Student already exists' });
-            } else {
-                students[id] = body[id];
+            let body = req.body;
+            let newStudents = Object.keys(body);
+            let allNew = true;
+            newStudents.forEach(element => {
+                if (students.hasOwnProperty(element)) {
+                    res.status(409).send({ error: 'At least one student already exists' });
+                    allNew = false;
+                }
+            });
+            if (allNew) {
+                newStudents.forEach(element => {
+                    students[element] = body[element];
+                });
                 writeFile(fileName, JSON.stringify(students), (err) => {
                     if (err) {
                         res.status(500).send({ error: 'Internal server error' });
                     } else {
-                        res.status(201).send(students[id]);
+                        res.status(200).send(students);
                     }
                 })
             }
@@ -219,17 +232,24 @@ router.post('/classes/', (req, res) => {
             res.status(500).send({ error: 'Internal server error' });
         } else {
             let classes = JSON.parse(data);
-            let body = JSON.parse(req.body);
-            let id = Object.keys(body)[0];
-            if (classes.hasOwnProperty(id)) {
-                res.status(409).send({ error: 'Class already exists' });
-            } else {
-                classes[id] = body[id];
+            let newClasses = req.body;
+            let allNew = true;
+            Object.keys(newClasses).forEach(element => {
+                if (classes.hasOwnProperty(element)) {
+                    res.status(409).send({ error: 'At least one class already exists' });
+                    allNew = false;
+                }
+            });
+            if (allNew) {
+                Object.keys(newClasses).forEach(element => {
+                    classes[element] = newClasses[element];
+                }
+                );
                 writeFile(fileName, JSON.stringify(classes), (err) => {
                     if (err) {
                         res.status(500).send({ error: 'Internal server error' });
                     } else {
-                        res.status(201).send(classes[id]);
+                        res.status(200).send(classes);
                     }
                 })
             }

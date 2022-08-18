@@ -11,7 +11,7 @@ router.post('/', (req, res) => {
             res.status(500).send({ error: 'Internal server error' });
         } else {
             let users = JSON.parse(data);
-            if (users.hasOwnProperty(req.body.username) && users[req.body.username] === passHash) {
+            if (users.hasOwnProperty(req.body.username) && users[req.body.username]["password"] === passHash) {
                 res.status(200).send({ login: true });
             } else {
                 res.status(200).send({ login: false });

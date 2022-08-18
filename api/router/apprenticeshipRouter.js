@@ -30,7 +30,7 @@ function checkPassword(username, password, cb) {
         } else {
             let users = JSON.parse(data);
             if (users.hasOwnProperty(username)) {
-                return cb(null, basicAuth.safeCompare(passHash, users[username]));
+                return cb(null, basicAuth.safeCompare(passHash, users[username]["password"]));
             } else {
                 return cb(null, false);
             }

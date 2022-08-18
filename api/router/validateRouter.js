@@ -57,7 +57,11 @@ router.get('/:token', (req, res) => {
                         if (users.hasOwnProperty(validating[token]["username"])) {
                             res.status(400).send({ error: 'Username already exists' });
                         } else {
-                            users[validating[token]["username"]] = validating[token]["password"];
+                            users[validating[token]["username"]] = {
+                                password: validating[token]["password"],
+                                friends: [],
+                                requests: []
+                            };
                             writeFile(fileNameUsers, JSON.stringify(users), (err) => {
                                 if (err) {
                                     res.status(500).send({ error: 'Internal server error' });
