@@ -122,7 +122,7 @@ router.get('/apprenticeship/maxid/', (req, res) => {
     });
 });
 
-router.get('/apprenticeship/todone/:id/', (req, res) => {
+router.post('/apprenticeship/todone/:id/', (req, res) => {
     let username = req.auth.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/apprenticeship/' + username + '.json';
@@ -155,7 +155,7 @@ router.get('/apprenticeship/todone/:id/', (req, res) => {
     });
 });
 
-router.get('/apprenticeship/toactive/:id/', (req, res) => {
+router.post('/apprenticeship/toactive/:id/', (req, res) => {
     let username = req.auth.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/apprenticeship/' + username + '.json';
@@ -319,7 +319,7 @@ router.get('/university/maxid/', (req, res) => {
     });
 });
 
-router.get('/university/todone/:id/', (req, res) => {
+router.post('/university/todone/:id/', (req, res) => {
     let username = req.auth.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/university/' + username + '.json';
@@ -352,7 +352,7 @@ router.get('/university/todone/:id/', (req, res) => {
     });
 });
 
-router.get('/university/toactive/:id/', (req, res) => {
+router.post('/university/toactive/:id/', (req, res) => {
     let username = req.auth.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/university/' + username + '.json';
