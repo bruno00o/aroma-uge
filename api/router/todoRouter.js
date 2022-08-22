@@ -1,34 +1,10 @@
 const express = require('express');
-const crypto = require('crypto');
 const { readFile, writeFile } = require('fs');
-const basicAuth = require('express-basic-auth');
 const router = express.Router();
+const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 
-router.use(basicAuth({
-    authorizer: checkPassword,
-    authorizeAsync: true
-}));
-
-function checkPassword(username, password, cb) {
-    let fileName = './src/users/users.json';
-    let passHash = crypto.createHash('md5').update(password).digest('hex');
-    readFile(fileName, (err, data) => {
-        if (err) {
-            console.log(err);
-            return cb(null, false);
-        } else {
-            let users = JSON.parse(data);
-            if (users.hasOwnProperty(username)) {
-                return cb(null, basicAuth.safeCompare(passHash, users[username]["password"]));
-            } else {
-                return cb(null, false);
-            }
-        }
-    });
-}
-
-router.get('/apprenticeship/', (req, res) => {
-    let username = req.auth.user;
+router.get('/apprenticeship/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/apprenticeship/' + username + '.json';
     readFile(fileName, (err, data) => {
@@ -40,8 +16,8 @@ router.get('/apprenticeship/', (req, res) => {
     });
 });
 
-router.post('/apprenticeship/add/', (req, res) => {
-    let username = req.auth.user;
+router.post('/apprenticeship/add/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/apprenticeship/' + username + '.json';
     readFile(fileName, (err, data) => {
@@ -98,8 +74,8 @@ router.post('/apprenticeship/add/', (req, res) => {
     });
 });
 
-router.get('/apprenticeship/maxid/', (req, res) => {
-    let username = req.auth.user;
+router.get('/apprenticeship/maxid/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/apprenticeship/' + username + '.json';
     readFile(fileName, (err, data) => {
@@ -122,8 +98,8 @@ router.get('/apprenticeship/maxid/', (req, res) => {
     });
 });
 
-router.post('/apprenticeship/todone/:id/', (req, res) => {
-    let username = req.auth.user;
+router.post('/apprenticeship/todone/:id/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/apprenticeship/' + username + '.json';
     readFile(fileName, (err, data) => {
@@ -155,8 +131,8 @@ router.post('/apprenticeship/todone/:id/', (req, res) => {
     });
 });
 
-router.post('/apprenticeship/toactive/:id/', (req, res) => {
-    let username = req.auth.user;
+router.post('/apprenticeship/toactive/:id/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/apprenticeship/' + username + '.json';
     readFile(fileName, (err, data) => {
@@ -188,8 +164,8 @@ router.post('/apprenticeship/toactive/:id/', (req, res) => {
     });
 });
 
-router.delete('/apprenticeship/delete/:id/', (req, res) => {
-    let username = req.auth.user;
+router.delete('/apprenticeship/delete/:id/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/apprenticeship/' + username + '.json';
     readFile(fileName, (err, data) => {
@@ -224,8 +200,8 @@ router.delete('/apprenticeship/delete/:id/', (req, res) => {
     });
 });
 
-router.get('/university/', (req, res) => {
-    let username = req.auth.user;
+router.get('/university/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/university/' + username + '.json';
     readFile(fileName, (err, data) => {
@@ -237,8 +213,8 @@ router.get('/university/', (req, res) => {
     });
 });
 
-router.post('/university/add/', (req, res) => {
-    let username = req.auth.user;
+router.post('/university/add/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/university/' + username + '.json';
     readFile(fileName, (err, data) => {
@@ -295,8 +271,8 @@ router.post('/university/add/', (req, res) => {
     });
 });
 
-router.get('/university/maxid/', (req, res) => {
-    let username = req.auth.user;
+router.get('/university/maxid/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/university/' + username + '.json';
     readFile(fileName, (err, data) => {
@@ -319,8 +295,8 @@ router.get('/university/maxid/', (req, res) => {
     });
 });
 
-router.post('/university/todone/:id/', (req, res) => {
-    let username = req.auth.user;
+router.post('/university/todone/:id/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/university/' + username + '.json';
     readFile(fileName, (err, data) => {
@@ -352,8 +328,8 @@ router.post('/university/todone/:id/', (req, res) => {
     });
 });
 
-router.post('/university/toactive/:id/', (req, res) => {
-    let username = req.auth.user;
+router.post('/university/toactive/:id/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/university/' + username + '.json';
     readFile(fileName, (err, data) => {
@@ -385,8 +361,8 @@ router.post('/university/toactive/:id/', (req, res) => {
     });
 });
 
-router.delete('/university/delete/:id/', (req, res) => {
-    let username = req.auth.user;
+router.delete('/university/delete/:id/', authenticateToken, (req, res) => {
+    let username = req.user.user;
     username = username.replace('.', '_');
     let fileName = './src/todo/university/' + username + '.json';
     readFile(fileName, (err, data) => {

@@ -105,7 +105,7 @@ router.post('/changepass/:token', encodeUrl, (req, res) => {
                     } else {
                         let users = JSON.parse(dataUsers);
                         if (users.hasOwnProperty(resetting[token])) {
-                            users[resetting[token]] = crypto.createHash('md5').update(params.password).digest('hex');
+                            users[resetting[token]] = crypto.createHash('sha256').update(params.password).digest('hex');
                             writeFile(fileNameUsers, JSON.stringify(users), (err) => {
                                 if (err) {
                                     res.status(500).send({ error: 'Internal server error' });

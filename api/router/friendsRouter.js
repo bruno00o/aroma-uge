@@ -1,43 +1,19 @@
 const express = require('express');
-const crypto = require('crypto');
 const { readFile, writeFile } = require('fs');
-const basicAuth = require('express-basic-auth');
 const router = express.Router();
-
-router.use(basicAuth({
-    authorizer: checkPassword,
-    authorizeAsync: true
-}));
-
-function checkPassword(username, password, cb) {
-    let fileName = './src/users/users.json';
-    let passHash = crypto.createHash('md5').update(password).digest('hex');
-    readFile(fileName, (err, data) => {
-        if (err) {
-            console.log(err);
-            return cb(null, false);
-        } else {
-            let users = JSON.parse(data);
-            if (users.hasOwnProperty(username)) {
-                return cb(null, basicAuth.safeCompare(passHash, users[username]["password"]));
-            } else {
-                return cb(null, false);
-            }
-        }
-    });
-}
+const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 
 /**
  * Get friends
  */
-router.get('/', (req, res) => {
+router.get('/', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
         if (err) {
             res.status(500).send({ error: 'Internal server error' });
         } else {
             let users = JSON.parse(data);
-            let user = req.auth.user;
+            let user = req.user.user;
             if (users.hasOwnProperty(user)) {
                 let friends = users[user]["friends"];
                 res.status(200).send(JSON.stringify(friends));
@@ -51,14 +27,14 @@ router.get('/', (req, res) => {
 /**
  * Get requests from user
  */
-router.get('/requests/', (req, res) => {
+router.get('/requests/', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
         if (err) {
             res.status(500).send({ error: 'Internal server error' });
         } else {
             let users = JSON.parse(data);
-            let username = req.auth.user;
+            let username = req.user.user;
             if (users.hasOwnProperty(username)) {
                 res.status(200).send(users[username]["requests"]);
             } else {
@@ -71,7 +47,7 @@ router.get('/requests/', (req, res) => {
 /**
  * Request to add a friend
  */
-router.post('/request/:id', (req, res) => {
+router.post('/request/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -79,7 +55,7 @@ router.post('/request/:id', (req, res) => {
         } else {
             let users = JSON.parse(data);
             let requestedUser = req.params.id;
-            let username = req.auth.user;
+            let username = req.user.user;
             if (users.hasOwnProperty(requestedUser)) {
                 let requestedUserRequests = users[requestedUser]["requests"];
                 let requestdUserFriends = users[requestedUser]["friends"];
@@ -103,7 +79,7 @@ router.post('/request/:id', (req, res) => {
     });
 });
 
-router.post('/accept/:id', (req, res) => {
+router.post('/accept/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -111,7 +87,7 @@ router.post('/accept/:id', (req, res) => {
         } else {
             let users = JSON.parse(data);
             let acceptedUser = req.params.id;
-            let username = req.auth.user;
+            let username = req.user.user;
             if (users.hasOwnProperty(username) && users[username]["requests"].indexOf(acceptedUser) !== -1) {
                 let acceptedUserFriends = users[acceptedUser]["friends"];
                 if (acceptedUserFriends.indexOf(username) === -1) {
@@ -145,7 +121,7 @@ router.post('/accept/:id', (req, res) => {
     });
 });
 
-router.post('/decline/:id', (req, res) => {
+router.post('/decline/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -153,7 +129,7 @@ router.post('/decline/:id', (req, res) => {
         } else {
             let users = JSON.parse(data);
             let declinedUser = req.params.id;
-            let username = req.auth.user;
+            let username = req.user.user;
             if (users.hasOwnProperty(username) && users[username]["requests"].indexOf(declinedUser) !== -1) {
                 let declinedUserRequests = users[declinedUser]["requests"];
                 declinedUserRequests.splice(declinedUserRequests.indexOf(username), 1);
@@ -175,7 +151,7 @@ router.post('/decline/:id', (req, res) => {
     });
 });
 
-router.delete('/delete/:id', (req, res) => {
+router.delete('/delete/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -183,7 +159,7 @@ router.delete('/delete/:id', (req, res) => {
         } else {
             let users = JSON.parse(data);
             let deletedUser = req.params.id;
-            let username = req.auth.user;
+            let username = req.user.user;
             if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(deletedUser) !== -1) {
                 let deletedUserFriends = users[deletedUser]["friends"];
                 deletedUserFriends.splice(deletedUserFriends.indexOf(username), 1);
@@ -205,7 +181,7 @@ router.delete('/delete/:id', (req, res) => {
     });
 });
 
-router.get('/timetable/:id', (req, res) => {
+router.get('/timetable/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -213,7 +189,7 @@ router.get('/timetable/:id', (req, res) => {
         } else {
             let users = JSON.parse(data);
             let timetableUser = req.params.id;
-            let username = req.auth.user;
+            let username = req.user.user;
             if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(timetableUser) !== -1) {
                 let user = timetableUser;
                 let fileClasses = './src/students/classes.json';
@@ -229,7 +205,7 @@ router.get('/timetable/:id', (req, res) => {
                             let followedClasses = new Array();
                             let studentKeys = Object.keys(student);
                             for (let i = 0; i < studentKeys.length; i++) {
-                                followedClasses.push(studentKeys[i].toLowerCase().replaceAll(' ', '_') + '_' + student[studentKeys[i]]);
+                                followedClasses.push(studentKeys[i].toLowerCase().replaceAll(' ', authenticateToken, '_') + '_' + student[studentKeys[i]]);
                             }
                             readFile(fileClasses, (err, data) => {
                                 if (err) {
@@ -261,7 +237,7 @@ router.get('/timetable/:id', (req, res) => {
     });
 });
 
-router.get('/groups/:id', (req, res) => {
+router.get('/groups/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -269,7 +245,7 @@ router.get('/groups/:id', (req, res) => {
         } else {
             let users = JSON.parse(data);
             let groupsUser = req.params.id;
-            let username = req.auth.user;
+            let username = req.user.user;
             if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(groupsUser) !== -1) {
                 let fileStudents = './src/students/students.json';
                 readFile(fileStudents, (err, data) => {
@@ -277,7 +253,7 @@ router.get('/groups/:id', (req, res) => {
                         res.status(500).send({ error: 'Internal server error' });
                     } else {
                         let students = JSON.parse(data);
-                        let user = req.auth.user;
+                        let user = req.user.user;
                         if (students.hasOwnProperty(user)) {
                             let groups = students[user];
                             res.status(200).send(JSON.stringify(groups));
@@ -293,7 +269,7 @@ router.get('/groups/:id', (req, res) => {
     });
 });
 
-router.get('/sharedgroups/:id', (req, res) => {
+router.get('/sharedgroups/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     let sharedgroups = new Array();
     readFile(fileName, (err, data) => {
@@ -302,7 +278,7 @@ router.get('/sharedgroups/:id', (req, res) => {
         } else {
             let users = JSON.parse(data);
             let groupsUser = req.params.id;
-            let username = req.auth.user;
+            let username = req.user.user;
             if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(groupsUser) !== -1) {
                 let fileStudents = './src/students/students.json';
                 readFile(fileStudents, (err, data) => {
@@ -310,7 +286,7 @@ router.get('/sharedgroups/:id', (req, res) => {
                         res.status(500).send({ error: 'Internal server error' });
                     } else {
                         let students = JSON.parse(data);
-                        let user = req.auth.user;
+                        let user = req.user.user;
                         if (students.hasOwnProperty(user) && students.hasOwnProperty(groupsUser)) {
                             let userGroups = students[user];
                             let friendGroups = students[groupsUser];

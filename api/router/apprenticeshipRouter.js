@@ -1,44 +1,9 @@
 const express = require('express');
-const crypto = require('crypto');
 const { readFile } = require('fs');
-const basicAuth = require('express-basic-auth');
 const router = express.Router();
+const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 
-/* router.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.header("WWW-Authenticate", 'Basic realm="Authorization Required"');
-    next();
-});
-
-app.options('/*', (_, res) => {
-    res.sendStatus(200);
-});
- */
-router.use(basicAuth({
-    authorizer: checkPassword,
-    authorizeAsync: true
-}));
-
-function checkPassword(username, password, cb) {
-    let fileName = './src/users/users.json';
-    let passHash = crypto.createHash('md5').update(password).digest('hex');
-    readFile(fileName, (err, data) => {
-        if (err) {
-            console.log(err);
-            return cb(null, false);
-        } else {
-            let users = JSON.parse(data);
-            if (users.hasOwnProperty(username)) {
-                return cb(null, basicAuth.safeCompare(passHash, users[username]["password"]));
-            } else {
-                return cb(null, false);
-            }
-        }
-    });
-}
-
-router.get('/', (req, res) => {
+router.get('/', authenticateToken, (req, res) => {
     let fileName = './src/calendar/apprenticeship.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -49,7 +14,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/next/', (req, res) => {
+router.get('/next/', authenticateToken, (req, res) => {
     let fileName = './src/calendar/apprenticeship.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -80,7 +45,7 @@ router.get('/next/', (req, res) => {
     });
 });
 
-router.get('/date/:date/', (req, res) => {
+router.get('/date/:date/', authenticateToken, (req, res) => {
     let params = req.params;
     if (params.date.match(/^\d{2}-\d{2}-\d{4}$/)) {
         let fileName = './src/calendar/apprenticeship.json';
@@ -103,7 +68,7 @@ router.get('/date/:date/', (req, res) => {
     }
 });
 
-router.get('/count/:elem/', (req, res) => {
+router.get('/count/:elem/', authenticateToken, (req, res) => {
     let params = req.params;
     if (params.elem == 'Cours' || params.elem == 'Entreprise' || params.elem == 'F') {
         let fileName = './src/calendar/apprenticeship.json';

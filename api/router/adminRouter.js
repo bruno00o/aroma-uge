@@ -1,45 +1,9 @@
 const express = require('express');
-const crypto = require('crypto');
-const { readFile, writeFile, read } = require('fs');
-const basicAuth = require('express-basic-auth');
+const { readFile, writeFile } = require('fs');
 const router = express.Router();
+const authenticateTokenAdmin = require('./modules/authenticateToken').authenticateTokenAdmin;
 
-router.use(basicAuth({
-    authorizer: checkPassword,
-    authorizeAsync: true
-}));
-
-function checkPassword(username, password, cb) {
-    let fileName = './src/users/users.json';
-    let fileAdmin = './src/users/admin.json';
-    let passHash = crypto.createHash('md5').update(password).digest('hex');
-    readFile(fileAdmin, (err, dataAdmin) => {
-        if (err) {
-            return cb(null, false);
-        } else {
-            let admins = JSON.parse(dataAdmin);
-            if (admins.includes(username)) {
-                readFile(fileName, (err, data) => {
-                    if (err) {
-                        console.log(err);
-                        return cb(null, false);
-                    } else {
-                        let users = JSON.parse(data);
-                        if (users.hasOwnProperty(username)) {
-                            return cb(null, basicAuth.safeCompare(passHash, users[username]["password"]));
-                        } else {
-                            return cb(null, false);
-                        }
-                    }
-                });
-            } else {
-                return cb(null, false);
-            }
-        }
-    })
-}
-
-router.get('/students/', (req, res) => {
+router.get('/students/', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/students.json'
     readFile(fileName, (err, data) => {
         if (err) {
@@ -51,7 +15,7 @@ router.get('/students/', (req, res) => {
     })
 });
 
-router.get('/students/:id', (req, res) => {
+router.get('/students/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/students.json'
     readFile(fileName, (err, data) => {
         if (err) {
@@ -70,7 +34,7 @@ router.get('/students/:id', (req, res) => {
 /**
  * change data from student but can't post new student
  */
-router.post('/students/:id', (req, res) => {
+router.post('/students/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/students.json'
     readFile(fileName, (err, data) => {
         if (err) {
@@ -96,7 +60,7 @@ router.post('/students/:id', (req, res) => {
 /**
  * Delete a student from json
  */
-router.delete('/students/:id', (req, res) => {
+router.delete('/students/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/students.json'
     readFile(fileName, (err, data) => {
         if (err) {
@@ -119,7 +83,7 @@ router.delete('/students/:id', (req, res) => {
     })
 });
 
-router.post('/students/', (req, res) => {
+router.post('/students/', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/students.json'
     readFile(fileName, (err, data) => {
         if (err) {
@@ -151,7 +115,7 @@ router.post('/students/', (req, res) => {
     })
 });
 
-router.get('/classes/', (req, res) => {
+router.get('/classes/', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/classes.json'
     readFile(fileName, (err, data) => {
         if (err) {
@@ -163,7 +127,7 @@ router.get('/classes/', (req, res) => {
     })
 });
 
-router.get('/classes/:id', (req, res) => {
+router.get('/classes/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/classes.json'
     readFile(fileName, (err, data) => {
         if (err) {
@@ -179,7 +143,7 @@ router.get('/classes/:id', (req, res) => {
     })
 });
 
-router.post('/classes/:id', (req, res) => {
+router.post('/classes/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/classes.json'
     readFile(fileName, (err, data) => {
         if (err) {
@@ -202,7 +166,7 @@ router.post('/classes/:id', (req, res) => {
     })
 });
 
-router.delete('/classes/:id', (req, res) => {
+router.delete('/classes/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/classes.json'
     readFile(fileName, (err, data) => {
         if (err) {
@@ -225,7 +189,7 @@ router.delete('/classes/:id', (req, res) => {
     })
 });
 
-router.post('/classes/', (req, res) => {
+router.post('/classes/', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/classes.json'
     readFile(fileName, (err, data) => {
         if (err) {
