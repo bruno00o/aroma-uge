@@ -63,7 +63,7 @@ router.post('/', (req, res) => {
                                         validating = JSON.parse(dataValidating);
                                         validating[randomString] = {
                                             username: params.username,
-                                            password: crypto.createHash('md5').update(params.password).digest('hex')
+                                            password: crypto.createHash('sha256').update(params.password).digest('hex')
                                         }
                                         writeFile('./src/users/validating.json', JSON.stringify(validating), (err) => {
                                             if (err) {
@@ -74,8 +74,11 @@ router.post('/', (req, res) => {
                                                     host: 'smtp.gmail.com',
                                                     auth: {
                                                         user: 'vos.loulous.info@gmail.com',
+                                                        /* to hide from github */
                                                         pass: 'whkrdbjvzsmaflcb'
-                                                    }
+                                                    },
+                                                    /* to remove */
+                                                    tls : { rejectUnauthorized: false }
                                                 });
                                                 let mailOptions = {
                                                     from: 'Aroma UGE <vos.loulous.info@gmail.com>',
@@ -87,6 +90,7 @@ router.post('/', (req, res) => {
                                                 transporter.sendMail(mailOptions, (err, info) => {
                                                     if (err) {
                                                         res.status(500).send({ error: 'Internal server error' });
+                                                        console.log(err);
                                                     } else {
                                                         res.status(200).send({ success: 'Mail sent' });
                                                     }

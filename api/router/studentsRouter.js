@@ -1,40 +1,16 @@
 const express = require('express');
-const crypto = require('crypto');
 const { readFile } = require('fs');
-const basicAuth = require('express-basic-auth');
 const router = express.Router();
+const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 
-router.use(basicAuth({
-    authorizer: checkPassword,
-    authorizeAsync: true
-}));
-
-function checkPassword(username, password, cb) {
-    let fileName = './src/users/users.json';
-    let passHash = crypto.createHash('md5').update(password).digest('hex');
-    readFile(fileName, (err, data) => {
-        if (err) {
-            console.log(err);
-            return cb(null, false);
-        } else {
-            let users = JSON.parse(data);
-            if (users.hasOwnProperty(username)) {
-                return cb(null, basicAuth.safeCompare(passHash, users[username]["password"]));
-            } else {
-                return cb(null, false);
-            }
-        }
-    });
-}
-
-router.get('/groups/', (req, res) => {
+router.get('/groups/', authenticateToken, (req, res) => {
     let fileName = './src/students/students.json';
     readFile(fileName, (err, data) => {
         if (err) {
             res.status(500).send({ error: 'Internal server error' });
         } else {
             let students = JSON.parse(data);
-            let user = req.auth.user;
+            let user = req.user.user;
             if (students.hasOwnProperty(user)) {
                 let groups = students[user];
                 res.status(200).send(JSON.stringify(groups));
@@ -45,7 +21,7 @@ router.get('/groups/', (req, res) => {
     });
 });
 
-router.get('/classes/', (req, res) => {
+router.get('/classes/', authenticateToken, (req, res) => {
     let fileName = './src/students/classes.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -57,8 +33,8 @@ router.get('/classes/', (req, res) => {
     });
 });
 
-router.get('/timetable/', (req, res) => {
-    let user = req.auth.user;
+router.get('/timetable/', authenticateToken, (req, res) => {
+    let user = req.user.user;
     let fileClasses = './src/students/classes.json';
     let fileStudents = './src/students/students.json';
     let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
