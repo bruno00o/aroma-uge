@@ -1,6 +1,3 @@
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
-
 const express = require('express');
 const app = express();
 const port = 8080;
@@ -16,8 +13,6 @@ const friendsRouter = require('./router/friendsRouter');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
 
 app.use('/register', registerRouter);
 app.use('/validate', validateRouter);
