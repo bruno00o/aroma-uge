@@ -3,6 +3,9 @@ const { readFile, writeFile } = require('fs');
 const router = express.Router();
 const authenticateTokenAdmin = require('./modules/authenticateToken').authenticateTokenAdmin;
 
+/**
+ * List all students and their data
+ */
 router.get('/students/', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/students.json'
     readFile(fileName, (err, data) => {
@@ -15,6 +18,9 @@ router.get('/students/', authenticateTokenAdmin, (req, res) => {
     })
 });
 
+/**
+ * List data of a student 
+ */
 router.get('/students/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/students.json'
     readFile(fileName, (err, data) => {
@@ -32,7 +38,7 @@ router.get('/students/:id', authenticateTokenAdmin, (req, res) => {
 });
 
 /**
- * change data from student but can't post new student
+ * Update data of a student
  */
 router.post('/students/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/students.json'
@@ -58,7 +64,7 @@ router.post('/students/:id', authenticateTokenAdmin, (req, res) => {
 });
 
 /**
- * Delete a student from json
+ * Delete a student
  */
 router.delete('/students/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/students.json'
@@ -83,6 +89,9 @@ router.delete('/students/:id', authenticateTokenAdmin, (req, res) => {
     })
 });
 
+/**
+ * Create new students
+ */
 router.post('/students/', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/students.json'
     readFile(fileName, (err, data) => {
@@ -115,6 +124,9 @@ router.post('/students/', authenticateTokenAdmin, (req, res) => {
     })
 });
 
+/**
+ * List all courses and their data
+ */
 router.get('/classes/', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/classes.json'
     readFile(fileName, (err, data) => {
@@ -127,6 +139,9 @@ router.get('/classes/', authenticateTokenAdmin, (req, res) => {
     })
 });
 
+/**
+ * List data of a course
+ */
 router.get('/classes/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/classes.json'
     readFile(fileName, (err, data) => {
@@ -143,6 +158,9 @@ router.get('/classes/:id', authenticateTokenAdmin, (req, res) => {
     })
 });
 
+/**
+ * Update data of a course
+ */
 router.post('/classes/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/classes.json'
     readFile(fileName, (err, data) => {
@@ -166,6 +184,9 @@ router.post('/classes/:id', authenticateTokenAdmin, (req, res) => {
     })
 });
 
+/**
+ * Delete a course
+ */
 router.delete('/classes/:id', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/classes.json'
     readFile(fileName, (err, data) => {
@@ -189,6 +210,9 @@ router.delete('/classes/:id', authenticateTokenAdmin, (req, res) => {
     })
 });
 
+/**
+ * Create new courses
+ */
 router.post('/classes/', authenticateTokenAdmin, (req, res) => {
     let fileName = './src/students/classes.json'
     readFile(fileName, (err, data) => {

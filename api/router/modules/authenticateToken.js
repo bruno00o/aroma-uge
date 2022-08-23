@@ -2,6 +2,12 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { readFileSync } = require('fs');
 
+/**
+ * Express middleware to authenticate a token
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 exports.authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -15,6 +21,12 @@ exports.authenticateToken = (req, res, next) => {
     });
 }
 
+/**
+ * Express middleware to authenticate a token and check if the user is an admin
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 exports.authenticateTokenAdmin = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];

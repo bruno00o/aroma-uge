@@ -5,14 +5,27 @@ const crypto = require('crypto');
 const { readFile, writeFile } = require('fs');
 const router = express.Router();
 
+/**
+ * Generate a new access token
+ * @param {string} user 
+ * @returns {string} token
+ */
 function generateAccessToken(user) {
     return jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
 }
 
+/**
+ * Generate a new refresh token
+ * @param {string} user 
+ * @returns {string} token
+ */
 function generateRefreshToken(user) {
     return jwt.sign({ user }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 }
 
+/**
+ * Authenticate an user and send a new access token if the user is valid
+ */
 router.post('/', (req, res) => {
     let fileName = './src/users/users.json';
     let passHash = crypto.createHash('sha256').update(req.body.password).digest('hex');
@@ -35,6 +48,9 @@ router.post('/', (req, res) => {
     });
 });
 
+/**
+ * Refresh an access token
+ */
 router.post('/refresh', (req, res) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -59,39 +75,6 @@ router.post('/refresh', (req, res) => {
         }
         );
     });
-});
-
-router.post('/deleteuser/', (req, res) => {
-    let fileName = './src/users/users.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            delete users[req.body.username];
-            writeFile(fileName, JSON.stringify(users), (err) => {
-                if (err) {
-                    res.status(500).send({ error: 'Internal server error' });
-                } else {
-                    res.status(200).send({ delete: true });
-                }
-            }
-            );
-        }
-    }
-    );
-});
-
-router.get('/getusers/', (req, res) => {
-    let fileName = './src/users/users.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            res.status(200).send(JSON.parse(data));
-        }
-    }
-    );
 });
 
 module.exports = router;

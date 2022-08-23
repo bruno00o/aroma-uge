@@ -79,6 +79,9 @@ router.post('/request/:id', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Accept a friend request
+ */
 router.post('/accept/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
@@ -121,6 +124,9 @@ router.post('/accept/:id', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Decline a friend request
+ */
 router.post('/decline/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
@@ -151,6 +157,9 @@ router.post('/decline/:id', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Delete a friend
+ */
 router.delete('/delete/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
@@ -181,6 +190,9 @@ router.delete('/delete/:id', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Get timetable of a friend
+ */
 router.get('/timetable/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
@@ -237,6 +249,9 @@ router.get('/timetable/:id', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Get groups of a friend
+ */
 router.get('/groups/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     readFile(fileName, (err, data) => {
@@ -269,6 +284,9 @@ router.get('/groups/:id', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Get shared groups with a friend
+ */
 router.get('/sharedgroups/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
     let sharedgroups = new Array();

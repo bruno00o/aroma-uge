@@ -3,6 +3,9 @@ const { readFile } = require('fs');
 const router = express.Router();
 const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 
+/**
+ * Get the apprenticeship calendar
+ */
 router.get('/', authenticateToken, (req, res) => {
     let fileName = './src/calendar/apprenticeship.json';
     readFile(fileName, (err, data) => {
@@ -14,6 +17,9 @@ router.get('/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Get the next apprenticeship date
+ */
 router.get('/next/', authenticateToken, (req, res) => {
     let fileName = './src/calendar/apprenticeship.json';
     readFile(fileName, (err, data) => {
@@ -45,6 +51,9 @@ router.get('/next/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Get the event of a date in the calendar
+ */
 router.get('/date/:date/', authenticateToken, (req, res) => {
     let params = req.params;
     if (params.date.match(/^\d{2}-\d{2}-\d{4}$/)) {
@@ -68,6 +77,9 @@ router.get('/date/:date/', authenticateToken, (req, res) => {
     }
 });
 
+/**
+ * Count the number of apprenticeship dates in the calendar
+ */
 router.get('/count/:elem/', authenticateToken, (req, res) => {
     let params = req.params;
     if (params.elem == 'Cours' || params.elem == 'Entreprise' || params.elem == 'F') {

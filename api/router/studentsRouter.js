@@ -3,6 +3,9 @@ const { readFile } = require('fs');
 const router = express.Router();
 const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 
+/**
+ * Get students groups
+ */
 router.get('/groups/', authenticateToken, (req, res) => {
     let fileName = './src/students/students.json';
     readFile(fileName, (err, data) => {
@@ -21,6 +24,9 @@ router.get('/groups/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Get every classes
+ */
 router.get('/classes/', authenticateToken, (req, res) => {
     let fileName = './src/students/classes.json';
     readFile(fileName, (err, data) => {
@@ -33,6 +39,9 @@ router.get('/classes/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Get timetable of a student
+ */
 router.get('/timetable/', authenticateToken, (req, res) => {
     let user = req.user.user;
     let fileClasses = './src/students/classes.json';

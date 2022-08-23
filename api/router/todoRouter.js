@@ -3,6 +3,9 @@ const { readFile, writeFile } = require('fs');
 const router = express.Router();
 const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 
+/**
+ * Get apprenticeship todo of a student
+ */
 router.get('/apprenticeship/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');
@@ -15,7 +18,9 @@ router.get('/apprenticeship/', authenticateToken, (req, res) => {
         }
     });
 });
-
+/**
+ * Post apprenticeship todo for a student
+ */
 router.post('/apprenticeship/add/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');
@@ -74,6 +79,10 @@ router.post('/apprenticeship/add/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Get apprenticeship todo max id of a student
+ * Usefull to know the next id to use
+ */
 router.get('/apprenticeship/maxid/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');
@@ -98,6 +107,9 @@ router.get('/apprenticeship/maxid/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Toggle apprenticeship todo of a student to done
+ */
 router.post('/apprenticeship/todone/:id/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');
@@ -131,6 +143,9 @@ router.post('/apprenticeship/todone/:id/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Toggle apprenticeship todo of a student to active
+ */
 router.post('/apprenticeship/toactive/:id/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');
@@ -164,6 +179,9 @@ router.post('/apprenticeship/toactive/:id/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Delete apprenticeship todo of a student
+ */
 router.delete('/apprenticeship/delete/:id/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');
@@ -200,6 +218,9 @@ router.delete('/apprenticeship/delete/:id/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Get university todo of a student
+ */
 router.get('/university/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');
@@ -213,6 +234,9 @@ router.get('/university/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Add university todo of a student
+ */
 router.post('/university/add/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');
@@ -271,6 +295,10 @@ router.post('/university/add/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Get university todo max id of a student
+ * Useful for adding new todo
+ */
 router.get('/university/maxid/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');
@@ -295,6 +323,9 @@ router.get('/university/maxid/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Toggle university todo of a student to done
+ */
 router.post('/university/todone/:id/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');
@@ -328,6 +359,9 @@ router.post('/university/todone/:id/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Toggle university todo of a student to active
+ */
 router.post('/university/toactive/:id/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');
@@ -361,6 +395,9 @@ router.post('/university/toactive/:id/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * Delete university todo of a student
+ */
 router.delete('/university/delete/:id/', authenticateToken, (req, res) => {
     let username = req.user.user;
     username = username.replace('.', '_');

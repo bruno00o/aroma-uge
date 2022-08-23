@@ -1,10 +1,15 @@
+require('dotenv').config();
 const express = require('express');
 const crypto = require('crypto');
 const { readFile, writeFile } = require('fs');
 const nodemailer = require('nodemailer');
 const router = express.Router();
 
-
+/**
+ * Generate a random string
+ * @param {int} length 
+ * @returns 
+ */
 const random = (length = 8) => {
     let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -16,23 +21,37 @@ const random = (length = 8) => {
 
 };
 
+/**
+ * Load style.css
+ */
 router.get('/reset/style.css', (req, res) => {
     res.sendFile(__dirname + '/views/src/css/style.css');
 });
 
+/**
+ * Load favicon.ico
+ */
 router.get('/reset/favicon.ico', (req, res) => {
     res.sendFile(__dirname + '/views/src/img/favicon.ico');
 });
 
+/**
+ * Load tahoma.ttf
+ */
 router.get('/reset/fonts/tahoma.ttf', (req, res) => {
     res.sendFile(__dirname + '/views/src/fonts/tahoma.ttf');
 });
 
+/**
+ * Load TAHOMABD.TTF
+ */
 router.get('/reset/fonts/TAHOMABD.TTF', (req, res) => {
     res.sendFile(__dirname + '/views/src/fonts/TAHOMABD.TTF');
 });
 
-
+/**
+ * Register an user
+ */
 router.post('/', (req, res) => {
     let params = req.body;
     readFile('./src/users/users.json', (err, dataUsers) => {
@@ -75,7 +94,7 @@ router.post('/', (req, res) => {
                                                     auth: {
                                                         user: 'vos.loulous.info@gmail.com',
                                                         /* to hide from github */
-                                                        pass: 'whkrdbjvzsmaflcb'
+                                                        pass: process.env.GMAIL_APP_PASSWORD
                                                     },
                                                     /* to remove */
                                                     tls : { rejectUnauthorized: false }
@@ -126,6 +145,9 @@ router.post('/', (req, res) => {
     });
 });
 
+/**
+ * Send an email if password is forgotten
+ */
 router.get('/forgot/:username', (req, res) => {
     let username = req.params.username;
     readFile('./src/users/users.json', (err, dataUsers) => {
@@ -150,8 +172,9 @@ router.get('/forgot/:username', (req, res) => {
                                     host: 'smtp.gmail.com',
                                     auth: {
                                         user: 'vos.loulous.info@gmail.com',
-                                        pass: 'whkrdbjvzsmaflcb'
-                                    }
+                                        pass: process.env.GMAIL_APP_PASSWORD
+                                    },
+                                    tls : { rejectUnauthorized: false }
                                 });
                                 let mailOptions = {
                                     from: 'Aroma UGE <vos.loulous.info@gmail.com>',
@@ -198,6 +221,9 @@ router.get('/forgot/:username', (req, res) => {
     });
 });
 
+/**
+ * Reset password
+ */
 router.get('/reset/:randomString', (req, res) => {
     let randomString = req.params.randomString;
     readFile('./src/users/resetting.json', (err, dataResetting) => {
