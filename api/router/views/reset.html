@@ -16,7 +16,13 @@
     <h2>Demande de réinitialisation du mot de passe</h2>
     <form action="/" method="post">
         <label for="password">Nouveau mot de passe</label>
-        <input type="password" name="password" placeholder="Nouveau mot de passe" required
+        <ul>
+            <li>au moins une minuscule</li>
+            <li>au moins une majuscule</li>
+            <li>au moins un chiffre</li>
+            <li>au moins 8 caractères</li>
+        </ul>
+        <input id="password-input" type="password" name="password" placeholder="Nouveau mot de passe" required
             aria-label="Nouveau mot de passe" autofocus autocomplete="off">
         <label for="password_confirm">Confirmer le mot de passe</label>
         <input type="password" name="password_confirm" placeholder="Confirmer le mot de passe" required
@@ -29,7 +35,36 @@
     let form = document.querySelector('form');
     let url = window.location.href;
     let token = url.split('/').pop();
+    let passwordInput = document.querySelector('#password-input');
     form.action = `/validate/changepass/${token}`;
+
+    passwordInput.addEventListener('keyup', function (e) {
+        let paternMin = /[a-z]/;
+        let paternMaj = /[A-Z]/;
+        let paternNum = /[0-9]/;
+        let paternLength = /.{8,}/;
+        let list = document.querySelectorAll('form ul li');
+        if (paternMin.test(e.target.value)) {
+            list[0].classList.add('valid');
+        } else {
+            list[0].classList.remove('valid');
+        }
+        if (paternMaj.test(e.target.value)) {
+            list[1].classList.add('valid');
+        } else {
+            list[1].classList.remove('valid');
+        }
+        if (paternNum.test(e.target.value)) {
+            list[2].classList.add('valid');
+        } else {
+            list[2].classList.remove('valid');
+        }
+        if (paternLength.test(e.target.value)) {
+            list[3].classList.add('valid');
+        } else {
+            list[3].classList.remove('valid');
+        }
+    });
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
