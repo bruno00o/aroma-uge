@@ -89,21 +89,18 @@ router.post('/', (req, res) => {
                                                 res.status(500).send({ error: 'Internal server error' });
                                             } else {
                                                 var transporter = nodemailer.createTransport({
-                                                    service: 'gmail',
-                                                    host: 'smtp.gmail.com',
+                                                    host: process.env.SMTP_HOST,
+                                                    port: process.env.SMTP_PORT,
+                                                    secure: true,
                                                     auth: {
-                                                        user: 'vos.loulous.info@gmail.com',
-                                                        /* to hide from github */
-                                                        pass: process.env.GMAIL_APP_PASSWORD
+                                                        user: process.env.MAIL_USER,
+                                                        pass: process.env.MAIL_PASS
                                                     },
-                                                    /* to remove */
-                                                    tls : { rejectUnauthorized: false }
                                                 });
                                                 let mailOptions = {
-                                                    from: 'Aroma UGE <vos.loulous.info@gmail.com>',
+                                                    from: 'Aroma UGE <' + process.env.MAIL_USER + '>',
                                                     to: params.username + '@edu.univ-eiffel.fr',
                                                     subject: 'Validation de votre compte',
-                                                    /* html: "<h1>Bienvenue sur Aroma UGE !</h1><p>Vous avez demandé à créer un compte sur Aroma UGE. Pour valider votre compte, veuillez cliquer sur le lien suivant :<br><a href='http://mnfu4687.odns.fr/validate/" + randomString + "'>Valider mon compte</a></p><p>Si vous n'avez pas demandé à créer un compte, ignorez ce mail.</p>" */
                                                     html: "<h1>Bienvenue sur Aroma UGE !</h1><p>Vous avez demandé à créer un compte sur Aroma UGE. Pour valider votre compte, veuillez cliquer sur le lien suivant :<br><br><a href='http://localhost:8080/validate/" + randomString + "'>Valider mon compte</a></p><p>Si vous n'avez pas demandé à créer un compte, ignorez ce mail.</p>"
                                                 }
                                                 transporter.sendMail(mailOptions, (err, info) => {
@@ -168,16 +165,16 @@ router.get('/forgot/:username', (req, res) => {
                                 res.status(500).send({ error: 'Internal server error' });
                             } else {
                                 var transporter = nodemailer.createTransport({
-                                    service: 'gmail',
-                                    host: 'smtp.gmail.com',
+                                    host: process.env.SMTP_HOST,
+                                    port: process.env.SMTP_PORT,
+                                    secure: true,
                                     auth: {
-                                        user: 'vos.loulous.info@gmail.com',
-                                        pass: process.env.GMAIL_APP_PASSWORD
+                                        user: process.env.MAIL_USER,
+                                        pass: process.env.MAIL_PASS
                                     },
-                                    tls : { rejectUnauthorized: false }
                                 });
                                 let mailOptions = {
-                                    from: 'Aroma UGE <vos.loulous.info@gmail.com>',
+                                    from: 'Aroma UGE <' + process.env.MAIL_USER + '>',
                                     to: username + '@edu.univ-eiffel.fr',
                                     subject: 'Réinitialisation de votre mot de passe',
                                     html: "<h1>Vous avez demandé à réinitialiser votre mot de passe.</h1><p>Pour le réinitialiser, veuillez cliquer sur le lien suivant :<br><br><a href='http://localhost:8080/register/reset/" + randomString + "'>Réinitialiser mon mot de passe</a></p><p>Si vous n'avez pas demandé à réinitialiser votre mot de passe, ignorez ce mail.</p>"
