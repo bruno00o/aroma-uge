@@ -51,6 +51,37 @@ router.get('/next/', authenticateToken, (req, res) => {
     });
 });
 
+router.get('/next/:element', authenticateToken, (req, res) => {
+    let fileName = './src/calendar/apprenticeship.json';
+    readFile(fileName, (err, data) => {
+        if (err) {
+            res.status(500).send({ error: 'Internal server error' });
+        } else {
+            let calendar = JSON.parse(data);
+            let keys = Object.keys(calendar);
+            let actualDate = new Date();
+            let i = 1;
+            let lastDate = new Date(keys[0]);
+            let nextDate = new Date(actualDate);
+            nextDate.setDate(nextDate.getDate() + i);
+            if (nextDate > lastDate) {
+                res.send({ error: 'No next date' });
+            } else {
+                do {
+                    let nextDate = new Date(actualDate);
+                    nextDate.setDate(nextDate.getDate() + i);
+                    let nexDate = nextDate.getDate() > 9 ? nextDate.getDate() : '0' + nextDate.getDate();
+                    let nextMonth = nextDate.getMonth() + 1 > 9 ? nextDate.getMonth() + 1 : '0' + (nextDate.getMonth() + 1);
+                    let nextYear = nextDate.getFullYear();
+                    var nextDateString = nexDate + '/' + nextMonth + '/' + nextYear;
+                    i++;
+                } while (keys.indexOf(nextDateString) === -1 || calendar[nextDateString] !== req.params.element);
+                res.status(200).send({ date: nextDateString, event: calendar[nextDateString] });
+            }
+        }
+    });
+});
+
 /**
  * Get the event of a date in the calendar
  */

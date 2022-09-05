@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = 8080;
 
@@ -13,6 +14,10 @@ const friendsRouter = require('./router/friendsRouter');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors({
+    origin: '*',
+}));
 
 app.use('/register', registerRouter);
 app.use('/validate', validateRouter);
