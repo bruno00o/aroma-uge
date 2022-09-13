@@ -50,7 +50,37 @@ router.get('/reset/fonts/TAHOMABD.TTF', (req, res) => {
 });
 
 /**
- * Register an user
+ * @swagger
+ * /register:
+ *  post:
+ *     description: Enregistre un nouvel utilisateur
+ *     tags:
+ *        - Utilisateurs
+ *     responses:
+ *        200:
+ *          description: Mail sent
+ *        400:
+ *          description: Bad request
+ *        500:
+ *          description: Internal server error
+ *     requestBody:
+ *       description: Enregistre un nouvel utilisateur
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Nom d'utilisateur
+ *                 example: "prenom.nom"
+ *                 required: true
+ *               password:
+ *                 type: string
+ *                 description: Mot de passe
+ *                 example: "motdepasse"
+ *                 required: true
  */
 router.post('/', (req, res) => {
     let params = req.body;
@@ -143,7 +173,26 @@ router.post('/', (req, res) => {
 });
 
 /**
- * Send an email if password is forgotten
+ * @swagger
+ * /register/forgot/{username}:
+ *  get:
+ *     description: Envoie un mail de réinitialisation de mot de passe
+ *     tags:
+ *        - Utilisateurs
+ *     responses:
+ *        200:
+ *          description: Mail sent
+ *        400:
+ *          description: Bad request
+ *        500:
+ *          description: Internal server error
+ *     parameters:
+ *        - username:
+ *          name: username
+ *          description: Nom d'utilisateur (prénom.nom)
+ *          in: path
+ *          required: true
+ *          type: string
  */
 router.get('/forgot/:username', (req, res) => {
     let username = req.params.username;
@@ -187,8 +236,7 @@ router.get('/forgot/:username', (req, res) => {
                                     else {
                                         res.status(200).send({ success: 'Mail sent' });
                                     }
-                                }
-                                );
+                                });
                             }
                         });
                         setTimeout(() => {
