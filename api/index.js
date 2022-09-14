@@ -55,10 +55,9 @@ const studentsRouter = require('./routes/studentsRouter');
 const adminRouter = require('./routes/adminRouter');
 const friendsRouter = require('./routes/friendsRouter');
 
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 var access = fs.createWriteStream('./access.log', { flags: 'a' })
-    , error = fs.createWriteStream('./error.log', { flags: 'a' });
+, error = fs.createWriteStream('./error.log', { flags: 'a' });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -76,6 +75,8 @@ app.use('/todo', todoRouter);
 app.use('/students', studentsRouter);
 app.use('/admin', adminRouter);
 app.use('/friends', friendsRouter);
+
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 cron.schedule("0 2 * * * * ", function () {
     let fileURLs = "./src/calendar/calendarURLs.json";

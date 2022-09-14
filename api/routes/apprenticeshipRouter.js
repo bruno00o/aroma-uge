@@ -4,7 +4,21 @@ const router = express.Router();
 const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 
 /**
- * Get the apprenticeship calendar
+ * @swagger
+ * /calendar/apprenticeship:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Renvoie le calendrier de l'apprentissage des L3 info
+ *     tags:
+ *        - Apprentissage
+ *     responses:
+ *        200:
+ *          description: Calendrier envoyé
+ *        401:
+ *          description: Token invalide
+ *        500:
+ *          description: Internal server error
  */
 router.get('/', authenticateToken, (req, res) => {
     let fileName = './src/calendar/apprenticeship.json';
@@ -18,7 +32,21 @@ router.get('/', authenticateToken, (req, res) => {
 });
 
 /**
- * Get the next apprenticeship date
+ * @swagger
+ * /calendar/apprenticeship/next:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Renvoie le prochain jour en alternance
+ *     tags:
+ *        - Apprentissage
+ *     responses:
+ *        200:
+ *          description: Jour envoyé
+ *        401:
+ *          description: Token invalide
+ *        500:
+ *          description: Internal server error
  */
 router.get('/next/', authenticateToken, (req, res) => {
     let fileName = './src/calendar/apprenticeship.json';
@@ -51,6 +79,32 @@ router.get('/next/', authenticateToken, (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ * /calendar/apprenticeship/next/{element}:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Renvoie le prochain jour en entreprise / en cours / férié
+ *     tags:
+ *        - Apprentissage
+ *     parameters:
+ *        - element:
+ *          name: element
+ *          description: element (Entreprise, Cours, F)
+ *          in: path
+ *          required: true
+ *          schema:
+ *            type: string
+ *            enum: [Entreprise, Cours, F]
+ *     responses:
+ *        200:
+ *          description: Jour envoyé
+ *        401:
+ *          description: Token invalide
+ *        500:
+ *          description: Internal server error
+ */
 router.get('/next/:element', authenticateToken, (req, res) => {
     let fileName = './src/calendar/apprenticeship.json';
     readFile(fileName, (err, data) => {
@@ -83,7 +137,28 @@ router.get('/next/:element', authenticateToken, (req, res) => {
 });
 
 /**
- * Get the event of a date in the calendar
+ * @swagger
+ * /calendar/apprenticeship/date/{date}:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Renvoie l'évènement du jour
+ *     tags:
+ *        - Apprentissage
+ *     parameters:
+ *        - date:
+ *          name: date
+ *          description: date format dd-mm-yyyy
+ *          in: path
+ *          required: true
+ *          type: string
+ *     responses:
+ *        200:
+ *          description: Jour envoyé
+ *        401:
+ *          description: Token invalide
+ *        500:
+ *          description: Internal server error
  */
 router.get('/date/:date/', authenticateToken, (req, res) => {
     let params = req.params;
@@ -109,7 +184,30 @@ router.get('/date/:date/', authenticateToken, (req, res) => {
 });
 
 /**
- * Count the number of apprenticeship dates in the calendar
+ * @swagger
+ * /calendar/apprenticeship/count/{element}:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Compte le nombre de jours en entreprise / en cours / fériés
+ *     tags:
+ *        - Apprentissage
+ *     parameters:
+ *        - element:
+ *          name: element
+ *          description: element (Entreprise, Cours, F)
+ *          in: path
+ *          required: true
+ *          schema:
+ *            type: string
+ *            enum: [Entreprise, Cours, F]
+ *     responses:
+ *        200:
+ *          description: Jour envoyé
+ *        401:
+ *          description: Token invalide
+ *        500:
+ *          description: Internal server error
  */
 router.get('/count/:elem/', authenticateToken, (req, res) => {
     let params = req.params;
