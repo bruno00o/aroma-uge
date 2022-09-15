@@ -1,3 +1,5 @@
 api/node_modules
 api/src
 api/.env
+api/access.log
+api/error.log

@@ -3,20 +3,61 @@ const cors = require('cors');
 const cron = require('node-cron');
 const fs = require('fs');
 const https = require('https');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+require('dotenv').config();
 const app = express();
 const port = 8080;
 
-const registerRouter = require('./router/registerRouter');
-const validateRouter = require('./router/validateRouter');
-const loginRouter = require('./router/loginRouter');
-const apprenticeshipRouter = require('./router/apprenticeshipRouter')
-const todoRouter = require('./router/todoRouter');
-const studentsRouter = require('./router/studentsRouter');
-const adminRouter = require('./router/adminRouter');
-const friendsRouter = require('./router/friendsRouter');
+// Swagger
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.3',
+        info: {
+            title: 'Aroma UGE API',
+            description: 'Documentation de l\'API Aroma UGE',
+            version: '1.0.0',
+            contact: {
+                name: 'Support Aroma UGE',
+                email: process.env.MAIL_SUPPORT
+            },
+            servers: ['http://localhost:8080']
+        },
+        components: {
+            securitySchemes: {
+                accessToken: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT'
+                },
+                refreshToken: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT'
+                }
+            }
+        },
+    },
+    apis: [
+        'index.js',
+        "./routes/*.js"
+    ],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+const registerRouter = require('./routes/registerRouter');
+const validateRouter = require('./routes/validateRouter');
+const loginRouter = require('./routes/loginRouter');
+const apprenticeshipRouter = require('./routes/apprenticeshipRouter')
+const todoRouter = require('./routes/todoRouter');
+const studentsRouter = require('./routes/studentsRouter');
+const adminRouter = require('./routes/adminRouter');
+const friendsRouter = require('./routes/friendsRouter');
+
 
 var access = fs.createWriteStream('./access.log', { flags: 'a' })
-    , error = fs.createWriteStream('./error.log', { flags: 'a' });
+, error = fs.createWriteStream('./error.log', { flags: 'a' });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -34,6 +75,8 @@ app.use('/todo', todoRouter);
 app.use('/students', studentsRouter);
 app.use('/admin', adminRouter);
 app.use('/friends', friendsRouter);
+
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 cron.schedule("0 2 * * * * ", function () {
     let fileURLs = "./src/calendar/calendarURLs.json";
