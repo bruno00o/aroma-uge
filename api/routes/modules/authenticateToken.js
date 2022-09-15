@@ -11,10 +11,10 @@ const { readFileSync } = require('fs');
 exports.authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    if (token == null) return res.sendStatus(401);
+    if (token == null) return res.status(401).send({ error: "Unauthorized" });
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) {
-            return res.sendStatus(401);
+            return res.status(401).send({ error: "Unauthorized" });
         }
         req.user = user;
         next();
@@ -30,10 +30,10 @@ exports.authenticateToken = (req, res, next) => {
 exports.authenticateTokenAdmin = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    if (token == null) return res.sendStatus(401);
+    if (token == null) return res.status(401).send({ error: "Unauthorized" });
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) {
-            return res.sendStatus(401);
+            return res.status(401).send({ error: "Unauthorized" });
         }
         try {
             const data = readFileSync('./src/users/admin.json');
@@ -43,9 +43,9 @@ exports.authenticateTokenAdmin = (req, res, next) => {
                 next();
                 return;
             }
-            return res.sendStatus(401);
+            return res.status(401).send({ error: "Unauthorized" });
         } catch (err) {
-            return res.sendStatus(401);
+            return res.status(401).send({ error: "Unauthorized" });
         }
     });
 }

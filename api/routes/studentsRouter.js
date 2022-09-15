@@ -4,9 +4,25 @@ const router = express.Router();
 const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 
 /**
- * Get students groups
+ * @swagger
+ * /students/info:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Renvoie les données de l'utilisateur
+ *     tags:
+ *        - Étudiant
+ *     responses:
+ *        200:
+ *          description: Données de l'étudiant renvoyées
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Utilisateur non trouvé
+ *        500:
+ *          description: Internal server error
  */
-router.get('/groups/', authenticateToken, (req, res) => {
+router.get('/info/', authenticateToken, (req, res) => {
     let fileName = './src/students/students.json';
     readFile(fileName, (err, data) => {
         if (err) {
@@ -20,21 +36,6 @@ router.get('/groups/', authenticateToken, (req, res) => {
             } else {
                 res.status(404).send({ error: 'User not found' });
             }
-        }
-    });
-});
-
-/**
- * Get every classes
- */
-router.get('/classes/', authenticateToken, (req, res) => {
-    let fileName = './src/students/classes.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let classes = JSON.parse(data);
-            res.status(200).send(JSON.stringify(classes));
         }
     });
 });
