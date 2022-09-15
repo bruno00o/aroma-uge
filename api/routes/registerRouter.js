@@ -71,10 +71,10 @@ router.get('/reset/fonts/TAHOMABD.TTF', (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               email:
  *                 type: string
- *                 description: Nom d'utilisateur
- *                 example: "prenom.nom"
+ *                 description: email universitaire
+ *                 example: "prenom.nom@edu.univ-eiffel.fr"
  *                 required: true
  *               password:
  *                 type: string
@@ -89,7 +89,11 @@ router.post('/', (req, res) => {
             res.status(500).send({ error: 'Internal server error' });
         } else {
             let users = JSON.parse(dataUsers);
-            if (users.hasOwnProperty(params.username)) {
+            let username = params.email.split('@')[0];
+            let domain = params.email.split('@')[1];
+            if (domain !== 'edu.univ-eiffel.fr') {
+                res.status(400).send({ error: 'Bad request' });
+            } else if (users.hasOwnProperty(username)) {
                 res.status(400).send({ error: 'Username already exists' });
             } else {
                 if (err) {
@@ -100,8 +104,8 @@ router.post('/', (req, res) => {
                             res.status(500).send({ error: 'Internal server error' });
                         } else {
                             let students = JSON.parse(dataStudents);
-                            if (!students.hasOwnProperty(params.username)) {
-                                res.status(400).send({ error: 'Username is not a student' });
+                            if (!students.hasOwnProperty(username) || !(students[username]["EMAIL"].includes(params.email))) {
+                                res.status(400).send({ error: 'Username is not a student or email is incorrect' });
                             } else {
                                 var validating = {};
                                 var randomString = random(40);
@@ -111,7 +115,7 @@ router.post('/', (req, res) => {
                                     } else {
                                         validating = JSON.parse(dataValidating);
                                         validating[randomString] = {
-                                            username: params.username,
+                                            username: username,
                                             password: crypto.createHash('sha256').update(params.password).digest('hex')
                                         }
                                         writeFile('./src/users/validating.json', JSON.stringify(validating), (err) => {
@@ -129,7 +133,7 @@ router.post('/', (req, res) => {
                                                 });
                                                 let mailOptions = {
                                                     from: 'Aroma UGE <' + process.env.MAIL_USER + '>',
-                                                    to: params.username + '@edu.univ-eiffel.fr',
+                                                    to: username + '@edu.univ-eiffel.fr',
                                                     subject: 'Validation de votre compte',
                                                     html: "<h1>Bienvenue sur Aroma UGE !</h1><p>Vous avez demandé à créer un compte sur Aroma UGE. Pour valider votre compte, veuillez cliquer sur le lien suivant :<br><br><a href='http://localhost:8080/validate/" + randomString + "'>Valider mon compte</a></p><p>Si vous n'avez pas demandé à créer un compte, ignorez ce mail.</p><p>Cordialement,<br>L'équipe Aroma UGE</p><p><small>Ce mail a été envoyé automatiquement, merci de ne pas y répondre.</small></p><p><small>Si vous rencontrez des problèmes, veuillez contacter l'administrateur du site à l'adresse suivante : " + process.env.MAIL_SUPPORT + "</small></p>"
                                                 }
