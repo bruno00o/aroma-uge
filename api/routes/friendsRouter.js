@@ -4,7 +4,23 @@ const router = express.Router();
 const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 
 /**
- * Get friends
+ * @swagger
+ * /friends:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Renvoie la liste des amis de l'utilisateur
+ *     tags:
+ *        - Amis
+ *     responses:
+ *        200:
+ *          description: Liste d'amis envoyée
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Utilisateur non trouvé
+ *        500:
+ *          description: Internal server error
  */
 router.get('/', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
@@ -25,7 +41,23 @@ router.get('/', authenticateToken, (req, res) => {
 });
 
 /**
- * Get requests from user
+ * @swagger
+ * /friends/requests:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Renvoie la liste des requêtes d'amis de l'utilisateur
+ *     tags:
+ *        - Amis
+ *     responses:
+ *        200:
+ *          description: Liste de requêtes envoyée
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Utilisateur non trouvé
+ *        500:
+ *          description: Internal server error
  */
 router.get('/requests/', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
@@ -38,14 +70,37 @@ router.get('/requests/', authenticateToken, (req, res) => {
             if (users.hasOwnProperty(username)) {
                 res.status(200).send(users[username]["requests"]);
             } else {
-                res.status(400).send({ error: 'User not found' });
+                res.status(404).send({ error: 'User not found' });
             }
         }
     });
 });
 
 /**
- * Request to add a friend
+ * @swagger
+ * /friends/request/{username}:
+ *  post:
+ *     security:
+ *        - accessToken: []
+ *     description: Envoie une requête d'amis à un utilisateur
+ *     tags:
+ *        - Amis
+ *     parameters:
+ *        - username:
+ *          name: username
+ *          description: username (prenom.nom) de l'utilisateur à qui envoyer la requête
+ *          in: path
+ *          required: true
+ *          type: string
+ *     responses:
+ *        200:
+ *          description: Requête envoyée
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Utilisateur non trouvé
+ *        500:
+ *          description: Internal server error
  */
 router.post('/request/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
@@ -80,7 +135,30 @@ router.post('/request/:id', authenticateToken, (req, res) => {
 });
 
 /**
- * Accept a friend request
+ * @swagger
+ * /friends/accept/{username}:
+ *  post:
+ *     security:
+ *        - accessToken: []
+ *     description: Accepte une requête d'amis d'un utilisateur
+ *     tags:
+ *        - Amis
+ *     parameters:
+ *        - username:
+ *          name: username
+ *          description: username (prenom.nom) de l'utilisateur dont la requête doit être acceptée
+ *          in: path
+ *          required: true
+ *          type: string
+ *     responses:
+ *        200:
+ *          description: Requête acceptée
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Requête non trouvée
+ *        500:
+ *          description: Internal server error
  */
 router.post('/accept/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
@@ -118,14 +196,37 @@ router.post('/accept/:id', authenticateToken, (req, res) => {
                     }
                 });
             } else {
-                res.status(400).send({ error: 'Request not found' });
+                res.status(404).send({ error: 'Request not found' });
             }
         }
     });
 });
 
 /**
- * Decline a friend request
+ * @swagger
+ * /friends/decline/{username}:
+ *  post:
+ *     security:
+ *        - accessToken: []
+ *     description: Décline une requête d'amis d'un utilisateur
+ *     tags:
+ *        - Amis
+ *     parameters:
+ *        - username:
+ *          name: username
+ *          description: username (prenom.nom) de l'utilisateur dont la requête doit être déclinée
+ *          in: path
+ *          required: true
+ *          type: string
+ *     responses:
+ *        200:
+ *          description: Requête déclinée
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Requête non trouvée
+ *        500:
+ *          description: Internal server error
  */
 router.post('/decline/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
@@ -151,14 +252,37 @@ router.post('/decline/:id', authenticateToken, (req, res) => {
                     }
                 });
             } else {
-                res.status(400).send({ error: 'Request not found' });
+                res.status(404).send({ error: 'Request not found' });
             }
         }
     });
 });
 
 /**
- * Delete a friend
+ * @swagger
+ * /friends/delete/{username}:
+ *  delete:
+ *     security:
+ *        - accessToken: []
+ *     description: Supprime un ami d'un utilisateur
+ *     tags:
+ *        - Amis
+ *     parameters:
+ *        - username:
+ *          name: username
+ *          description: username (prenom.nom) de l'amis à supprimer
+ *          in: path
+ *          required: true
+ *          type: string
+ *     responses:
+ *        200:
+ *          description: Amis supprimé
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Amis non trouvé
+ *        500:
+ *          description: Internal server error
  */
 router.delete('/delete/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
@@ -184,7 +308,7 @@ router.delete('/delete/:id', authenticateToken, (req, res) => {
                     }
                 });
             } else {
-                res.status(400).send({ error: 'Friend not found' });
+                res.status(404).send({ error: 'Friend not found' });
             }
         }
     });
