@@ -78,6 +78,71 @@ app.use('/friends', friendsRouter);
 
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+async function icsToJson(calendarURLs, cal, calendarFolder) {
+    return new Promise((resolve, reject) => {
+        fs.readFile(calendarFolder + calendarURLs[cal].icsFileName, 'utf8', function (err, data) {
+            if (err) {
+                error.write(err + ' ' + new Date() + "\n");
+                reject(err);
+            } else {
+                const lines = data.split("\n");
+                const events = [];
+                let event = {};
+                lines.forEach(function (line) {
+                    if (line.startsWith("BEGIN:VEVENT")) {
+                        event = {};
+                    } else if (line.startsWith("END:VEVENT")) {
+                        events.push(event);
+                    } else if (line.startsWith("DTSTART")) {
+                        event.start = line.substring(8).replace("\r", "");
+                    } else if (line.startsWith("DTEND")) {
+                        event.end = line.substring(6).replace("\r", "");
+                    } else if (line.startsWith("SUMMARY")) {
+                        event.summary = line.substring(8).replace("\r", "");
+                    } else if (line.startsWith("LOCATION")) {
+                        event.location = line.substring(9).replace("\r", "");
+                    }
+                });
+                fs.writeFileSync(calendarFolder + calendarURLs[cal].jsonFileName, JSON.stringify(events), function (err) {
+                    if (err) {
+                        error.write(err + ' ' + new Date() + "\n");
+                        reject(err);
+                    }
+                    resolve();
+                });
+            }
+        });
+    });
+}
+
+function processIcsData(calendarURLs, cal, calendarFolder) {
+    access.write("Downloaded " + calendarURLs[cal].icsFileName + " at " + new Date() + "\n");
+    (async () => await icsToJson(calendarURLs, cal, calendarFolder))().then(() => {
+        access.write("Converted " + calendarURLs[cal].icsFileName + " to json at " + new Date() + "\n");
+    }).catch((err) => {
+        error.write(err + ' ' + new Date() + "\n");
+    });
+}
+
+async function downloadIcs(calendarURLs, cal, calendarFolder) {
+    let url = calendarURLs[cal].url;
+    let file = fs.createWriteStream(calendarFolder + calendarURLs[cal].icsFileName);
+
+    return new Promise((resolve, reject) => {
+        https.get(url, response => {
+            response.pipe(file);
+            file.on('finish', () => {
+                file.close();
+                resolve(processIcsData(calendarURLs, cal, calendarFolder));
+            });
+        }).on('error', err => {
+            error.write("Error while downloading " + calendarURLs[cal].icsFileName + " at " + new Date() + "\n");
+            fs.unlink(calendarFolder + calendarURLs[cal].icsFileName);
+            reject(err.message);
+        });
+    });
+}
+
 cron.schedule("1 * * * * *", function () {
     let fileURLs = "./src/calendar/calendarURLs.json";
     let calendarFolder = "./src/calendar/";
@@ -87,48 +152,7 @@ cron.schedule("1 * * * * *", function () {
         } else {
             let calendarURLs = JSON.parse(data);
             for (cal in calendarURLs) {
-                let url = calendarURLs[cal].url;
-                let file = fs.createWriteStream(calendarFolder + calendarURLs[cal].icsFileName);
-                let request = https.get(url, function (response) {
-                    response.pipe(file);
-                    file.on('end', function () {
-                        file.close();
-                        console.log(cal);
-                        access.write("Downloaded " + calendarURLs[cal].icsFileName + " at " + new Date() + "\n");
-                        fs.readFileSync(calendarFolder + calendarURLs[cal].icsFileName, 'utf8', function (err, data) {
-                            if (err) {
-                                error.write(err + ' ' + new Date() + "\n");
-                            } else {
-                                const lines = data.split("\n");
-                                const events = [];
-                                let event = {};
-                                lines.forEach(function (line) {
-                                    if (line.startsWith("BEGIN:VEVENT")) {
-                                        event = {};
-                                    } else if (line.startsWith("END:VEVENT")) {
-                                        events.push(event);
-                                    } else if (line.startsWith("DTSTART")) {
-                                        event.start = line.substring(8).replace("\r", "");
-                                    } else if (line.startsWith("DTEND")) {
-                                        event.end = line.substring(6).replace("\r", "");
-                                    } else if (line.startsWith("SUMMARY")) {
-                                        event.summary = line.substring(8).replace("\r", "");
-                                    } else if (line.startsWith("LOCATION")) {
-                                        event.location = line.substring(9).replace("\r", "");
-                                    }
-                                });
-                                fs.writeFileSync(calendarFolder + calendarURLs[cal].jsonFileName, JSON.stringify(events), function (err) {
-                                    if (err) {
-                                        error.write(err + ' ' + new Date() + "\n");
-                                    }
-                                });
-                            }
-                        });
-                    });
-                }).on('error', function (err) {
-                    error.write("Error while downloading " + calendarURLs[cal].icsFileName + " at " + new Date() + "\n");
-                    fs.unlink(dest);
-                });
+                (async () => await downloadIcs(calendarURLs, cal, calendarFolder))();
             }
         }
     });
