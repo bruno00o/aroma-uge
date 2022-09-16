@@ -143,7 +143,7 @@ async function downloadIcs(calendarURLs, cal, calendarFolder) {
     });
 }
 
-cron.schedule("1 * * * * *", function () {
+cron.schedule("0 2 * * * *", function () {
     let fileURLs = "./src/calendar/calendarURLs.json";
     let calendarFolder = "./src/calendar/";
     fs.readFile(fileURLs, (err, data) => {
