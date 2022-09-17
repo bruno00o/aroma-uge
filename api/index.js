@@ -21,7 +21,7 @@ const swaggerOptions = {
                 name: 'Support Aroma UGE',
                 email: process.env.MAIL_SUPPORT
             },
-            servers: ['http://localhost:8080']
+            servers: [process.env.URL_API]
         },
         components: {
             securitySchemes: {

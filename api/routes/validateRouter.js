@@ -93,8 +93,15 @@ router.post('/changepass/:token', encodeUrl, (req, res) => {
     let fileNameResetting = './src/users/resetting.json';
     let params = req.body;
     readFile(fileNameResetting, (err, dataResetting) => {
+        let paternMin = /[a-z]/;
+        let paternMaj = /[A-Z]/;
+        let paternNum = /[0-9]/;
+        let paternLength = /.{8,}/;
         if (err) {
             res.status(500).send({ error: 'Internal server error' });
+        } else if (!paternMin.test(params.password) || !paternMaj.test(params.password) || !paternNum.test(params.password) || !paternLength.test(
+            params.password)) {
+            res.status(400).send({ error: 'Password is not strong enough' });
         } else {
             let resetting = JSON.parse(dataResetting);
             if (resetting.hasOwnProperty(token)) {

@@ -91,10 +91,17 @@ router.post('/', (req, res) => {
             let users = JSON.parse(dataUsers);
             let username = params.email.split('@')[0];
             let domain = params.email.split('@')[1];
+            let paternMin = /[a-z]/;
+            let paternMaj = /[A-Z]/;
+            let paternNum = /[0-9]/;
+            let paternLength = /.{8,}/;
             if (domain !== 'edu.univ-eiffel.fr') {
                 res.status(400).send({ error: 'Bad request' });
             } else if (users.hasOwnProperty(username)) {
                 res.status(400).send({ error: 'Username already exists' });
+            } else if (!paternMin.test(params.password) || !paternMaj.test(params.password) || !paternNum.test(params.password) || !paternLength.test(
+                params.password)) {
+                res.status(400).send({ error: 'Password is not strong enough' });
             } else {
                 if (err) {
                     res.status(500).send({ error: 'Internal server error' });
@@ -135,7 +142,7 @@ router.post('/', (req, res) => {
                                                     from: 'Aroma UGE <' + process.env.MAIL_USER + '>',
                                                     to: username + '@edu.univ-eiffel.fr',
                                                     subject: 'Validation de votre compte',
-                                                    html: "<h1>Bienvenue sur Aroma UGE !</h1><p>Vous avez demandé à créer un compte sur Aroma UGE. Pour valider votre compte, veuillez cliquer sur le lien suivant :<br><br><a href='http://localhost:8080/validate/" + randomString + "'>Valider mon compte</a></p><p>Si vous n'avez pas demandé à créer un compte, ignorez ce mail.</p><p>Cordialement,<br>L'équipe Aroma UGE</p><p><small>Ce mail a été envoyé automatiquement, merci de ne pas y répondre.</small></p><p><small>Si vous rencontrez des problèmes, veuillez contacter l'administrateur du site à l'adresse suivante : " + process.env.MAIL_SUPPORT + "</small></p>"
+                                                    html: "<h1>Bienvenue sur Aroma UGE !</h1><p>Vous avez demandé à créer un compte sur Aroma UGE. Pour valider votre compte, veuillez cliquer sur le lien suivant :<br><br><a href='" + process.env.URL_API + "/validate/" + randomString + "'>Valider mon compte</a></p><p>Si vous n'avez pas demandé à créer un compte, ignorez ce mail.</p><p>Cordialement,<br>L'équipe Aroma UGE</p><p><small>Ce mail a été envoyé automatiquement, merci de ne pas y répondre.</small></p><p><small>Si vous rencontrez des problèmes, veuillez contacter l'administrateur du site à l'adresse suivante : " + process.env.MAIL_SUPPORT + "</small></p>"
                                                 }
                                                 transporter.sendMail(mailOptions, (err, info) => {
                                                     if (err) {
@@ -230,7 +237,7 @@ router.get('/forgot/:username', (req, res) => {
                                     from: 'Aroma UGE <' + process.env.MAIL_USER + '>',
                                     to: username + '@edu.univ-eiffel.fr',
                                     subject: 'Réinitialisation de votre mot de passe',
-                                    html: "<h1>Vous avez demandé à réinitialiser votre mot de passe.</h1><p>Pour le réinitialiser, veuillez cliquer sur le lien suivant :<br><br><a href='http://localhost:8080/register/reset/" + randomString + "'>Réinitialiser mon mot de passe</a></p><p>Si vous n'avez pas demandé à réinitialiser votre mot de passe, ignorez ce mail.</p><p>Cordialement,<br>L'équipe Aroma UGE</p><p><small>Ce mail a été envoyé automatiquement, merci de ne pas y répondre.</small></p><p><small>Si vous rencontrez des problèmes, veuillez contacter l'administrateur du site à l'adresse suivante : " + process.env.MAIL_SUPPORT + "</small></p>"
+                                    html: "<h1>Vous avez demandé à réinitialiser votre mot de passe.</h1><p>Pour le réinitialiser, veuillez cliquer sur le lien suivant :<br><br><a href='href='" + process.env.URL_API + "/register/reset/" + randomString + "'>Réinitialiser mon mot de passe</a></p><p>Si vous n'avez pas demandé à réinitialiser votre mot de passe, ignorez ce mail.</p><p>Cordialement,<br>L'équipe Aroma UGE</p><p><small>Ce mail a été envoyé automatiquement, merci de ne pas y répondre.</small></p><p><small>Si vous rencontrez des problèmes, veuillez contacter l'administrateur du site à l'adresse suivante : " + process.env.MAIL_SUPPORT + "</small></p>"
                                 }
                                 transporter.sendMail(mailOptions, (err, info) => {
                                     if (err) {

@@ -70,9 +70,12 @@
         e.preventDefault();
         let password = form.password.value;
         let password_confirm = form.password_confirm.value;
-        /* patern with letters and numbers */
-        let patern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-        if (!patern.test(password)) {
+        let paternMin = /[a-z]/;
+        let paternMaj = /[A-Z]/;
+        let paternNum = /[0-9]/;
+        let paternLength = /.{8,}/;
+        if (!paternMin.test(password) || !paternMaj.test(password) || !paternNum.test(password) || !paternLength.test(
+                password)) {
             let firstLabel = form.querySelectorAll('label')[0];
             let firstInput = form.querySelectorAll('input')[0];
             firstInput.classList.add('error');
