@@ -76,7 +76,11 @@ app.use('/students', studentsRouter);
 app.use('/admin', adminRouter);
 app.use('/friends', friendsRouter);
 
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+app.get('/', (req, res) => {
+    res.redirect('/docs');
+});
 
 async function icsToJson(calendarURLs, cal, calendarFolder) {
     return new Promise((resolve, reject) => {
