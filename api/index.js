@@ -1,3 +1,7 @@
+if (typeof(PhusionPassenger) !== 'undefined') {
+    PhusionPassenger.configure({ autoInstall: false });
+}
+
 const express = require('express');
 const cors = require('cors');
 const cron = require('node-cron');
@@ -163,7 +167,11 @@ cron.schedule("0 2 * * * *", function () {
         }
     });
 });
-
-app.listen(port);
+ 
+if (typeof(PhusionPassenger) !== 'undefined') {
+    app.listen('passenger');
+} else {
+    app.listen(port);
+}
 
 module.exports = app;

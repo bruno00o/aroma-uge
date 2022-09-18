@@ -467,7 +467,7 @@ router.get('/imgschedule/:date', authenticateToken, (req, res) => {
                     request.continue({ headers });
                 });
                 await page.setViewport({ width: 1400, height: 1200 });
-                await page.goto(process.env.URL_API + '/students/genschedule/' + req.params.date, { waitUntil: 'networkidle2' });
+                await page.goto(process.env.URL_API + 'students/genschedule/' + req.params.date, { waitUntil: 'networkidle2' });
                 await page.screenshot({ path: './src/students/timetables/' + req.user.user + '.png', fullPage: true });
                 await browser.close();
                 res.status(200).sendFile(req.user.user + '.png', { 'root': __dirname + '/../src/students/timetables/' });
@@ -475,6 +475,8 @@ router.get('/imgschedule/:date', authenticateToken, (req, res) => {
         } else {
             res.status(400).send({ error: 'Date must be a Monday' });
         }
+    } else {
+        res.status(400).send({ error: 'Bad request' });
     }
 });
 
