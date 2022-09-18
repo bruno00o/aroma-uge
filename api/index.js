@@ -59,6 +59,8 @@ const friendsRouter = require('./routes/friendsRouter');
 var access = fs.createWriteStream('./access.log', { flags: 'a' })
     , error = fs.createWriteStream('./error.log', { flags: 'a' });
 
+app.set('view engine', 'ejs');
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>document.getElementsByTagName("html")[0].className += " js";</script>
+    <link rel="stylesheet" href="style.css">
+    <title>Schedule Template | CodyHouse</title>
+</head>
+
+<body>
+    <header class="cd-main-header text-center flex flex-column flex-center">
+        <h1 class="text-xl">
+            <%= prenom + ' ' + nom %> - <%= start + ' - ' + end %>
+        </h1>
+    </header>
+
+    <div class="cd-schedule cd-schedule--loading margin-top-lg margin-bottom-lg js-cd-schedule">
+        <div class="cd-schedule__timeline">
+            <ul>
+                <li><span>08:00</span></li>
+                <li><span>08:30</span></li>
+                <li><span>09:00</span></li>
+                <li><span>09:30</span></li>
+                <li><span>10:00</span></li>
+                <li><span>10:30</span></li>
+                <li><span>11:00</span></li>
+                <li><span>11:30</span></li>
+                <li><span>12:00</span></li>
+                <li><span>12:30</span></li>
+                <li><span>13:00</span></li>
+                <li><span>13:30</span></li>
+                <li><span>14:00</span></li>
+                <li><span>14:30</span></li>
+                <li><span>15:00</span></li>
+                <li><span>15:30</span></li>
+                <li><span>16:00</span></li>
+                <li><span>16:30</span></li>
+                <li><span>17:00</span></li>
+                <li><span>17:30</span></li>
+                <li><span>18:00</span></li>
+                <li><span>18:30</span></li>
+                <li><span>19:00</span></li>
+                <li><span>19:30</span></li>
+                <li><span>20:00</span></li>
+            </ul>
+        </div> <!-- .cd-schedule__timeline -->
+
+        <div class="cd-schedule__events">
+            <ul>
+                <% Object.keys(calendar).forEach(function(day) { %>
+                    <li class="cd-schedule__group">
+                        <div class="cd-schedule__top-info"><span>
+                                <%= day %>
+                            </span></div>
+                        <ul>
+                            <% calendar[day].forEach(function(event) { %>
+                                <li class="cd-schedule__event">
+                                    <% let start=new Date(event.start).toLocaleTimeString([], {hour: '2-digit' ,
+                                        minute:'2-digit'}); %>
+                                    <% let end=new Date(event.end).toLocaleTimeString([], {hour: '2-digit' ,
+                                        minute:'2-digit'}); %>
+                                    <% let dataEvent = "event-autre"; %>
+                                    <% if (event.summary.split(" ").includes("CM") || event.summary.split(" ").includes("Cours")) { %>
+                                        <% dataEvent = "event-cours"; %>
+                                    <% } else if (event.summary.split(" ").includes("TD")) { %>
+                                        <% dataEvent = "event-td"; %>
+                                    <% } else if (event.summary.split(" ").includes("TP")) { %>
+                                        <% dataEvent = "event-tp"; %>
+                                    <% } else if (event.summary.split(" ").includes("Examen")) { %>
+                                        <% dataEvent = "event-exam"; %>
+                                    <% } else if (event.summary.split(" ").includes("Anglais") || event.summary.split(" ").includes("English")) { %>
+                                        <% dataEvent = "event-anglais"; %>
+                                    <% } %>
+                                            <a data-start="<%= start %>" data-end="<%= end %>"
+                                                data-content="<%= event.content %>" data-event="<%= dataEvent %>">
+                                                <em class="cd-schedule__name">
+                                                    <%= event.summary %>
+                                                </em>
+                                                <p style="color:white; opacity: .8">
+                                                    <%= event.location %>
+                                                </p>
+                                            </a>
+                                </li>
+                                <% }); %>
+                        </ul>
+                    </li>
+                    <% }) %>
+
+            </ul>
+        </div>
+
+        <div class="cd-schedule-modal">
+            <header class="cd-schedule-modal__header">
+                <div class="cd-schedule-modal__content">
+                    <span class="cd-schedule-modal__date"></span>
+                    <h3 class="cd-schedule-modal__name"></h3>
+                </div>
+
+                <div class="cd-schedule-modal__header-bg"></div>
+            </header>
+
+            <div class="cd-schedule-modal__body">
+                <div class="cd-schedule-modal__event-info"></div>
+                <div class="cd-schedule-modal__body-bg"></div>
+            </div>
+
+            <a href="#0" class="cd-schedule-modal__close text-replace">Close</a>
+        </div>
+
+        <div class="cd-schedule__cover-layer"></div>
+    </div> <!-- .cd-schedule -->
+
+    <script src="util.js"></script> <!-- util functions included in the CodyHouse framework -->
+    <script src="main.js"></script>
+</body>
+
+</html>
