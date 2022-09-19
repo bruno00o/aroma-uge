@@ -111,6 +111,9 @@ async function icsToJson(calendarURLs, cal, calendarFolder) {
                         event.summary = line.substring(8).replace("\r", "");
                     } else if (line.startsWith("LOCATION")) {
                         event.location = line.substring(9).replace("\r", "");
+                    } else if (line.startsWith("DESCRIPTION")) {
+                        let array = (line.substring(12).replace("\r", "")).split("\\n");
+                        event.description = array[array.length - 2];
                     }
                 });
                 fs.writeFileSync(calendarFolder + calendarURLs[cal].jsonFileName, JSON.stringify(events), function (err) {
