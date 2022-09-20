@@ -4,6 +4,8 @@ const express = require('express');
 const crypto = require('crypto');
 const { readFile } = require('fs');
 const router = express.Router();
+const accessDurationExp = '1800s';
+const refreshDurationExp = '7d';
 
 /**
  * Generate a new access token
@@ -11,7 +13,7 @@ const router = express.Router();
  * @returns {string} token
  */
 function generateAccessToken(user) {
-    return jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
+    return jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: accessDurationExp });
 }
 
 /**
@@ -20,7 +22,7 @@ function generateAccessToken(user) {
  * @returns {string} token
  */
 function generateRefreshToken(user) {
-    return jwt.sign({ user }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+    return jwt.sign({ user }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: refreshDurationExp });
 }
 
 /**
@@ -69,7 +71,12 @@ router.post('/', (req, res) => {
                 const refreshToken = generateRefreshToken(req.body.username);
                 res.status(200).send({
                     accessToken: accessToken,
-                    refreshToken: refreshToken
+                    accessTokenExp: accessDurationExp,
+                    refreshToken: refreshToken,
+                    refreshTokenExp: refreshDurationExp,
+                    user: req.body.username,
+                    shareSchedule: users[req.body.username]["shareSchedule"],
+                    shareScheduleURL: users[req.body.username]["shareScheduleURL"]
                 });
             } else {
                 res.status(401).send({ error: 'Username or password is incorrect' });

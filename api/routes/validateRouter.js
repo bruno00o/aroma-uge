@@ -60,7 +60,9 @@ router.get('/:token', (req, res) => {
                             users[validating[token]["username"]] = {
                                 password: validating[token]["password"],
                                 friends: [],
-                                requests: []
+                                requests: [],
+                                shareSchedule: false,
+                                shareScheduleURL: ""
                             };
                             writeFile(fileNameUsers, JSON.stringify(users), (err) => {
                                 if (err) {

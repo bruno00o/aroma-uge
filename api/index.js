@@ -58,6 +58,7 @@ const todoRouter = require('./routes/todoRouter');
 const studentsRouter = require('./routes/studentsRouter');
 const adminRouter = require('./routes/adminRouter');
 const friendsRouter = require('./routes/friendsRouter');
+const shareScheduleRouter = require('./routes/shareScheduleRouter');
 
 
 var access = fs.createWriteStream('./access.log', { flags: 'a' })
@@ -81,6 +82,7 @@ app.use('/todo', todoRouter);
 app.use('/students', studentsRouter);
 app.use('/admin', adminRouter);
 app.use('/friends', friendsRouter);
+app.use('/shareSchedule', shareScheduleRouter);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 

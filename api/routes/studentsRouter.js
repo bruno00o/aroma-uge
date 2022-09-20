@@ -329,7 +329,7 @@ router.get('/genschedule/main.js', (req, res) => {
  *  get:
  *     security:
  *        - accessToken: []
- *     description: Renvoie l'emploi du temps de l'étudiant pour la semaine de la date donnée sous forme de page html
+ *     description: Renvoie l'emploi du temps de l'étudiant pour la semaine de la date donnée sous forme de page htm. Attention, les jours passés ne sont pas affichés
  *     tags:
  *        - Étudiant
  *     parameters:
@@ -370,6 +370,11 @@ router.get('/genschedule/:date', authenticateToken, (req, res) => {
                                 calendar[day] = [];
                             }
                         });
+                        /* sort by day */
+                        let sortedCalendar = {};
+                        weekDays.forEach(day => {
+                            sortedCalendar[day] = calendar[day];
+                        });
                         const frenchWeekDays = {
                             "Monday": "Lundi",
                             "Tuesday": "Mardi",
@@ -381,7 +386,7 @@ router.get('/genschedule/:date', authenticateToken, (req, res) => {
                         }
                         /* change days to french in calendar */
                         let resCalendar = {};
-                        for (const [key, value] of Object.entries(calendar)) {
+                        for (const [key, value] of Object.entries(sortedCalendar)) {
                             resCalendar[frenchWeekDays[key]] = value;
                         }
                         let startDate = dateObj;
