@@ -246,6 +246,16 @@ router.post('/:bool', authenticateToken, (req, res) => {
     }
 });
 
+router.get('/style.css', (req, res) => {
+    res.sendFile('style.css', { 'root': __dirname + '/../views/schedule-view/assets/css/' });
+});
+router.get('/util.js', (req, res) => {
+    res.sendFile('util.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
+});
+router.get('/main.js', (req, res) => {
+    res.sendFile('main.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
+});
+
 router.get('/:user/style.css', (req, res) => {
     res.sendFile('style.css', { 'root': __dirname + '/../views/schedule-view/assets/css/' });
 });
