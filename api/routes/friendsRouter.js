@@ -113,7 +113,6 @@ router.post('/request/:id', authenticateToken, (req, res) => {
             let username = req.user.user;
             if (users.hasOwnProperty(requestedUser)) {
                 let requestedUserRequests = users[requestedUser]["requests"];
-                let requestdUserFriends = users[requestedUser]["friends"];
                 if (requestedUserRequests.indexOf(username) === -1) {
                     requestedUserRequests.push(username);
                     users[requestedUser]["requests"] = requestedUserRequests;
