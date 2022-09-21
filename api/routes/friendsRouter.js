@@ -2,6 +2,9 @@ const express = require('express');
 const { readFile, writeFile } = require('fs');
 const router = express.Router();
 const authenticateToken = require('./modules/authenticateToken').authenticateToken;
+const getTimeTable = require('./modules/calendarModule').getTimeTable;
+const getWeekTimetable = require('./modules/calendarModule').getWeekTimetable;
+const generateSchedule = require('./modules/calendarModule').generateSchedule;
 
 /**
  * @swagger
@@ -279,7 +282,7 @@ router.post('/decline/:id', authenticateToken, (req, res) => {
  *        401:
  *          description: Token invalide
  *        404:
- *          description: Amis non trouvé
+ *          description: Ami non trouvé
  *        500:
  *          description: Internal server error
  */
@@ -314,142 +317,238 @@ router.delete('/delete/:id', authenticateToken, (req, res) => {
 });
 
 /**
- * Get timetable of a friend
+ * @swagger
+ * /friends/timetable/{username}:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Récupère le planning d'un ami au format json
+ *     tags:
+ *        - Amis
+ *     parameters:
+ *        - username:
+ *          name: username
+ *          description: username (prenom.nom) de l'amis à supprimer
+ *          in: path
+ *          required: true
+ *          type: string
+ *     responses:
+ *        200:
+ *          description: Planning récupéré
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Ami non trouvé
+ *        500:
+ *          description: Internal server error
  */
 router.get('/timetable/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
+    let studentsFileName = './src/students/students.json';
     readFile(fileName, (err, data) => {
         if (err) {
             res.status(500).send({ error: 'Internal server error' });
         } else {
             let users = JSON.parse(data);
-            let timetableUser = req.params.id;
+            let friend = req.params.id;
             let username = req.user.user;
-            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(timetableUser) !== -1) {
-                let user = timetableUser;
-                let fileClasses = './src/students/classes.json';
-                let fileStudents = './src/students/students.json';
-                let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-                readFile(fileStudents, (err, data) => {
+            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(friend) !== -1) {
+                readFile(studentsFileName, (err, data) => {
                     if (err) {
                         res.status(500).send({ error: 'Internal server error' });
                     } else {
                         let students = JSON.parse(data);
-                        if (students.hasOwnProperty(user)) {
-                            let student = students[user];
-                            let followedClasses = new Array();
-                            let studentKeys = Object.keys(student);
-                            for (let i = 0; i < studentKeys.length; i++) {
-                                followedClasses.push(studentKeys[i].toLowerCase().replaceAll(' ', authenticateToken, '_') + '_' + student[studentKeys[i]]);
-                            }
-                            readFile(fileClasses, (err, data) => {
-                                if (err) {
-                                    res.status(500).send({ error: 'Internal server error' });
-                                } else {
-                                    let classes = JSON.parse(data);
-                                    let timetable = {};
-                                    for (d in days) {
-                                        timetable[days[d]] = {};
-                                        for (elem in followedClasses) {
-                                            if (classes[followedClasses[elem]] != undefined && classes[followedClasses[elem]]["day"] == days[d]) {
-                                                timetable[days[d]][followedClasses[elem]] = classes[followedClasses[elem]];
-
-                                            }
-                                        }
-                                    }
-                                    res.status(200).send(JSON.stringify(timetable));
-                                }
+                        if (students.hasOwnProperty(friend)) {
+                            getTimeTable(students, friend).then((timetable) => {
+                                res.status(200).send(timetable);
+                            }).catch((err) => {
+                                res.status(500).send({ error: 'Internal server error' });
                             });
                         } else {
-                            res.status(404).send({ error: 'User not found' });
+                            res.status(404).send({ error: 'Friend not found' });
                         }
                     }
                 });
             } else {
-                res.status(400).send({ error: 'User not found or friend not found' });
+                res.status(404).send({ error: 'User not found or friend not found' });
             }
         }
     });
 });
 
 /**
- * Get groups of a friend
+ * @swagger
+ * /friends/weektimetable/{date}/{username}:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Récupère le planning d'un ami sur une semaine au format json
+ *     tags:
+ *        - Amis
+ *     parameters:
+ *        - date:
+ *          name: date
+ *          description: date format dd-mm-yyyy (doit être un lundi)
+ *          in: path
+ *          required: true
+ *          type: string
+ *        - username:
+ *          name: username
+ *          description: username (prenom.nom) de l'amis à supprimer
+ *          in: path
+ *          required: true
+ *          type: string
+ *     responses:
+ *        200:
+ *          description: Planning récupéré
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Ami non trouvé
+ *        500:
+ *          description: Internal server error
  */
-router.get('/groups/:id', authenticateToken, (req, res) => {
+router.get('/weektimetable/:date/:id', authenticateToken, (req, res) => {
     let fileName = './src/users/users.json';
+    let studentsFileName = './src/students/students.json';
     readFile(fileName, (err, data) => {
         if (err) {
             res.status(500).send({ error: 'Internal server error' });
         } else {
             let users = JSON.parse(data);
-            let groupsUser = req.params.id;
+            let friend = req.params.id;
             let username = req.user.user;
-            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(groupsUser) !== -1) {
-                let fileStudents = './src/students/students.json';
-                readFile(fileStudents, (err, data) => {
+            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(friend) !== -1) {
+                readFile(studentsFileName, (err, data) => {
                     if (err) {
                         res.status(500).send({ error: 'Internal server error' });
                     } else {
                         let students = JSON.parse(data);
-                        let user = req.user.user;
-                        if (students.hasOwnProperty(user)) {
-                            let groups = students[user];
-                            res.status(200).send(JSON.stringify(groups));
-                        } else {
-                            res.status(404).send({ error: 'User not found' });
-                        }
-                    }
-                });
-            } else {
-                res.status(400).send({ error: 'User not found or friend not found' });
-            }
-        }
-    });
-});
-
-/**
- * Get shared groups with a friend
- */
-router.get('/sharedgroups/:id', authenticateToken, (req, res) => {
-    let fileName = './src/users/users.json';
-    let sharedgroups = new Array();
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            let groupsUser = req.params.id;
-            let username = req.user.user;
-            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(groupsUser) !== -1) {
-                let fileStudents = './src/students/students.json';
-                readFile(fileStudents, (err, data) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        let students = JSON.parse(data);
-                        let user = req.user.user;
-                        if (students.hasOwnProperty(user) && students.hasOwnProperty(groupsUser)) {
-                            let userGroups = students[user];
-                            let friendGroups = students[groupsUser];
-                            let userKeys = Object.keys(userGroups);
-                            let friendKeys = Object.keys(friendGroups);
-                            for (let i = 0; i < userKeys.length; i++) {
-                                for (let j = 0; j < friendKeys.length; j++) {
-                                    if (userKeys[i] == friendKeys[j]) {
-                                        if (userGroups[userKeys[i]] === friendGroups[friendKeys[j]]) {
-                                            sharedgroups.push(userKeys[i]);
+                        if (students.hasOwnProperty(friend)) {
+                            let date = req.params.date;
+                            if (date.match(/^\d{2}-\d{2}-\d{4}$/)) {
+                                let fileName = './src/students/students.json';
+                                readFile(fileName, (err, data) => {
+                                    if (err) {
+                                        res.status(500).send({ error: 'Internal server error' });
+                                    } else {
+                                        let students = JSON.parse(data);
+                                        let dateArray = date.split('-');
+                                        let dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
+                                        if (dateObj.getDay() === 1) {
+                                            getWeekTimetable(students, friend, dateObj).then((calendar) => {
+                                                res.status(200).send(calendar);
+                                            }).catch((err) => {
+                                                res.status(500).send({ error: 'Internal server error' });
+                                            });
+                                        } else {
+                                            res.status(400).send({ error: 'Date must be a Monday' });
                                         }
                                     }
-                                }
+                                });
+                            } else {
+                                res.status(400).send({ error: 'Bad request' });
                             }
-                            res.status(200).send(JSON.stringify(sharedgroups));
                         } else {
-                            res.status(404).send({ error: 'One user not found' });
+                            res.status(404).send({ error: 'Friend not found' });
                         }
                     }
                 });
             } else {
-                res.status(400).send({ error: 'User not found or friend not found' });
+                res.status(404).send({ error: 'User not found or friend not found' });
+            }
+        }
+    });
+});
+
+router.get('/genschedule/:date/style.css', (req, res) => {
+    res.sendFile('style.css', { 'root': __dirname + '/../views/schedule-view/assets/css/' });
+});
+
+router.get('/genschedule/:date/util.js', (req, res) => {
+    res.sendFile('util.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
+});
+
+router.get('/genschedule/:date/main.js', (req, res) => {
+    res.sendFile('main.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
+});
+
+/**
+ * @swagger
+ * /friends/genschedule/{date}/{username}:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Récupère le planning d'un ami au format html
+ *     tags:
+ *        - Amis
+ *     parameters:
+ *        - date:
+ *          name: date
+ *          description: date format dd-mm-yyyy (doit être un lundi)
+ *          in: path
+ *          required: true
+ *          type: string
+ *        - username:
+ *          name: username
+ *          description: username (prenom.nom) de l'amis à supprimer
+ *          in: path
+ *          required: true
+ *          type: string
+ *     responses:
+ *        200:
+ *          description: Planning récupéré
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Ami non trouvé
+ *        500:
+ *          description: Internal server error
+ */
+router.get('/genschedule/:date/:id', authenticateToken, (req, res) => {
+    let fileName = './src/users/users.json';
+    let studentsFileName = './src/students/students.json';
+    readFile(fileName, (err, data) => {
+        if (err) {
+            res.status(500).send({ error: 'Internal server error' });
+        } else {
+            let users = JSON.parse(data);
+            let friend = req.params.id;
+            let username = req.user.user;
+            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(friend) !== -1) {
+                readFile(studentsFileName, (err, data) => {
+                    if (err) {
+                        res.status(500).send({ error: 'Internal server error' });
+                    } else {
+                        let students = JSON.parse(data);
+                        if (students.hasOwnProperty(friend)) {
+                            let date = req.params.date;
+                            if (date.match(/^\d{2}-\d{2}-\d{4}$/)) {
+                                let fileName = './src/students/students.json';
+                                readFile(fileName, (err, data) => {
+                                    if (err) {
+                                        res.status(500).send({ error: 'Internal server error' });
+                                    } else {
+                                        let students = JSON.parse(data);
+                                        let dateArray = date.split('-');
+                                        let dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
+                                        if (dateObj.getDay() === 1) {
+                                            generateSchedule(students, friend, dateObj, res);
+                                        } else {
+                                            res.status(400).send({ error: 'Date must be a Monday' });
+                                        }
+                                    }
+                                });
+                            } else {
+                                res.status(400).send({ error: 'Bad request' });
+                            }
+                        } else {
+                            res.status(404).send({ error: 'Friend not found' });
+                        }
+                    }
+                });
+            } else {
+                res.status(404).send({ error: 'User not found or friend not found' });
             }
         }
     });

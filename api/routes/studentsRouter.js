@@ -73,7 +73,7 @@ router.get('/timetable/', authenticateToken, (req, res) => {
             let students = JSON.parse(data);
             let user = req.user.user;
             getTimeTable(students, user).then((calendar) => {
-                res.status(200).send(JSON.stringify(calendar));
+                res.status(200).send(calendar);
             }).catch((err) => {
                 res.status(500).send({ error: 'Internal server error' });
             });
