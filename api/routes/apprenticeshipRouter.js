@@ -37,7 +37,7 @@ router.get('/', authenticateToken, (req, res) => {
  *  get:
  *     security:
  *        - accessToken: []
- *     description: Renvoie le prochain jour en alternance
+ *     description: Renvoie l'événement suivant du calendrier de l'apprentissage
  *     tags:
  *        - Apprentissage
  *     responses:

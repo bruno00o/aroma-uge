@@ -3,8 +3,41 @@ const express = require('express');
 const router = express.Router();
 const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 const { readFileSync, writeFileSync, readFile } = require('fs');
-const getWeekTimetable = require('./modules/calendarModule').getWeekTimetable;
 const generateSchedule = require('./modules/calendarModule').generateSchedule;
+
+/**
+ * @swagger
+ * /shareSchedule:
+ *   get:
+ *     security:
+ *        - accessToken: []
+ *     description: Retourne true ou false selon si l'utilisateur a partagé son emploi du temps ou non
+ *     tags:
+ *        - Partage de calendrier
+ *     responses:
+ *        200:
+ *          description: {sharing: true/false}
+ *        401:
+ *          description: Token invalide
+ *        500:
+ *          description: Internal server error
+ */
+router.get('/', authenticateToken, (req, res) => {
+    const username = req.user.user;
+    const users = JSON.parse(readFileSync('./src/users/users.json', 'utf-8'));
+    if (users[username]) {
+        if (users[username]["shareSchedule"] === true) {
+            res.status(200).send({
+                sharing: true,
+                url: users[username]["shareScheduleURL"]
+            });
+        } else {
+            res.status(200).send({ sharing: false });
+        }
+    } else {
+        res.status(500).send({ error: "Internal server error" });
+    }
+});
 
 /**
  * @swagger
