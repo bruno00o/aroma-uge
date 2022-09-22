@@ -116,7 +116,8 @@ router.post('/request/:id', authenticateToken, (req, res) => {
             let username = req.user.user;
             if (users.hasOwnProperty(requestedUser)) {
                 let requestedUserRequests = users[requestedUser]["requests"];
-                if (requestedUserRequests.indexOf(username) === -1) {
+                let userFriends = users[username]["friends"];
+                if (requestedUserRequests.indexOf(username) === -1  && requestedUser !== username && userFriends.indexOf(requestedUser) === -1) {
                     requestedUserRequests.push(username);
                     users[requestedUser]["requests"] = requestedUserRequests;
                     writeFile(fileName, JSON.stringify(users), (err) => {
@@ -127,7 +128,7 @@ router.post('/request/:id', authenticateToken, (req, res) => {
                         }
                     });
                 } else {
-                    res.status(400).send({ error: 'Request already sent or already friends' });
+                    res.status(400).send({ error: 'Request already sent or already friends. You can\'t send a request to yourself' });
                 }
             } else {
                 res.status(404).send({ error: 'User not found' });
