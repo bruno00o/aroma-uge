@@ -44,7 +44,7 @@ function createEvents(icsLines) {
  */
 async function icsToJson(calendarURLs, cal, calendarFolder) {
     return new Promise((resolve, reject) => {
-        fs.readFileSync(calendarFolder + calendarURLs[cal].icsFileName, 'utf8', function (err, data) {
+        fs.readFile(calendarFolder + calendarURLs[cal].icsFileName, 'utf8', function (err, data) {
             if (err) {
                 error.write(err + ' ' + new Date() + "\n");
                 reject(err);
@@ -116,7 +116,7 @@ async function downloadIcs(calendarURLs, cal, calendarFolder) {
  * Define the cron job to download the calendars
  */
 exports.initCronDlCalendar = function () {
-    cron.schedule("0 2 * * * *", function () {
+    cron.schedule("1 * * * * *", function () {
         let fileURLs = "./src/calendar/calendarURLs.json";
         let calendarFolder = "./src/calendar/";
         let file = fs.readFileSync(fileURLs, 'utf8');
