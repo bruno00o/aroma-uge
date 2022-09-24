@@ -42,7 +42,7 @@ app.use('/todo', todoRouter);
 app.use('/students', studentsRouter);
 app.use('/admin', adminRouter);
 app.use('/friends', friendsRouter);
-app.use('/shareschedule', shareScheduleRouter);
+app.use('/partage-edt', shareScheduleRouter);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 

@@ -29,7 +29,11 @@ function createEvents(icsLines) {
             event.location = line.substring(9).replace("\r", "");
         } else if (line.startsWith("DESCRIPTION")) {
             let array = (line.substring(12).replace("\r", "")).split("\\n");
-            event.description = array[array.length - 2];
+            let description = array[array.length - 2];
+            if (description.includes("Exported")) {
+                description = "";
+            }
+            event.description = description;
         }
     });
     return events;

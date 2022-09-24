@@ -7,7 +7,7 @@ const generateSchedule = require('./modules/calendarModule').generateSchedule;
 
 /**
  * @swagger
- * /shareSchedule:
+ * /partage-edt:
  *   get:
  *     security:
  *        - accessToken: []
@@ -41,7 +41,7 @@ router.get('/', authenticateToken, (req, res) => {
 
 /**
  * @swagger
- * /shareschedule/{boolean}:
+ * /partage-edt/{boolean}:
  *  post:
  *     security:
  *        - accessToken: []
@@ -86,7 +86,7 @@ router.post('/:bool', authenticateToken, (req, res) => {
             return;
         } else {
             users[user]["shareSchedule"] = bool;
-            let url = bool ? process.env.URL_API + 'shareSchedule/' + user : '';
+            let url = bool ? process.env.URL_API + 'partage-edt/' + user : '';
             users[user]["shareScheduleURL"] = url;
             writeFileSync('./src/users/users.json', JSON.stringify(users));
             res.status(200).send({
@@ -122,7 +122,7 @@ router.get('/:user/main.js', (req, res) => {
 
 /**
  * @swagger
- * /shareschedule/{user}:
+ * /partage-edt/{user}:
  *  get:
  *     description: Renvoie l'emploi du temps de l'étudiant {user} s'il a partagé son emploi du temps. Attention, les jours passés ne sont pas affichés. Ouvrir le lien dans un nouvel onglet.
  *     tags:
@@ -163,7 +163,7 @@ router.get('/:user', (req, res) => {
 
 /**
  * @swagger
- * /shareschedule/{user}/{date}:
+ * /partage-edt/{user}/{date}:
  *  get:
  *     description: Renvoie l'emploi du temps de l'étudiant {user} à la date {data} s'il a partagé son emploi du temps. Attention, les jours passés ne sont pas affichés. Ouvrir le lien dans un nouvel onglet.
  *     tags:
