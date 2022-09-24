@@ -213,6 +213,7 @@ function weekDaysToFrench(calendar) {
  * @returns calendar
  */
 async function getWeekTimetable(students, user, date) {
+    date.setHours(6);
     return new Promise((resolve, reject) => {
         getTimeTable(students, user).then((calendar) => {
             let resCalendar = {};

@@ -150,6 +150,11 @@ router.get('/:user', (req, res) => {
         let date = new Date();
         let previousMonday = new Date(date);
         previousMonday.setDate(date.getDate() - date.getDay() + 1);
+        if (date.getDay() === 0 || date.getDay() === 6) {
+            let nextMonday = new Date(date);
+            nextMonday.setDate(date.getDate() + 8 - date.getDay());
+            previousMonday = nextMonday;
+        }
         generateSchedule(students, user, previousMonday, res);
     } else {
         res.status(404).send({ error: 'Not found' });
