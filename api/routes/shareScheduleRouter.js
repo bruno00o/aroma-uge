@@ -150,9 +150,15 @@ router.get('/:user', (req, res) => {
         let date = new Date();
         let previousMonday = new Date(date);
         previousMonday.setDate(date.getDate() - date.getDay() + 1);
-        if (date.getDay() === 0 || date.getDay() === 6) {
-            let nextMonday = new Date(date);
-            nextMonday.setDate(date.getDate() + 8 - date.getDay());
+        if (date.getDay() === 0) {
+            let date = new Date();
+            nextMonday = new Date(date);
+            nextMonday.setDate(date.getDate() + 1);
+            previousMonday = nextMonday;
+        } else if (date.getDay() === 6) {
+            let date = new Date();
+            nextMonday = new Date(date);
+            nextMonday.setDate(date.getDate() + 2);
             previousMonday = nextMonday;
         }
         generateSchedule(students, user, previousMonday, res, true);
