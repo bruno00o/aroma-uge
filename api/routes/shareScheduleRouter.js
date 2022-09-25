@@ -155,7 +155,7 @@ router.get('/:user', (req, res) => {
             nextMonday.setDate(date.getDate() + 8 - date.getDay());
             previousMonday = nextMonday;
         }
-        generateSchedule(students, user, previousMonday, res);
+        generateSchedule(students, user, previousMonday, res, true);
     } else {
         res.status(404).send({ error: 'Not found' });
     }
@@ -199,7 +199,7 @@ router.get('/:user/:date', (req, res) => {
             let dateArray = date.split('-');
             let dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
             if (dateObj.getDay() === 1) {
-                generateSchedule(students, user, dateObj, res);
+                generateSchedule(students, user, dateObj, res, true);
             } else {
                 res.status(400).send({ error: 'Date must be a Monday' });
             }

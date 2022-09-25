@@ -534,7 +534,7 @@ router.get('/genschedule/:date/:id', authenticateToken, (req, res) => {
                                         let dateArray = date.split('-');
                                         let dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
                                         if (dateObj.getDay() === 1) {
-                                            generateSchedule(students, friend, dateObj, res);
+                                            generateSchedule(students, friend, dateObj, res, false);
                                         } else {
                                             res.status(400).send({ error: 'Date must be a Monday' });
                                         }

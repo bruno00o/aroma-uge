@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>document.getElementsByTagName("html")[0].className += " js";</script>
     <link rel="stylesheet" href="style.css">
-    <title><%= prenom + ' ' + nom %> - <%= start + ' - ' + end %></title>
+    <title>Cours</title>
 </head>
     <style>
         /* @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600"); */
@@ -127,7 +127,7 @@
         }
         
         @supports (--css: variables) {
-            @media (min-width: 64rem) {
+            @media (min-width: 0) {
                 :root {
                     --space-unit: 1.25em
                 }
@@ -155,7 +155,7 @@
         }
         
         @supports (--css: variables) {
-            @media (min-width: 64rem) {
+            @media (min-width: 0) {
                 :root {
                     --text-base-size: 1.25em;
                     --text-scale-ratio: 1.25
@@ -215,7 +215,7 @@
             display: none
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .js .cd-schedule {
                 width: calc(100% - 1.25em);
                 width: calc(100% - 2*var(--component-padding));
@@ -234,7 +234,7 @@
             display: none
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .js .cd-schedule__timeline {
                 display: block;
                 position: absolute;
@@ -272,7 +272,7 @@
             }
         }
         
-        @media (min-width: 80rem) {
+        @media (min-width: 0) {
             .js .cd-schedule__timeline li::after {
                 width: calc(100% - 60px);
                 left: 60px
@@ -297,7 +297,7 @@
             z-index: 1
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .js .cd-schedule__events {
                 width: 100%
             }
@@ -310,7 +310,7 @@
             }
         }
         
-        @media (min-width: 80rem) {
+        @media (min-width: 0) {
             .js .cd-schedule__events {
                 width: calc(100% - 60px);
                 margin-left: 60px
@@ -322,7 +322,7 @@
             margin-bottom: var(--space-lg)
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .js .cd-schedule__group {
                 -ms-flex-preferred-size: 0;
                 flex-basis: 0;
@@ -376,7 +376,7 @@
             color: transparent
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .js .cd-schedule__group>ul {
                 height: 1198px;
                 /* height: calc(var(--schedule-rows-height)*var(--schedule-rows-number)); */
@@ -402,7 +402,7 @@
             font-weight: bold
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .js .cd-schedule__top-info {
                 display: -ms-flexbox;
                 display: flex;
@@ -459,7 +459,7 @@
             }
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .js .cd-schedule__event {
                 position: absolute;
                 z-index: 3;
@@ -476,7 +476,7 @@
             }
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .js .cd-schedule__event--selected {
                 visibility: hidden
             }
@@ -504,7 +504,7 @@
             font-size: var(--text-lg)
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
         
             .cd-schedule__name,
             .cd-schedule-modal__name {
@@ -520,7 +520,7 @@
             margin-bottom: var(--space-xxxs)
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
         
             .cd-schedule-modal__date,
             .cd-schedule__event a::before {
@@ -580,7 +580,7 @@
             transition-timing-function: cubic-bezier(0.5, 0, 0.1, 1)
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .cd-schedule-modal {
                 right: auto;
                 width: auto;
@@ -606,7 +606,7 @@
             width: 100%
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .cd-schedule-modal__header {
                 position: absolute;
                 display: block;
@@ -627,7 +627,7 @@
             padding: var(--space-sm) var(--component-padding)
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .cd-schedule-modal__content {
                 display: block;
                 padding: 0.75em;
@@ -641,7 +641,7 @@
             height: calc(100% - 70px)
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .cd-schedule-modal__body {
                 height: 100%;
                 width: auto
@@ -666,7 +666,7 @@
             padding: var(--space-md) var(--component-padding)
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .cd-schedule-modal__event-info {
                 opacity: 0;
                 font-size: 0.83333em;
@@ -688,7 +688,7 @@
             width: 100%
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
         
             .cd-schedule-modal__header-bg,
             .cd-schedule-modal__body-bg {
@@ -707,7 +707,7 @@
             transform-origin: top center
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .cd-schedule-modal__header-bg {
                 transition: -webkit-transform .4s;
                 transition: transform .4s;
@@ -725,7 +725,7 @@
             transform-origin: top left
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .cd-schedule-modal__body-bg {
                 opacity: 0;
                 -webkit-transform: none;
@@ -747,7 +747,7 @@
             display: none
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .cd-schedule-modal__date {
                 display: block
             }
@@ -796,7 +796,7 @@
             }
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
             .cd-schedule-modal__close {
                 width: 40px;
                 height: 40px;
@@ -823,7 +823,7 @@
             -webkit-overflow-scrolling: touch
         }
         
-        @media (min-width: 64rem) {
+        @media (min-width: 0) {
         
             .cd-schedule-modal--animation-completed .cd-schedule-modal__close,
             .cd-schedule-modal--content-loaded.cd-schedule-modal--animation-completed .cd-schedule-modal__event-info {
@@ -898,25 +898,42 @@
             cursor: pointer;
         }
 
+        @media screen and (max-width: 768px) {
+            .js .cd-schedule {
+                margin-top: 2em;
+                width: 100%;
+                max-width: 90%;
+            }
+        }
+
+        .js .cd-schedule__timeline {
+            display: none;
+        }
+
+        .js .cd-schedule__timeline li span {
+            display: none;
+        }
+
+        .js .cd-schedule__events {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        .js .cd-schedule--loading .cd-schedule__event {
+            opacity: 1;
+        }
+
+        .js .cd-schedule__group>ul {
+            height: unset;
+        }
+
+        .cd-schedule__cover-layer {
+            display: none;
+        }
+
         </style>
 <body>
-    <header class="cd-main-header text-center flex flex-column flex-center">
-        <% if (arrows) { %>
-        <a class="change-week" href="">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 278.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
-        </a>
-        <% } %>
-        <h1 class="text-xl" style="margin-bottom: 1em;">
-            <%= prenom + ' ' + nom %><br><%= start + ' - ' + end %>
-        </h1>
-        <% if (arrows) { %>
-        <a class="change-week" href="">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M342.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L274.7 256 105.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg>
-        </a>
-        <% } %>
-    </header>
-
-    <div class="cd-schedule cd-schedule--loading margin-top-lg margin-bottom-lg js-cd-schedule">
+    <div class="cd-schedule cd-schedule--loading margin-top-lg margin-bottom-lg js-cd-schedule" style="margin-top: 0;">
         <div class="cd-schedule__timeline">
             <ul>
                 <li><span>08:00</span></li>
@@ -929,21 +946,6 @@
                 <li><span>11:30</span></li>
                 <li><span>12:00</span></li>
                 <li><span>12:30</span></li>
-                <li><span>13:00</span></li>
-                <li><span>13:30</span></li>
-                <li><span>14:00</span></li>
-                <li><span>14:30</span></li>
-                <li><span>15:00</span></li>
-                <li><span>15:30</span></li>
-                <li><span>16:00</span></li>
-                <li><span>16:30</span></li>
-                <li><span>17:00</span></li>
-                <li><span>17:30</span></li>
-                <li><span>18:00</span></li>
-                <li><span>18:30</span></li>
-                <li><span>19:00</span></li>
-                <li><span>19:30</span></li>
-                <li><span>20:00</span></li>
             </ul>
         </div> <!-- .cd-schedule__timeline -->
 
@@ -951,12 +953,9 @@
             <ul>
                 <% Object.keys(calendar).forEach(function(day) { %>
                     <li class="cd-schedule__group <%= calendar[day].length === 0 ? 'empty-day' : '' %>">
-                        <div class="cd-schedule__top-info"><span>
-                                <%= day %>
-                            </span></div>
                         <ul>
                             <% calendar[day].forEach(function(event) { %>
-                                <li class="cd-schedule__event">
+                                <li class="cd-schedule__event" style="top: 0; height: 200px;">
                                     <% let start=new Date(event.start).toLocaleTimeString([], {hour: '2-digit' ,
                                         minute:'2-digit'}); %>
                                     <% let end=new Date(event.end).toLocaleTimeString([], {hour: '2-digit' ,
@@ -1014,47 +1013,7 @@
 
         <div class="cd-schedule__cover-layer"></div>
     </div> <!-- .cd-schedule -->
-
-    <script>
-        let weekChange = document.getElementsByClassName("change-week");
-
-        if (weekChange.length > 0) {
-            let url = window.location.href;
-            if (url[url.length - 1] === "/") {
-                url = url.slice(0, -1);
-                window.location = url;
-            }
-
-            let paths = url.split("/");
-            
-            let currentWeek = paths[paths.length - 1];
-            let date;
-            if (currentWeek.match(/^[0-9]{2}-[0-9]{2}-[0-9]{4}$/)) {
-                date = new Date(currentWeek.split("-").reverse().join("-"));
-            } else {
-                let title = document.querySelector("h1.text-xl");
-                date = new Date((title.innerHTML.trim().split("<br>")[1].split('-')[0].trim()).split("/").reverse().join("-"));
-            }
-            let nextWeek = new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000);
-            let prevWeek = new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-            let nextWeekString = nextWeek.toLocaleDateString("fr-FR").replace(/\//g, "-");
-            let prevWeekString = prevWeek.toLocaleDateString("fr-FR").replace(/\//g, "-");
-            
-
-            if (currentWeek.match(/^[0-9]{2}-[0-9]{2}-[0-9]{4}$/)) {
-                url = paths.slice(0, paths.length - 1).join("/");
-                weekChange[0].href = url + "/" + prevWeekString;
-                weekChange[1].href = url + "/" + nextWeekString;
-            } else {
-                weekChange[0].href = url + "/" + prevWeekString;
-                weekChange[1].href = url + "/" + nextWeekString;
-            }
-        }
-    </script>
-
-    <script src="util.js"></script> <!-- util functions included in the CodyHouse framework -->
-    <script src="main.js"></script>
+    
 </body>
 
 </html>

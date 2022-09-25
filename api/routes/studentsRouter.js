@@ -7,6 +7,9 @@ const authenticateToken = require('./modules/authenticateToken').authenticateTok
 const getTimeTable = require('./modules/calendarModule').getTimeTable;
 const getWeekTimetable = require('./modules/calendarModule').getWeekTimetable;
 const generateSchedule = require('./modules/calendarModule').generateSchedule;
+const generateOneDay = require('./modules/calendarModule').generateOneDay;
+const generateNextClass = require('./modules/calendarModule').generateNextClass;
+const getNextClass = require('./modules/calendarModule').getNextClass;
 
 /**
  * @swagger
@@ -149,6 +152,106 @@ router.get('/genschedule/main.js', (req, res) => {
 
 /**
  * @swagger
+ * /students/genschedule/today:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Renvoie l'emploi du temps de l'étudiant pour le jour actuel sous forme de page html
+ *     tags:
+ *        - Étudiant
+ *     responses:
+ *        200:
+ *          description: Emploi du temps de l'étudiant renvoyé
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Utilisateur non trouvé
+ *        500:
+ *          description: Internal server error
+ */
+ router.get('/genschedule/today', authenticateToken, (req, res) => {
+    let date = new Date();
+    let fileName = './src/students/students.json';
+    readFile(fileName, (err, data) => {
+        if (err) {
+            res.status(500).send({ error: 'Internal server error' });
+        } else {
+            let students = JSON.parse(data);
+            let user = req.user.user;
+            generateOneDay(students, user, date, res);
+        }
+    });
+});
+
+/**
+ * @swagger
+ * /students/getnextclass:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Renvoie le prochain cours de l'étudiant
+ *     tags:
+ *        - Étudiant
+ *     responses:
+ *        200:
+ *          description: Emploi du temps de l'étudiant renvoyé
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Utilisateur non trouvé
+ *        500:
+ *          description: Internal server error
+ */
+ router.get('/getnextclass', authenticateToken, (req, res) => {
+    let date = new Date();
+    let fileName = './src/students/students.json';
+    readFile(fileName, (err, data) => {
+        if (err) {
+            res.status(500).send({ error: 'Internal server error' });
+        } else {
+            let students = JSON.parse(data);
+            let user = req.user.user;
+            getNextClass(students, user, date, res);
+        }
+    });
+});
+
+/**
+ * @swagger
+ * /students/genschedule/nextclass:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Renvoie l'emploi du temps de l'étudiant pour le jour suivant sous forme de page html
+ *     tags:
+ *        - Étudiant
+ *     responses:
+ *        200:
+ *          description: Emploi du temps de l'étudiant renvoyé
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Utilisateur non trouvé
+ *        500:
+ *          description: Internal server error
+ */
+ router.get('/genschedule/nextclass', authenticateToken, (req, res) => {
+    let date = new Date();
+    let fileName = './src/students/students.json';
+    readFile(fileName, (err, data) => {
+        if (err) {
+            res.status(500).send({ error: 'Internal server error' });
+        } else {
+            let students = JSON.parse(data);
+            let user = req.user.user;
+            generateNextClass(students, user, date, res);
+        }
+    });
+});
+
+
+/**
+ * @swagger
  * /students/genschedule/{date}:
  *  get:
  *     security:
@@ -186,7 +289,7 @@ router.get('/genschedule/:date', authenticateToken, (req, res) => {
                 let dateArray = date.split('-');
                 let dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
                 if (dateObj.getDay() === 1) {
-                    generateSchedule(students, user, dateObj, res);
+                    generateSchedule(students, user, dateObj, res, false);
                 } else {
                     res.status(400).send({ error: 'Date must be a Monday' });
                 }

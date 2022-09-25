@@ -238,7 +238,77 @@ async function getWeekTimetable(students, user, date) {
     });
 }
 
-async function generateSchedule(students, user, date, res) {
+async function generateOneDay(students, user, date, res) {
+    let previousMonday = new Date(date);
+    previousMonday.setDate(date.getDate() - date.getDay() + 1);
+    getWeekTimetable(students, user, previousMonday).then((calendar) => {
+        let day = date.getDay();
+        let dayName = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+        let dayEvents = calendar[dayName[day]];
+        if (dayEvents === undefined || dayEvents.length === 0) {
+            res.send({ error: "Aucun cours ce jour là" });
+        } else {
+            let resCalendar = {};
+            resCalendar[dayName[day]] = dayEvents;
+            res.render('schedule-view/scheduleOneDay', { calendar: resCalendar });
+        }
+    }).catch((err) => {
+        console.log(err);
+        res.status(500).send({ error: 'Internal server error' });
+    });
+}
+
+async function getNextClass(students, user, date, res) {
+    getTimeTable(students, user).then((calendar) => {
+        let nextClass = null;
+        calendar.forEach(event => {
+            let eventDate = new Date(event.start);
+            if (eventDate > date) {
+                if (nextClass === null) {
+                    nextClass = event;
+                } else if (eventDate < new Date(nextClass.start)) {
+                    nextClass = event;
+                }
+            }
+        });
+        if (nextClass === null) {
+            res.send({ error: "Aucun cours ce jour là" });
+        } else {
+            res.status(200).send(nextClass);
+        }
+    }).catch((err) => {
+        console.log(err);
+        res.status(500).send({ error: 'Internal server error' });
+    });
+}
+
+async function generateNextClass(students, user, date, res) {
+    getTimeTable(students, user).then((calendar) => {
+        let nextClass = null;
+        calendar.forEach(event => {
+            let eventDate = new Date(event.start);
+            if (eventDate > date) {
+                if (nextClass === null) {
+                    nextClass = event;
+                } else if (eventDate < new Date(nextClass.start)) {
+                    nextClass = event;
+                }
+            }
+        });
+        if (nextClass === null) {
+            res.send({ error: "Aucun cours ce jour là" });
+        } else {
+            let resCalendar = {};
+            resCalendar["Prochain cours"] = [nextClass];
+            res.render('schedule-view/scheduleOneClass', { calendar: resCalendar });
+        }
+    }).catch((err) => {
+        console.log(err);
+        res.status(500).send({ error: 'Internal server error' });
+    });
+}
+
+async function generateSchedule(students, user, date, res, arrows) {
     getWeekTimetable(students, user, date).then((resCalendar) => {
         let startDate = date;
         let endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 6);
@@ -262,7 +332,7 @@ async function generateSchedule(students, user, date, res) {
                     let groups = students[user];
                     let nom = groups["NOM"];
                     let prenom = groups["PRENOM"];
-                    res.render('schedule-view/schedule', { calendar: resCalendar, start: start, end: end, nom: nom, prenom: prenom });
+                    res.render('schedule-view/schedule', { calendar: resCalendar, start: start, end: end, nom: nom, prenom: prenom, arrows: arrows });
                 } else {
                     res.status(404).send({ error: 'User not found' });
                 }
@@ -277,5 +347,8 @@ async function generateSchedule(students, user, date, res) {
 module.exports = {
     getTimeTable: getTimeTable,
     getWeekTimetable: getWeekTimetable,
-    generateSchedule: generateSchedule
+    generateSchedule: generateSchedule,
+    generateOneDay: generateOneDay,
+    generateNextClass: generateNextClass,
+    getNextClass: getNextClass
 };
