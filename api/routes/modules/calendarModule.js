@@ -138,7 +138,7 @@ async function getTimeTable(students, username) {
             });
         } else {
             getCalendar(user.GROUPE).then((calendar) => {
-                getCalendar('OPTION').then((optionCalendar) => {
+                getCalendar(user.OPTION).then((optionCalendar) => {
                     calendar = addCalendar(optionCalendar, calendar);
                     calendar = sortCalendar(calendar);
                     calendar = changeDateCalendar(calendar);
