@@ -38,7 +38,7 @@ async function getCalendar(calendarName) {
  */
 function checkSameEvent(calendar, event) {
     calendar.forEach(event1 => {
-        if (event1.summary === event.summary && event1.start === event.start && event1.end === event.end && event1.location === event.location) {
+        if (event1.start === event.start && event1.end === event.end) {
             return true;
         }
     });
@@ -106,6 +106,17 @@ function changeDateCalendar(calendar) {
     return calendar;
 }
 
+function deleteSameEvents(calendar) {
+    calendar.forEach(event => {
+        calendar.forEach(event1 => {
+            if (event.start === event1.start && event.end === event1.end) {
+                calendar.splice(calendar.indexOf(event1), 1);
+            }
+        });
+    });
+    return calendar;
+}
+
 /**
  * Return the timetable of the user (working only for L3 info students)
  * @param {*} students 
@@ -129,6 +140,7 @@ async function getTimeTable(students, username) {
                     calendar = addCalendar(optionCalendar, calendar);
                     calendar = sortCalendar(calendar);
                     calendar = changeDateCalendar(calendar);
+                    calendar = deleteSameEvents(calendar);
                     resolve(calendar);
                 }).catch((err) => {
                     reject(err);
@@ -142,6 +154,7 @@ async function getTimeTable(students, username) {
                     calendar = addCalendar(optionCalendar, calendar);
                     calendar = sortCalendar(calendar);
                     calendar = changeDateCalendar(calendar);
+                    calendar = deleteSameEvents(calendar);
                     resolve(calendar);
                 }).catch((err) => {
                     reject(err);
