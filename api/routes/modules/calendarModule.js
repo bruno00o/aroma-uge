@@ -4,7 +4,7 @@ const { readFile } = require('fs');
  * Return the json calendar
  * @param {*} calendarName 
  */
-async function getCalendar(calendarName) {
+async function getCalendar(calendarName, monday = false) {
     let calendarURLs = './src/calendar/calendarURLs.json';
     return new Promise((resolve, reject) => {
         readFile(calendarURLs, (err, data) => {
@@ -13,7 +13,13 @@ async function getCalendar(calendarName) {
             } else {
                 let calendarURLs = JSON.parse(data);
                 if (calendarURLs.hasOwnProperty(calendarName)) {
-                    let file = './src/calendar/' + calendarURLs[calendarName].jsonFileName;
+                    let file;
+                    if (monday) {
+                        file = './src/calendar/' + calendarURLs[calendarName].jsonFileName.replace(".json", "_monday.json");
+                    }
+                    else {
+                        file = './src/calendar/' + calendarURLs[calendarName].jsonFileName;
+                    }
                     readFile(file, (err, data) => {
                         if (err) {
                             reject(err);
@@ -123,11 +129,11 @@ function deleteSameEvents(calendar) {
  * @param {*} user 
  * @returns calendar
  */
-async function getTimeTable(students, username) {
+async function getTimeTable(students, username, monday = false) {
     return new Promise((resolve, reject) => {
         let user = students[username];
         if (user.ALTERNANCE === 'ALTERNANCE') {
-            getCalendar('ALTERNANCE').then((calendar) => {
+            getCalendar('ALTERNANCE', monday).then((calendar) => {
                 calendar = sortCalendar(calendar);
                 calendar = changeDateCalendar(calendar);
                 resolve(calendar);
@@ -135,8 +141,8 @@ async function getTimeTable(students, username) {
                 reject(err);
             });
         } else if (user.ALTERNANCE === 'RECHERCHE') {
-            getCalendar('RECHERCHE').then((calendar) => {
-                getCalendar('OPTION').then((optionCalendar) => {
+            getCalendar('RECHERCHE', monday).then((calendar) => {
+                getCalendar('OPTION', monday).then((optionCalendar) => {
                     calendar = addCalendar(optionCalendar, calendar);
                     calendar = sortCalendar(calendar);
                     calendar = changeDateCalendar(calendar);
@@ -149,8 +155,8 @@ async function getTimeTable(students, username) {
                 reject(err);
             });
         } else {
-            getCalendar(user.GROUPE).then((calendar) => {
-                getCalendar(user.OPTION).then((optionCalendar) => {
+            getCalendar(user.GROUPE, monday).then((calendar) => {
+                getCalendar(user.OPTION, monday).then((optionCalendar) => {
                     calendar = addCalendar(optionCalendar, calendar);
                     calendar = sortCalendar(calendar);
                     calendar = changeDateCalendar(calendar);
@@ -219,6 +225,39 @@ function weekDaysToFrench(calendar) {
 }
 
 /**
+ * Add past days to the calendar
+ * @param {*} calendar 
+ * @param {*} students 
+ * @param {*} username 
+ * @returns 
+ */
+async function addPastDays(calendar, students, username, date) {
+    return new Promise((resolve, reject) => {
+        getTimeTable(students, username, true).then((pastCalendar) => {
+            let previousMonday = new Date(date);
+            console.log(previousMonday);
+            pastCalendar.forEach(event => {
+                if (event.start < new Date()) {
+                    let eventDate = new Date(event.start);
+                    let nextWeekDate = new Date(previousMonday.getFullYear(), previousMonday.getMonth(), previousMonday.getDate() + 7);
+                    console.log(nextWeekDate);
+                    const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                    if (eventDate >= previousMonday && eventDate <= nextWeekDate) {
+                        if (calendar[weekday[eventDate.getDay()]] === undefined) {
+                            calendar[weekday[eventDate.getDay()]] = [];
+                        }
+                        calendar[weekday[eventDate.getDay()]].push(event);
+                    }
+                }
+            });
+            resolve(calendar);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+/**
  * Return the calendar of the user on the week
  * @param {*} students 
  * @param {*} user 
@@ -241,10 +280,21 @@ async function getWeekTimetable(students, user, date) {
                     resCalendar[weekday[eventDate.getDay()]].push(event);
                 }
             });
-            resCalendar = addWeekDays(resCalendar);
-            resCalendar = sortCalendarByDays(resCalendar);
-            resCalendar = weekDaysToFrench(resCalendar);
-            resolve(resCalendar);
+            if (new Date().getDay() !== 1) {
+                addPastDays(resCalendar, students, user, date).then((calendar) => {
+                    resCalendar = addWeekDays(calendar);
+                    resCalendar = sortCalendarByDays(resCalendar);
+                    resCalendar = weekDaysToFrench(resCalendar);
+                    resolve(resCalendar);
+                }).catch((err) => {
+                    reject(err);
+                });
+            } else {
+                resCalendar = addWeekDays(resCalendar);
+                resCalendar = sortCalendarByDays(resCalendar);
+                resCalendar = weekDaysToFrench(resCalendar);
+                resolve(resCalendar);
+            }
         }).catch((err) => {
             reject(err);
         });

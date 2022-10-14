@@ -121,7 +121,7 @@ async function downloadIcs(calendarURLs, cal, calendarFolder) {
  * Define the cron job to download the calendars
  */
 exports.initCronDlCalendar = function () {
-    cron.schedule("* 6/ * * *", function () {
+    cron.schedule("0 0 */3 * * *", function () {
         let fileURLs = "./src/calendar/calendarURLs.json";
         let calendarFolder = "./src/calendar/";
         let file = fs.readFileSync(fileURLs, 'utf8');
