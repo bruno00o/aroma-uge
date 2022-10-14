@@ -235,12 +235,10 @@ async function addPastDays(calendar, students, username, date) {
     return new Promise((resolve, reject) => {
         getTimeTable(students, username, true).then((pastCalendar) => {
             let previousMonday = new Date(date);
-            console.log(previousMonday);
             pastCalendar.forEach(event => {
                 if (event.start < new Date()) {
                     let eventDate = new Date(event.start);
                     let nextWeekDate = new Date(previousMonday.getFullYear(), previousMonday.getMonth(), previousMonday.getDate() + 7);
-                    console.log(nextWeekDate);
                     const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
                     if (eventDate >= previousMonday && eventDate <= nextWeekDate) {
                         if (calendar[weekday[eventDate.getDay()]] === undefined) {
