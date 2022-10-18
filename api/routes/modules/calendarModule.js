@@ -255,6 +255,24 @@ async function addPastDays(calendar, students, username, date) {
     });
 }
 
+function removeDuplicates(calendar) {
+    const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    weekDays.forEach(day => {
+        if (calendar[day] !== undefined) {
+            calendar[day].forEach(event => {
+                let hash = event.start + event.end + event.title;
+                calendar[day].forEach(event1 => {
+                    let hash1 = event1.start + event1.end + event1.title;
+                    if (hash === hash1 && event !== event1) {
+                        calendar[day].splice(calendar[day].indexOf(event1), 1);
+                    }
+                });
+            });
+        }
+    });
+    return calendar;
+}
+
 /**
  * Return the calendar of the user on the week
  * @param {*} students 
@@ -281,6 +299,7 @@ async function getWeekTimetable(students, user, date) {
             if (new Date().getDay() !== 1) {
                 addPastDays(resCalendar, students, user, date).then((calendar) => {
                     resCalendar = addWeekDays(calendar);
+                    resCalendar = removeDuplicates(resCalendar);
                     resCalendar = sortCalendarByDays(resCalendar);
                     resCalendar = weekDaysToFrench(resCalendar);
                     resolve(resCalendar);
@@ -289,6 +308,7 @@ async function getWeekTimetable(students, user, date) {
                 });
             } else {
                 resCalendar = addWeekDays(resCalendar);
+                resCalendar = removeDuplicates(resCalendar);
                 resCalendar = sortCalendarByDays(resCalendar);
                 resCalendar = weekDaysToFrench(resCalendar);
                 resolve(resCalendar);

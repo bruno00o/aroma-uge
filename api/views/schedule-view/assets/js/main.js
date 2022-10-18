@@ -67,7 +67,7 @@
 		var self = this,
 			slotHeight = this.topInfoElement.offsetHeight;
 		for(var i = 0; i < this.singleEvents.length; i++) {
-			var anchor = this.singleEvents[i].getElementsByTagName('a')[0];
+			var anchor = this.singleEvents[i].getElementsByTagName('div')[0];
 			var start = getScheduleTimestamp(anchor.getAttribute('data-start')),
 				duration = getScheduleTimestamp(anchor.getAttribute('data-end')) - start;
 

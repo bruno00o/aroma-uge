@@ -109,7 +109,18 @@ router.get('/util.js', (req, res) => {
 router.get('/main.js', (req, res) => {
     res.sendFile('main.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
 });
-
+router.get('/icons/manifest-icon-192.png', (req, res) => {
+    res.sendFile('manifest-icon-192.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
+});
+router.get('/icons/manifest-icon-512.png', (req, res) => {
+    res.sendFile('manifest-icon-512.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
+});
+router.get('/apple-icon-180.png', (req, res) => {
+    res.sendFile('apple-icon-180.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
+});
+router.get('/service-worker.js', (req, res) => {
+    res.sendFile('service-worker.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
+});
 router.get('/:user/style.css', (req, res) => {
     res.sendFile('style.css', { 'root': __dirname + '/../views/schedule-view/assets/css/' });
 });
@@ -118,6 +129,18 @@ router.get('/:user/util.js', (req, res) => {
 });
 router.get('/:user/main.js', (req, res) => {
     res.sendFile('main.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
+});
+router.get('/:user/icons/manifest-icon-192.png', (req, res) => {
+    res.sendFile('manifest-icon-192.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
+});
+router.get('/:user/icons/manifest-icon-512.png', (req, res) => {
+    res.sendFile('manifest-icon-512.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
+});
+router.get('/:user/apple-icon-180.png', (req, res) => {
+    res.sendFile('apple-icon-180.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
+});
+router.get('/:user/service-worker.js', (req, res) => {
+    res.sendFile('service-worker.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
 });
 
 /**
