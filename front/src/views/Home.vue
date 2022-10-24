@@ -1,0 +1,90 @@
+<template>
+    <Nav />
+    <main id="content">
+        <div v-if="apprenticeship">
+            <h3>{{ nextDay }}</h3>
+            <p>{{ event }}</p>
+        </div>
+        <div v-else>
+
+        </div>
+        
+    </main>
+</template>
+
+<script>
+import Nav from "../components/Nav.vue";
+import axios from "axios";
+export default {
+    name: "Home",
+    components: {
+        Nav
+    },
+    data() {
+        return {
+            apprenticeship: this.$store.state.apprenticeship,
+            nextDay: '',
+            event: '',
+        }
+    },
+    methods: {
+        nextEvent() {
+            axios.get(`${this.$store.state.serverLocation}/calendar/apprenticeship/next`,
+                { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("user")).accessToken}` } })
+                .then(response => {
+                    let date = new Date(response.data.date.split("/").reverse().join("-"));
+                    if (date.getDate() == new Date().getDate() + 1) {
+                        this.nextDay = "Demain";
+                    } else {
+                        this.nextDay = "Le " + response.data.date;
+                    }
+                    this.event = response.data.event;
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        }
+    },
+    created() {
+        this.nextEvent();
+    }
+}
+
+</script>
+
+<style lang="scss">
+#content {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    width: 90%;
+    max-width: 1100px;
+    align-items: flex-start;
+    padding: 1em 2em;
+    color: var(--primary);
+
+    h3 {
+        font-size: 1.5em;
+        margin-bottom: 0.5em;
+    }
+
+    p {
+        font-size: 1.2em;
+        color: var(--secondary);
+    }
+
+    div:first-child {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #content {
+        width: 100%;
+        max-height: calc(100vh - var(--header-height) - var(--nav-height));
+        overflow-y: auto; 
+    }
+}
+</style>
