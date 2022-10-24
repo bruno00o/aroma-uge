@@ -96,12 +96,12 @@ router.post('/', (req, res) => {
             let paternNum = /[0-9]/;
             let paternLength = /.{8,}/;
             if (domain !== 'edu.univ-eiffel.fr') {
-                res.status(400).send({ error: 'Bad request' });
+                res.status(400).send({ error: 'Utilisez une adresse email universitaire' });
             } else if (users.hasOwnProperty(username)) {
-                res.status(400).send({ error: 'Username already exists' });
+                res.status(400).send({ error: 'Utilisateur déjà existant' });
             } else if (!paternMin.test(params.password) || !paternMaj.test(params.password) || !paternNum.test(params.password) || !paternLength.test(
                 params.password)) {
-                res.status(400).send({ error: 'Password is not strong enough' });
+                res.status(400).send({ error: 'Le mot de passe doit être plus sécurisé' });
             } else {
                 if (err) {
                     res.status(500).send({ error: 'Internal server error' });
@@ -112,7 +112,7 @@ router.post('/', (req, res) => {
                         } else {
                             let students = JSON.parse(dataStudents);
                             if (!students.hasOwnProperty(username) || !(students[username]["EMAIL"].includes(params.email))) {
-                                res.status(400).send({ error: 'Username is not a student or email is incorrect' });
+                                res.status(400).send({ error: 'L\'utlisateur n\'est pas étudiant ou l\'adresse email n\'est pas valide' });
                             } else {
                                 var validating = {};
                                 var randomString = random(40);
@@ -149,7 +149,7 @@ router.post('/', (req, res) => {
                                                         res.status(500).send({ error: 'Internal server error' });
                                                         console.log(err);
                                                     } else {
-                                                        res.status(200).send({ success: 'Mail sent' });
+                                                        res.status(200).send({ success: 'Un email de validation a été envoyé à ' + username + '@edu.univ-eiffel.fr' });
                                                     }
                                                 });
                                             }
@@ -245,7 +245,7 @@ router.get('/forgot/:username', (req, res) => {
                                         res.status(500).send({ error: 'Internal server error' });
                                     }
                                     else {
-                                        res.status(200).send({ success: 'Mail sent' });
+                                        res.status(200).send({ success: 'Un email de réinitialisation a été envoyé à ' + username + '@edu.univ-eiffel.fr' });
                                     }
                                 });
                             }
@@ -271,7 +271,7 @@ router.get('/forgot/:username', (req, res) => {
                     }
                 });
             } else {
-                res.status(400).send({ error: 'Username does not exist' });
+                res.status(400).send({ error: 'L\'utilisateur ' + username + ' n\'existe pas' });
             }
         }
     });
@@ -294,7 +294,7 @@ router.get('/reset/:randomString', (req, res) => {
                         if (users.hasOwnProperty(username)) {
                             res.sendFile('./views/reset.html', { root: __dirname });
                         } else {
-                            res.status(400).send({ error: 'Username does not exist' });
+                            res.status(400).send({ error: 'L\'utilisateur n\'existe pas' });
                         }
                     }
                 });

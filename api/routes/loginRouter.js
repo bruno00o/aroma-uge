@@ -79,7 +79,7 @@ router.post('/', (req, res) => {
                     shareScheduleURL: users[req.body.username]["shareScheduleURL"]
                 });
             } else {
-                res.status(401).send({ error: 'Username or password is incorrect' });
+                res.status(401).send({ error: 'Utilisateur ou mot de passe incorrect' });
             }
         }
     });
@@ -103,6 +103,7 @@ router.post('/', (req, res) => {
  *          description: Internal server error
  */
 router.post('/refresh', (req, res) => {
+    console.log(req.headers['Authorization']);
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if (token == null) return res.sendStatus(401);
