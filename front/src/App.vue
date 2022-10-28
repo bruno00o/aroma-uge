@@ -49,14 +49,12 @@ body {
     background-color: var(--background);
     min-height: 100vh;
     font-size: 16px;
-    min-height: -webkit-fill-available;
 }
 
 #app {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    min-height: -webkit-fill-available;
 }
 
 main {
@@ -78,6 +76,16 @@ main {
     :root {
         --primary: white;
         --background: #090A35;
+    }
+}
+
+@supports (-webkit-touch-callout: none) {
+    body {
+        min-height: -webkit-fill-available;
+    }
+
+    #app {
+        min-height: -webkit-fill-available;
     }
 }
 </style>
