@@ -57,7 +57,10 @@ router.get('/next/', authenticateToken, (req, res) => {
             let calendar = JSON.parse(data);
             let keys = Object.keys(calendar);
             let actualDate = new Date();
-            let i = 1;
+            let i = 0;
+            if (actualDate.getHours() >= 18) {
+                i = 1;
+            }
             let lastDate = new Date(keys[0]);
             let nextDate = new Date(actualDate);
             nextDate.setDate(nextDate.getDate() + i);
@@ -73,7 +76,11 @@ router.get('/next/', authenticateToken, (req, res) => {
                     var nextDateString = nexDate + '/' + nextMonth + '/' + nextYear;
                     i++;
                 } while (keys.indexOf(nextDateString) === -1);
-                res.status(200).send({ date: nextDateString, event: calendar[nextDateString] });
+                let event = calendar[nextDateString];
+                if (calendar[nextDateString] === 'F') {
+                    event = 'Férié';
+                }
+                res.status(200).send({ date: nextDateString, event: event });
             }
         }
     });
