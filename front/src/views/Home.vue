@@ -9,8 +9,7 @@
 
 
         </section>
-        
-        </section>
+
     </main>
 </template>
 
