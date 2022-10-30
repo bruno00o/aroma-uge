@@ -1,11 +1,11 @@
 <template>
     <Nav />
     <main id="content">
-        <div v-if="apprenticeship">
+        <section v-if="apprenticeship">
             <h3>En entreprise</h3>
             <p>{{ date }}</p>
-            <button @click="">Consulter le calendrier d'alternance</button>
-        </div>
+            <button @click="$router.push('/apprenticeship/calendar')">Consulter le calendrier d'alternance</button>
+        </section>
     </main>
 
 </template>

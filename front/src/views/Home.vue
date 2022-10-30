@@ -1,14 +1,16 @@
 <template>
     <Nav />
     <main id="content">
-        <div v-if="apprenticeship">
+        <section v-if="apprenticeship">
             <h3>{{ nextDay }}</h3>
             <p>{{ event }}</p>
-        </div>
-        <div v-else>
+        </section>
+        <section v-else>
 
-        </div>
 
+        </section>
+        
+        </section>
     </main>
 </template>
 
@@ -75,7 +77,7 @@ export default {
         color: var(--secondary);
     }
 
-    div:first-child {
+    section {
         width: 100%;
         display: flex;
         flex-direction: column;
