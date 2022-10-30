@@ -36,6 +36,9 @@ export default {
     beforeMount() {
         this.loggedIn();
     },
+    created() {
+        this.$store.dispatch('loggedIn');
+    }
 }
 </script>
 
@@ -56,7 +59,8 @@ header {
         color: white;
 
         strong {
-            font-family: 'Tahoma UGE Bold';
+            font-family: 'Tahoma UGE Bold', sans-serif;
+            font-weight: bold;
         }
 
         &+a {
@@ -77,7 +81,8 @@ header {
     }
 
     h1 {
-        font-family: 'Tahoma UGE Bold';
+        font-family: 'Tahoma UGE Bold', sans-serif;
+        font-weight: bold;
         font-size: 2rem;
         color: white
     }

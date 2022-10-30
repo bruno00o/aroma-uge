@@ -33,7 +33,9 @@ export default {
                 { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("user")).accessToken}` } })
                 .then(response => {
                     let date = new Date(response.data.date.split("/").reverse().join("-"));
-                    if (date.getDate() == new Date().getDate() + 1) {
+                    if (date.getDate() == new Date().getDate()) {
+                        this.nextDay = "Aujourd'hui";
+                    } else if (date.getDate() == new Date().getDate() + 1) {
                         this.nextDay = "Demain";
                     } else {
                         this.nextDay = "Le " + response.data.date;

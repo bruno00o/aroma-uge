@@ -47,7 +47,6 @@ export default {
         this.$store.dispatch("getShareSchedule").then(() => {
             this.share = this.$store.state.share;
             this.shareUrl = this.$store.state.shareUrl;
-            console.log(this.shareUrl);
         });
     }
 }

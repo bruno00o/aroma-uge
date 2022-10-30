@@ -115,7 +115,8 @@ export default {
             background-color: var(--error);
             color: white;
             font-size: .9rem;
-            font-family: 'Tahoma UGE Bold';
+            font-family: 'Tahoma UGE Bold', sans-serif;
+            font-weight: bold;
             display: flex;
             justify-content: center;
             align-items: center;

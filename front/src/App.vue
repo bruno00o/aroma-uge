@@ -13,7 +13,8 @@ export default {
     name: 'app',
     components: {
         Header
-    }
+    },
+    
 }
 </script>
 
@@ -45,7 +46,7 @@ export default {
 }
 
 body {
-    font-family: 'Tahoma UGE';
+    font-family: 'Tahoma UGE', sans-serif;
     background-color: var(--background);
     min-height: 100vh;
     font-size: 16px;

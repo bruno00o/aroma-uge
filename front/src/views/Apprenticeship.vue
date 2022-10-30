@@ -58,7 +58,8 @@ export default {
         background-color: var(--secondary);
         color: white;
         font-size: 1.2em;
-        font-family: 'Tahoma UGE Bold';
+        font-family: 'Tahoma UGE Bold', sans-serif;
+        font-weight: bold;
         align-self: center;
         cursor: pointer;
     }

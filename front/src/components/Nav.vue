@@ -57,7 +57,10 @@ export default {
         return {
             apprenticeship: this.$store.state.apprenticeship,
         }
-    }
+    },
+    created() {
+        this.$store.dispatch('loggedIn')
+    },
 }
 </script>
 

@@ -10,7 +10,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,ttf}']
       },
       includeAssets: ['src/asses/images/favicon.ico', 'icons/apple-touch-icon.png'],
       manifest: {

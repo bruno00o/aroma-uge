@@ -24,12 +24,18 @@ const routes = [
     {
         path: '/login',
         name: 'login',
-        component: LoginUser
+        component: LoginUser,
+        meta: {
+            redirectIfAuth: true,
+        }
     },
     {
         path: '/register',
         name: 'register',
-        component: RegisterUser
+        component: RegisterUser,
+        meta: {
+            redirectIfAuth: true,
+        }
     },
     {
         path: '/forgot',
@@ -101,7 +107,6 @@ router.beforeEach((to, from, next) => {
             }).catch(err => {
                 if (err.response.status == 401) {
                     let refreshToken = user.refreshToken
-                    console.log(refreshToken)
                     axios.post(`${serverLocation}/login/refresh`, {}, {
                         headers: {
                             'Authorization': `Bearer ${refreshToken}`
@@ -118,6 +123,14 @@ router.beforeEach((to, from, next) => {
                         })
                     })
                 }
+            })
+        }
+    } else if (to.matched.some(record => record.meta.redirectIfAuth)) {
+        if (localStorage.getItem('user') == null) {
+            next()
+        } else {
+            next({
+                name: 'home',
             })
         }
     } else {

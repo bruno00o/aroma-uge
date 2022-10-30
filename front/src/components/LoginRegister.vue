@@ -28,7 +28,8 @@ export default {
     min-width: 300px;
 
     a {
-        font-family: 'Tahoma UGE Bold';
+        font-family: 'Tahoma UGE Bold', sans-serif;
+        font-weight: bold;
         font-size: 1.1rem;
         color: var(--primary);
         text-decoration: none;
@@ -70,7 +71,7 @@ form {
             border: 2px solid var(--primary);
             border-radius: 5px;
             padding: 0 10px;
-            font-family: 'Tahoma UGE';
+            font-family: 'Tahoma UGE', sans-serif;
             font-size: 1rem;
         }
 
@@ -114,7 +115,8 @@ form {
         height: 35px;
         width: 75%;
         align-self: center;
-        font-family: 'Tahoma UGE Bold';
+        font-family: 'Tahoma UGE Bold', sans-serif;
+        font-weight: bold;
         font-size: 16px;
     }
 }
