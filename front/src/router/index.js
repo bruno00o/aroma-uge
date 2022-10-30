@@ -9,6 +9,7 @@ import University from '../views/University.vue'
 import Friends from '../views/Friends.vue'
 import Settings from '../views/Settings.vue'
 import FriendsRequests from '../views/FriendsRequests.vue'
+import ApprenticeCalendar from '../views/ApprenticeCalendar.vue'
 
 const serverLocation = "https://api.aroma-uge.tech";
 
@@ -82,6 +83,14 @@ const routes = [
             requiresAuth: true,
         }
     },
+    {
+        path: '/apprenticeship/calendar',
+        name: 'apprenticeCalendar',
+        component: ApprenticeCalendar,
+        meta: {
+            requiresAuth: true,
+        }
+    }
 ]
 
 const router = createRouter({
