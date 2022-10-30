@@ -108,7 +108,7 @@ nav {
                 flex-direction: column;
                 opacity: .5;
 
-                &.router-link-exact-active {
+                &.router-link-active {
                     opacity: 1;
                 }
             }

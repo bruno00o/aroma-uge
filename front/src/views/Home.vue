@@ -7,8 +7,10 @@
         </section>
         <section v-else>
 
+
         </section>
         
+        </section>
     </main>
 </template>
 
@@ -80,13 +82,31 @@ export default {
         display: flex;
         flex-direction: column;
     }
+
+    #backButton {
+        margin: 0;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: unset;
+        border: 3px solid var(--primary);
+
+        svg {
+            fill: var(--primary);
+            width: 80%;
+            height: 80%;
+        }
+    }
 }
 
 @media screen and (max-width: 600px) {
     #content {
         width: 100%;
         max-height: calc(100vh - var(--header-height) - var(--nav-height));
-        overflow-y: auto; 
+        overflow-y: auto;
     }
 }
 </style>
