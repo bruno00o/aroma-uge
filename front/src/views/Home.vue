@@ -34,9 +34,12 @@ export default {
                 { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("user")).accessToken}` } })
                 .then(response => {
                     let date = new Date(response.data.date.split("/").reverse().join("-"));
-                    if (date.getDate() == new Date().getDate()) {
+                    let today = new Date();
+                    let tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    if (date.getDate() == today.getDate() && date.getMonth() == today.getMonth() && date.getFullYear() == today.getFullYear()) {
                         this.nextDay = "Aujourd'hui";
-                    } else if (date.getDate() == new Date().getDate() + 1) {
+                    } else if (date.getDate() == tomorrow.getDate() && date.getMonth() == tomorrow.getMonth() && date.getFullYear() == tomorrow.getFullYear()) {
                         this.nextDay = "Demain";
                     } else {
                         this.nextDay = "Le " + response.data.date;

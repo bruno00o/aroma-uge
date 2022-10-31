@@ -38,6 +38,18 @@ export default {
     },
     created() {
         this.$store.dispatch('loggedIn');
+        this.loggedIn();
+        this.$forceUpdate();
+    },
+    mounted() {
+        this.$store.dispatch('loggedIn');
+        this.loggedIn();
+        this.$forceUpdate();
+    },
+    loaded() {
+        this.$store.dispatch('loggedIn');
+        this.loggedIn();
+        this.$forceUpdate();
     }
 }
 </script>

@@ -14,7 +14,26 @@ export default {
     components: {
         Header
     },
-    
+    data() {
+        return {
+            user: this.$store.state.user,
+            serverLocation: this.$store.state.serverLocation,
+            apprenticeship: this.$store.state.apprenticeship,
+            nextDay: '',
+            event: '',
+        }
+    },
+    created() {
+        this.$store.dispatch('loggedIn');
+    },
+    loaded() {
+        this.$store.dispatch('loggedIn');
+        this.$forceUpdate();
+    },
+    mounted() {
+        this.$store.dispatch('loggedIn');
+        this.$forceUpdate();
+    }
 }
 </script>
 

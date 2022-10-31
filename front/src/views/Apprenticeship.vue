@@ -65,4 +65,13 @@ export default {
     }
 }
 
+@media screen and (max-width: 600px) {
+    #content {
+        button {
+            width: 100%;
+            font-size: .95em;
+        }
+    }
+}
+
 </style>
