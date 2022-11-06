@@ -126,7 +126,7 @@ async function refreshAccessToken() {
                 Authorization: `Bearer ${token}`
             }
         }
-        axios.get(`${serverLocation}/login/refresh`, config)
+        axios.post(`${serverLocation}/login/refresh`, {}, config)
             .then(response => {
                 let data = response.data;
                 user.accessToken = data.accessToken;
@@ -161,7 +161,6 @@ async function login() {
                 resolve(true);
             })
             .catch(error => {
-                console.log(error);
                 resolve(false);
             });
     });
@@ -187,10 +186,13 @@ router.beforeEach((to, from, next) => {
                             next()
                         } else {
                             localStorage.removeItem('user');
+                            localStorage.removeItem('firstName');
+                            localStorage.removeItem('lastName');
                             localStorage.removeItem('apprenticeship');
                             next({
                                 name: 'login',
                             })
+                            /* window.location.reload(); */
                         }
                     })
                 }
