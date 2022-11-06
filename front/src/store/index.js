@@ -97,6 +97,7 @@ export default createStore({
                 }
             }).then(({ data }) => {
                 commit('SET_USER_SHARING', data.shareSchedule);
+                commit('SET_SHARE_URL', data.shareScheduleURL);
             }).catch(err => {
                 console.log(err);
             });

@@ -90,7 +90,6 @@ nav {
             justify-content: center;
             height: 100%;
             width: 100%;
-            cursor: pointer;
 
             svg {
                 width: 1.5em;
@@ -107,6 +106,7 @@ nav {
                 justify-content: center;
                 flex-direction: column;
                 opacity: .5;
+                width: 100%;
 
                 &.router-link-active {
                     opacity: 1;

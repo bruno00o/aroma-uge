@@ -1,14 +1,14 @@
 <template>
     <Nav />
     <main id="content">
-        <h3>Partage d'emploi du temps à l'extérieur de l'application</h3>
-        <p class="info">Vous pouvez partager votre emploi du temps avec vos proches en activant l'option ci-dessous.</p>
         <form id="share-schedule">
-            <label for="share">
-                Partager mon emploi du temps
-            </label>
+            <h3>Partager mon emploi du temps</h3>
             <input type="checkbox" name="share" id="share" v-model="share" @change="shareSchedule" checked="checked">
+            <label for="share" id="share-label">
+                <div id="share-toggle"></div>
+            </label>
         </form>
+        <p class="info">Vous pouvez partager votre emploi du temps avec vos proches en activant l'option ci-dessous. Celui-ci sera visible par quiconque disposant du lien.</p>
         <a :href="shareUrl" v-if="share" target="_blank" id="share-url">
             <button>
                 Lien de partage de l'emploi du temps
@@ -37,7 +37,9 @@ export default {
     },
     methods: {
         shareSchedule() {
-            this.$store.dispatch("shareSchedule", this.share);
+            this.$store.dispatch("shareSchedule", this.share).then(() => {
+                this.shareUrl = this.$store.state.shareUrl;
+            });
         },
         logout() {
             this.$store.dispatch("logout");
@@ -56,7 +58,8 @@ export default {
 <style lang="scss" scoped>
 .info {
     color: var(--primary) !important;
-    font-size: 1rem;
+    font-size: 1rem !important;
+    margin-bottom: .5em;
 }
 
 #share-url {
@@ -88,19 +91,52 @@ h3:not(:first-child) {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 10px;
+    gap: 2em;
+
+    h3 {
+        margin-bottom: .2em;
+    }
 
     label {
         font-size: 1rem;
     }
 
     input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        border: 2px solid var(--primary);
-        border-radius: 5px;
-        cursor: pointer;
+        height: 0;
+        width: 0;
+        visibility: hidden;
     }
+
+    #share-toggle {
+        margin-bottom: 0;
+        cursor: pointer;
+        width: 50px;
+        height: 25px;
+        background: var(--error);
+        border-radius: 100px;
+        position: relative;
+        transition: background-color .4s;
+        &:after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 19px;
+            height: 19px;
+            background: #fff;
+            border-radius: 90px;
+            transition: 0.3s;
+        }
+    }
+
+    input:checked + #share-label #share-toggle {
+        background: var(--secondary);
+        &:after {
+            left: calc(100% - 3px);
+            transform: translateX(-100%);
+        }
+    }
+
 }
 
 @media screen and (max-width: 600px) {
@@ -109,6 +145,19 @@ h3:not(:first-child) {
             font-size: 0.9rem;
             width: 100%;
         }
+    }
+    #share-schedule {
+        gap: 1em;
+        justify-content: space-between;
+
+        h3 {
+            margin-bottom: 0;
+            font-size: 1.1rem;
+        }
+    }
+
+    h3 {
+        font-size: 1.25rem !important;
     }
 }
 </style>
