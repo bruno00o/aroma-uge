@@ -167,7 +167,7 @@ async function login() {
 }
 
 router.beforeEach((to, from, next) => {
-    if (from.name == 'login') {
+    if (from.name == 'login' && to.name == 'home') {
         login().then(() => {
             next();
         });

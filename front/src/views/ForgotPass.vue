@@ -1,6 +1,9 @@
 <template>
     <form @submit.prevent="forgot">
         <div>
+            Entrez votre nom d'utilisateur, un lien de réinitialisation vous sera envoyé par mail.
+        </div>
+        <div>
             <label for="username">
                 Nom d'utilisateur
             </label>
@@ -20,6 +23,20 @@
         <button type="submit" name="button">
             Envoyer
         </button>
+        <div>
+            <p>
+                Vous n'avez pas de compte ?
+                <router-link to="/register">
+                    S'inscrire
+                </router-link>
+            </p>
+            <p>
+                Vous vous souvenez de votre mot de passe ?
+                <router-link to="/login">
+                    Se connecter
+                </router-link>
+            </p>
+        </div>
     </form>
 </template>
 
@@ -53,5 +70,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+form {
+    div:first-of-type {
+        margin-bottom: 1rem;
+    }
+}
 </style>

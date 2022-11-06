@@ -3,10 +3,10 @@
         <div v-if="firstname && name" class="displayName">
             <h2>Bienvenue <br><strong>{{ firstname + " " + name }}</strong></h2>
         </div>
-        <a href="https://aroma-uge.tech">
+        <router-link to="/login">
             <img src="../assets/images/logo.svg" alt="Logo Université Gustave Eiffel">
             <h1>Aroma UGE</h1>
-        </a>
+        </router-link>
     </header>
 </template>
 
