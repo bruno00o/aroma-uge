@@ -55,11 +55,11 @@ export default {
     name: 'Navbar',
     data() {
         return {
-            apprenticeship: this.$store.state.apprenticeship,
+            apprenticeship: (localStorage.getItem('apprenticeship') === 'true'),
         }
     },
     created() {
-        this.$store.dispatch('loggedIn')
+        this.$store.dispatch('loggedIn');
     },
 }
 </script>

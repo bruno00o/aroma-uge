@@ -98,38 +98,100 @@ const router = createRouter({
     routes
 })
 
+async function checkAuth() {
+    return new Promise((resolve, reject) => {
+        let user = JSON.parse(localStorage.getItem('user'));
+        let token = user.accessToken;
+        let config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        axios.get(`${serverLocation}/students/info`, config)
+            .then(response => {
+                resolve(true);
+            })
+            .catch(error => {
+                resolve(false);
+            });
+    });
+}
+
+async function refreshAccessToken() {
+    return new Promise((resolve, reject) => {
+        let user = JSON.parse(localStorage.getItem('user'));
+        let token = user.refreshToken;
+        let config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        axios.get(`${serverLocation}/login/refresh`, config)
+            .then(response => {
+                let data = response.data;
+                user.accessToken = data.accessToken;
+                localStorage.setItem('user', JSON.stringify(user));
+                resolve(true);
+            })
+            .catch(error => {
+                resolve(false);
+            });
+    });
+}
+
+async function login() {
+    return new Promise((resolve, reject) => {
+        let user = JSON.parse(localStorage.getItem('user'));
+        let token = user.accessToken;
+        let config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        axios.get(`${serverLocation}/students/info`, config)
+            .then(response => {
+                let data = response.data;
+                let firstName = data["PRENOM"];
+                let lastName = data["NOM"];
+                firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+                localStorage.setItem('firstName', firstName)
+                lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase();
+                localStorage.setItem('lastName', lastName)
+                localStorage.setItem('apprenticeship', data["ALTERNANCE"] === "ALTERNANCE")
+                resolve(true);
+            })
+            .catch(error => {
+                console.log(error);
+                resolve(false);
+            });
+    });
+}
+
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (from.name == 'login') {
+        login().then(() => {
+            next();
+        });
+    } else if (to.matched.some(record => record.meta.requiresAuth)) {
         if (localStorage.getItem('user') == null) {
             next({
                 name: 'login',
             })
         } else {
-            let user = JSON.parse(localStorage.getItem('user'))
-            let token = user.accessToken
-            axios.get(`${serverLocation}/students/info`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then(sucess => {
-                next()
-            }).catch(err => {
-                if (err.response.status == 401) {
-                    let refreshToken = user.refreshToken
-                    axios.post(`${serverLocation}/login/refresh`, {}, {
-                        headers: {
-                            'Authorization': `Bearer ${refreshToken}`
+            checkAuth().then((res) => {
+                if (res) {
+                    next()
+                } else {
+                    refreshAccessToken().then((res) => {
+                        if (res) {
+                            next()
+                        } else {
+                            localStorage.removeItem('user');
+                            localStorage.removeItem('apprenticeship');
+                            next({
+                                name: 'login',
+                            })
                         }
-                    }).then(sucess => {
-                        let data = sucess.data
-                        user.accessToken = data.accessToken
-                        localStorage.setItem('user', JSON.stringify(user))
-                        next()
-                    }).catch(err => {
-                        console.log(err)
-                        next({
-                            name: 'login',
-                        })
                     })
                 }
             })

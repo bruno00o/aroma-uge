@@ -22,16 +22,23 @@ export default createStore({
         },
         CLEAR_USER_DATA() {
             localStorage.removeItem('user')
-            window.location.href = "https://aroma-uge.tech";
+            localStorage.removeItem('firstName')
+            localStorage.removeItem('lastName')
+            localStorage.removeItem('apprenticeship')
             axios.defaults.headers.common['Authorization'] = null
         },
         SET_FIRST_NAME(state, firstName) {
+            firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+            localStorage.setItem('firstName', firstName)
             state.firstName = firstName
         },
         SET_LAST_NAME(state, lastName) {
+            lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase();
+            localStorage.setItem('lastName', lastName)
             state.lastName = lastName
         },
         SET_APPRENTICESHIP(state, apprenticeship) {
+            localStorage.setItem('apprenticeship', apprenticeship)
             state.apprenticeship = apprenticeship
         },
         SET_USER_SHARING(state, data) {

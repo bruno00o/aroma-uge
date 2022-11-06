@@ -15,41 +15,9 @@
 export default {
 
     name: 'header',
-    data() {
-        return {
-            name: '',
-            firstname: ''
-        }
-    },
-    methods: {
-        loggedIn() {
-            this.$store.dispatch('loggedIn').then((res) => {
-                if (res && this.$store.state.lastName && this.$store.state.firstName) {
-                    this.name = this.$store.state.lastName;
-                    this.firstname = this.$store.state.firstName;
-                    this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1).toLowerCase();
-                    this.firstname = this.firstname.charAt(0).toUpperCase() + this.firstname.slice(1).toLowerCase();
-                }
-            });
-        },
-    },
-    beforeMount() {
-        this.loggedIn();
-    },
-    created() {
-        this.$store.dispatch('loggedIn');
-        this.loggedIn();
-        this.$forceUpdate();
-    },
-    mounted() {
-        this.$store.dispatch('loggedIn');
-        this.loggedIn();
-        this.$forceUpdate();
-    },
-    loaded() {
-        this.$store.dispatch('loggedIn');
-        this.loggedIn();
-        this.$forceUpdate();
+    props: {
+        firstname: String,
+        name: String
     }
 }
 </script>

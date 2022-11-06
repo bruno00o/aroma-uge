@@ -1,5 +1,5 @@
 <template>
-    <Header />
+    <Header :firstname="firstname" :name="name" />
     <main>
         <router-view />
     </main>
@@ -21,19 +21,21 @@ export default {
             apprenticeship: this.$store.state.apprenticeship,
             nextDay: '',
             event: '',
+            name: localStorage.getItem('lastName') ? localStorage.getItem('lastName') : '',
+            firstname: localStorage.getItem('firstName') ? localStorage.getItem('firstName') : '',
         }
     },
-    created() {
-        this.$store.dispatch('loggedIn');
+    watch: {
+        $route(to, from) {
+            if (from.name == 'login') {
+                this.name = localStorage.getItem('lastName') ? localStorage.getItem('lastName') : '';
+                this.firstname = localStorage.getItem('firstName') ? localStorage.getItem('firstName') : '';
+            } else if (to.name == 'login' && from.name == 'settings') {
+                this.name = localStorage.getItem('lastName') ? localStorage.getItem('lastName') : '';
+                this.firstname = localStorage.getItem('firstName') ? localStorage.getItem('firstName') : '';
+            }
+        }
     },
-    loaded() {
-        this.$store.dispatch('loggedIn');
-        this.$forceUpdate();
-    },
-    mounted() {
-        this.$store.dispatch('loggedIn');
-        this.$forceUpdate();
-    }
 }
 </script>
 

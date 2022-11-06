@@ -56,16 +56,11 @@ export default {
             this.$store.dispatch("login", {
                 username: this.username,
                 password: this.password,
-            })
-                .then(() => {
-                    this.$router.push({ name: "home" })
-                    .then(() => {
-                        window.location.reload();
-                    });
-                })
-                .catch((error) => {
-                    this.error = error.response.data.error;
-                });
+            }).then(() => {
+                this.$router.push({ name: "home" })
+            }).catch((error) => {
+                this.error = error.response.data.error;
+            });
         },
     },
     components: { LoginRegister }
