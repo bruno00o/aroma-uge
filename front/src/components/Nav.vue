@@ -66,13 +66,17 @@ export default {
 
 <style lang="scss" scoped>
 nav {
+    position: sticky;
+    top: var(--header-height);
     color: white;
     background-color: var(--header);
     width: 90%;
     max-width: 1100px;
     border-radius: 0 0 20pt 20pt;
     border-top: 4px solid var(--background);
+    border-bottom: 8px solid var(--background);
     padding: 1em 0;
+    z-index: 1;
 
     ul {
         display: flex;
@@ -119,11 +123,14 @@ nav {
 @media screen and (max-width: 600px) {
     nav {
         position: absolute;
+        top: unset;
         bottom: 0;
         border-radius: 0;
         border-top: 0;
         max-width: unset;
         width: 100%;
+        border-bottom: unset;
+        box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
 
         ul {
             li {

@@ -24,6 +24,8 @@ export default {
 
 <style lang="scss" scoped>
 header {
+    position: sticky;
+    top: 0;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -34,6 +36,7 @@ header {
     max-width: 1200px;
     align-self: center;
     border-radius: 0 0 20pt 20pt;
+    z-index: 1;
 
     .displayName {
         color: white;
@@ -70,6 +73,8 @@ header {
 
 @media screen and (max-width: 600px) {
     header {
+        border-bottom: 8px solid var(--background);
+
         div {
             position: absolute;
             left: 20px;

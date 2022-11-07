@@ -92,6 +92,10 @@ main {
     :root {
         --header-height: 100px;
     }
+
+    main {
+        justify-content: unset;
+    }
 }
 
 @media (prefers-color-scheme: dark) {

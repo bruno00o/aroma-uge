@@ -109,6 +109,7 @@ export default {
         width: 100%;
         max-height: calc(100vh - var(--header-height) - var(--nav-height));
         overflow-y: auto;
+        padding-top: 2em;
     }
 }
 </style>

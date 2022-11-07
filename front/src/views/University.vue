@@ -4,7 +4,9 @@
         <section v-if="apprenticeship">
             <h3>À l'Université</h3>
             <p>{{ date }}</p>
-            <button>Consulter mon emploi du temps</button>
+            <button @click="$router.push('/university/timetable')">
+                Consulter mon emploi du temps
+            </button>
         </section>
     </main>
 </template>
