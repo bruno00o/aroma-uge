@@ -62,6 +62,24 @@ export default {
         font-weight: bold;
         align-self: center;
         cursor: pointer;
+        transition: all .2s ease-in-out;
+    }
+}
+
+@media all and not (pointer: coarse) {
+    #content {
+        button {
+            &:hover {
+                background-color: white;
+                color: var(--secondary);
+                outline: 3px solid var(--secondary);
+
+                svg {
+                    fill: var(--secondary) !important;
+                    stroke: var(--secondary);
+                }
+            }
+        }
     }
 }
 

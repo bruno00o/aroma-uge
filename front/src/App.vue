@@ -33,7 +33,7 @@ export default {
             } else if (to.name == 'login' && from.name == 'settings') {
                 this.name = localStorage.getItem('lastName') ? localStorage.getItem('lastName') : '';
                 this.firstname = localStorage.getItem('firstName') ? localStorage.getItem('firstName') : '';
-            }
+            } 
         }
     },
 }

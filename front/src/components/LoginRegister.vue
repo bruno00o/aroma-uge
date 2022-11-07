@@ -9,8 +9,7 @@
         <router-link :to="{ name: 'register' }">
             Inscription
         </router-link>
-    </div>
-    <router-view />
+    </div>    
 </template>
 
 <script>
@@ -152,12 +151,11 @@ button[type="submit"]+div {
     color: #C73E1D !important
 }
 
-/* @media screen and (max-width: 600px) {
-    header {
-        justify-content: center !important;
-        padding-left: 0 !important;
-    }    
-} */
+@media screen and (max-width: 600px) {
+    #loginRegister {
+        margin-top: 40%;
+    }  
+}
 
 @media screen and (max-width: 300px) {
     #loginRegister {

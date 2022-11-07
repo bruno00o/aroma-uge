@@ -111,6 +111,7 @@ nav {
                 flex-direction: column;
                 opacity: .5;
                 width: 100%;
+                transition: opacity 0.15s ease-in-out;
 
                 &.router-link-active {
                     opacity: 1;
@@ -140,6 +141,20 @@ nav {
 
                 p {
                     display: none;
+                }
+            }
+        }
+    }
+}
+
+@media all and not (pointer: coarse) {
+    nav {
+        ul {
+            li {
+                a {
+                    &:hover {
+                        opacity: .9;
+                    }
                 }
             }
         }

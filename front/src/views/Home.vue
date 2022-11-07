@@ -97,7 +97,7 @@ export default {
         border: 3px solid var(--primary);
 
         svg {
-            fill: var(--primary);
+            fill: var(--primary) !important;
             width: 80%;
             height: 80%;
         }

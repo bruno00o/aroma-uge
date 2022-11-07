@@ -4,7 +4,7 @@
             <h2>Bienvenue <br><strong>{{ firstname + " " + name }}</strong></h2>
         </div>
         <router-link to="/login">
-            <img src="../assets/images/logo.svg" alt="Logo Université Gustave Eiffel">
+            <img src="../assets/images/logo.svg" alt="Logo Université Gustave Eiffel" height="100" width="100">
             <h1>Aroma UGE</h1>
         </router-link>
     </header>
