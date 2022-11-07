@@ -124,14 +124,14 @@ router.post('/request/:id', authenticateToken, (req, res) => {
                         if (err) {
                             res.status(500).send({ error: 'Internal server error' });
                         } else {
-                            res.status(200).send({ message: 'Request sent' });
+                            res.status(200).send({ message: 'Requête envoyée' });
                         }
                     });
                 } else {
-                    res.status(400).send({ error: 'Request already sent or already friends. You can\'t send a request to yourself' });
+                    res.status(400).send({ error: 'Requête déjà envoyée ou utilisateur déjà ami. Impossible de s\'ajouter soi-même en ami.' });
                 }
             } else {
-                res.status(404).send({ error: 'User not found' });
+                res.status(404).send({ error: 'Utilisateur non trouvé' });
             }
         }
     });
@@ -195,11 +195,11 @@ router.post('/accept/:id', authenticateToken, (req, res) => {
                     if (err) {
                         res.status(500).send({ error: 'Internal server error' });
                     } else {
-                        res.status(200).send({ message: 'Request accepted' });
+                        res.status(200).send({ message: 'Requête acceptée' });
                     }
                 });
             } else {
-                res.status(404).send({ error: 'Request not found' });
+                res.status(404).send({ error: 'Requête non trouvée' });
             }
         }
     });
@@ -251,11 +251,11 @@ router.post('/decline/:id', authenticateToken, (req, res) => {
                     if (err) {
                         res.status(500).send({ error: 'Internal server error' });
                     } else {
-                        res.status(200).send({ message: 'Request declined' });
+                        res.status(200).send({ message: 'Requête déclinée' });
                     }
                 });
             } else {
-                res.status(404).send({ error: 'Request not found' });
+                res.status(404).send({ error: 'Requête non trouvée' });
             }
         }
     });
@@ -307,11 +307,11 @@ router.delete('/delete/:id', authenticateToken, (req, res) => {
                     if (err) {
                         res.status(500).send({ error: 'Internal server error' });
                     } else {
-                        res.status(200).send({ message: 'Friend deleted' });
+                        res.status(200).send({ message: 'Ami supprimé' });
                     }
                 });
             } else {
-                res.status(404).send({ error: 'Friend not found' });
+                res.status(404).send({ error: 'Ami non trouvé' });
             }
         }
     });
