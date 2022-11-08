@@ -4,10 +4,44 @@
         <section v-if="apprenticeship">
             <h3>{{ nextDay }}</h3>
             <p>{{ event }}</p>
+            <h3 v-if="event === 'Cours'" class="next-course">Prochain cours</h3>
+            <div class="course" v-if="event === 'Cours'">
+                <p>{{ new Date(course.start).toLocaleTimeString(
+                        'fr-FR', {
+                        timeZone: 'UTC',
+                        hour: '2-digit', minute: '2-digit'
+                    })
+                }} -
+                    {{ new Date(course.end).toLocaleTimeString([], {
+                            timeZone: 'UTC',
+                            hour: '2-digit', minute: '2-digit'
+                        })
+                    }}
+                </p>
+                <p><strong>{{ course.summary }}</strong></p>
+                <p>{{ course.location }}</p>
+                <p>{{ course.description }}</p>
+            </div>
         </section>
         <section v-else>
-
-
+            <h3>Prochain cours</h3>
+            <div class="course">
+                <p>{{ new Date(course.start).toLocaleTimeString(
+                        'fr-FR', {
+                        timeZone: 'UTC',
+                        hour: '2-digit', minute: '2-digit'
+                    })
+                }} -
+                    {{ new Date(course.end).toLocaleTimeString([], {
+                            timeZone: 'UTC',
+                            hour: '2-digit', minute: '2-digit'
+                        })
+                    }}
+                </p>
+                <p><strong>{{ course.summary }}</strong></p>
+                <p>{{ course.location }}</p>
+                <p>{{ course.description }}</p>
+            </div>
         </section>
 
     </main>
@@ -26,6 +60,7 @@ export default {
             apprenticeship: localStorage.getItem("apprenticeship") === "true" ? true : false,
             nextDay: '',
             event: '',
+            course: {}
         }
     },
     methods: {
@@ -49,10 +84,21 @@ export default {
                 .catch(error => {
                     console.log(error);
                 })
+        },
+        getNextClass() {
+            axios.get(`${this.$store.state.serverLocation}/students/getnextclass`,
+                { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("user")).accessToken}` } })
+                .then(response => {
+                    this.course = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                })
         }
     },
     created() {
         this.nextEvent();
+        this.getNextClass();
     }
 }
 
@@ -77,6 +123,10 @@ export default {
     p {
         font-size: 1.2em;
         color: var(--secondary);
+
+        &+.next-course {
+            margin-top: 2em;
+        }
     }
 
     section {
@@ -100,6 +150,28 @@ export default {
             fill: var(--primary) !important;
             width: 80%;
             height: 80%;
+        }
+    }
+
+    .course {
+        background-color: var(--header);
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px 0;
+
+        p {
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        p:first-child {
+            opacity: .7;
+            font-size: .9rem;
+            margin-bottom: .5em;
+        }
+
+        p:not(:last-child) {
+            margin-bottom: .5em;
         }
     }
 }

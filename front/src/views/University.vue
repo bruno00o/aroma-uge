@@ -8,6 +8,11 @@
                 Consulter mon emploi du temps
             </button>
         </section>
+        <section v-else>
+            <button @click="$router.push('/university/timetable')">
+                Consulter mon emploi du temps
+            </button>
+        </section>
     </main>
 </template>
 
