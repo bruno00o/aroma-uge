@@ -62,6 +62,7 @@ export default {
     --error: #C73E1D;
     --header: #171C8F;
     --background: #FFFCFF;
+    --highlight : #090A35;
     --header-height: 150px;
     --nav-height: 56px;
 }
@@ -102,6 +103,7 @@ main {
     :root {
         --primary: white;
         --background: #090A35;
+        --highlight: #FFFCFF;
     }
 }
 

@@ -137,7 +137,20 @@ export default {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
+        background-color: var(--header);
+        border-radius: 10px;
+        padding: 1em;
+
+        p {
+            margin: 0;
+            font-family: 'Tahoma UGE Bold', sans-serif;
+            font-weight: bold;
+            color: white;
+        }
+        
+        &:not(:last-child) {
+            margin-bottom: 1.5em;
+        }
 
         button {
             margin: 0 !important;
