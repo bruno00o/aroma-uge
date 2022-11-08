@@ -142,7 +142,7 @@ async function getTimeTable(students, username, monday = false) {
             });
         } else if (user.ALTERNANCE === 'RECHERCHE') {
             getCalendar('RECHERCHE', monday).then((calendar) => {
-                getCalendar('OPTION', monday).then((optionCalendar) => {
+                getCalendar(user.OPTION, monday).then((optionCalendar) => {
                     calendar = addCalendar(optionCalendar, calendar);
                     calendar = sortCalendar(calendar);
                     calendar = changeDateCalendar(calendar);
@@ -156,15 +156,22 @@ async function getTimeTable(students, username, monday = false) {
             });
         } else {
             getCalendar(user.GROUPE, monday).then((calendar) => {
-                getCalendar(user.OPTION, monday).then((optionCalendar) => {
-                    calendar = addCalendar(optionCalendar, calendar);
+                if (user.OPTION !== undefined && user.OPTION !== "") {
+                    getCalendar(user.OPTION, monday).then((optionCalendar) => {
+                        calendar = addCalendar(optionCalendar, calendar);
+                        calendar = sortCalendar(calendar);
+                        calendar = changeDateCalendar(calendar);
+                        calendar = deleteSameEvents(calendar);
+                        resolve(calendar);
+                    }).catch((err) => {
+                        reject(err);
+                    });
+                } else {
                     calendar = sortCalendar(calendar);
                     calendar = changeDateCalendar(calendar);
-                    calendar = deleteSameEvents(calendar);
+                    /* calendar = deleteSameEvents(calendar); */
                     resolve(calendar);
-                }).catch((err) => {
-                    reject(err);
-                });
+                }
             }).catch((err) => {
                 reject(err);
             });
