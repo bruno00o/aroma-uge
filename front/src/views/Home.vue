@@ -5,6 +5,7 @@
             <h3>{{ nextDay }}</h3>
             <p>{{ event }}</p>
             <h3 v-if="event === 'Cours'" class="next-course">Prochain cours</h3>
+            <p v-if="event === 'Cours'">{{ nexCourseDay }}</p>
             <div class="course" v-if="event === 'Cours'">
                 <p>{{ new Date(course.start).toLocaleTimeString(
                         'fr-FR', {
@@ -25,6 +26,7 @@
         </section>
         <section v-else>
             <h3>Prochain cours</h3>
+            <p>{{ nexCourseDay }}</p>
             <div class="course">
                 <p>{{ new Date(course.start).toLocaleTimeString(
                         'fr-FR', {
@@ -60,7 +62,8 @@ export default {
             apprenticeship: localStorage.getItem("apprenticeship") === "true" ? true : false,
             nextDay: '',
             event: '',
-            course: {}
+            course: {},
+            nexCourseDay: ''
         }
     },
     methods: {
@@ -90,6 +93,22 @@ export default {
                 { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("user")).accessToken}` } })
                 .then(response => {
                     this.course = response.data;
+                    let date = new Date(response.data.start);
+                    let today = new Date();
+                    let tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    if (date.getDate() == today.getDate() && date.getMonth() == today.getMonth() && date.getFullYear() == today.getFullYear()) {
+                        this.nexCourseDay = "Aujourd'hui";
+                    } else if (date.getDate() == tomorrow.getDate() && date.getMonth() == tomorrow.getMonth() && date.getFullYear() == tomorrow.getFullYear()) {
+                        this.nexCourseDay = "Demain";
+                    } else {
+                        this.nexCourseDay = "Le " + date.toLocaleDateString('fr-FR', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                    }
                 })
                 .catch(error => {
                     console.log(error);

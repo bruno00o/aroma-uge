@@ -33,7 +33,7 @@ export default {
             } else if (to.name == 'login' && from.name == 'settings') {
                 this.name = localStorage.getItem('lastName') ? localStorage.getItem('lastName') : '';
                 this.firstname = localStorage.getItem('firstName') ? localStorage.getItem('firstName') : '';
-            } 
+            }
         }
     },
 }
@@ -62,7 +62,7 @@ export default {
     --error: #C73E1D;
     --header: #171C8F;
     --background: #FFFCFF;
-    --highlight : #090A35;
+    --highlight: #090A35;
     --header-height: 150px;
     --nav-height: 56px;
 }
@@ -87,6 +87,25 @@ main {
     justify-content: center;
     gap: 20px;
     flex-direction: column;
+}
+
+span.requests-banner {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--error);
+    color: white;
+    font-size: .9rem;
+    font-family: 'Tahoma UGE Bold', sans-serif;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    vertical-align: middle;
 }
 
 @media screen and (max-width: 600px) {

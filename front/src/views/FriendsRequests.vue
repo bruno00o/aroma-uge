@@ -1,5 +1,5 @@
 <template>
-    <Nav />
+    <Nav :show="false" />
     <main id="content">
         <router-link to="/friends">
             <button id="backButton">
@@ -123,7 +123,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 h3 {
     font-size: 1.25rem !important;
 }
@@ -159,17 +158,24 @@ form {
     flex-direction: column;
     width: 100%;
     margin-bottom: 20px;
-    border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    background-color: #fff;
 
     .friend {
         width: 100%;
         display: flex;
-        flex-direction: row !important;
+        flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        background-color: var(--header);
+        border-radius: 10px;
+        padding: 1em;
+
+        p {
+            margin: 0;
+            font-family: 'Tahoma UGE Bold', sans-serif;
+            font-weight: bold;
+            color: white !important;
+        }
 
         div {
             display: flex;
@@ -187,8 +193,22 @@ form {
                 align-items: center;
                 justify-content: center;
 
+                &:hover {
+                    outline: none !important;
+                }
+
                 &:last-of-type {
                     background-color: var(--error) !important;
+
+                    @media not (pointer: coarse) {
+                        &:hover {
+                            background-color: white !important;
+                        }
+
+                        &:hover svg {
+                            fill: var(--error) !important;
+                        }
+                    }
                 }
 
                 svg {

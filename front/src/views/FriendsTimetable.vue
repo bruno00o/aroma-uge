@@ -36,15 +36,15 @@
                     <div class="courses-container">
                         <div v-for="course in timetable[day]" :key="course.id" class="course">
                             <p>{{ new Date(course.start).toLocaleTimeString('fr-FR', {
-                                    timeZone: 'UTC',
-                                    hour: '2-digit', minute:
-                                        '2-digit'
-                                })
+                            timeZone: 'UTC',
+                            hour: '2-digit', minute:
+                            '2-digit'
+                            })
                             }} -
                                 {{ new Date(course.end).toLocaleTimeString('fr-FR', {
-                                        timeZone: 'UTC',
-                                        hour: '2-digit', minute: '2-digit'
-                                    })
+                                timeZone: 'UTC',
+                                hour: '2-digit', minute: '2-digit'
+                                })
                                 }}
                             </p>
                             <p><strong>{{ course.summary }}</strong></p>
@@ -113,7 +113,15 @@ export default {
         this.weekStart = monday.toLocaleDateString('fr-FR');
         this.weekStartDate = monday;
         this.getTimetable(dateReq);
-        this.friend = this.friendId.split(".")[0].charAt(0).toUpperCase() + this.friendId.split(".")[0].slice(1);
+        axios.get(`${this.$store.state.serverLocation}/friends`,
+            { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("user")).accessToken}` } })
+            .then(response => {
+                let data = response.data;
+                this.friend = data[this.friendId]["PRENOM"].charAt(0).toUpperCase() + data[this.friendId]["PRENOM"].slice(1).toLowerCase();
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 }
 </script>

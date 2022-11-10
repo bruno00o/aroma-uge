@@ -6,6 +6,9 @@
             <p>{{ date }}</p>
             <button @click="$router.push('/apprenticeship/calendar')">Consulter le calendrier d'alternance</button>
         </section>
+        <section v-else>
+            <h3>En formation</h3>
+        </section>
     </main>
 
 </template>
@@ -20,7 +23,7 @@ export default {
     },
     data() {
         return {
-            apprenticeship: this.$store.state.apprenticeship,
+            apprenticeship: (localStorage.getItem('apprenticeship') === 'true'),
             date: ''
         }
     },
@@ -75,7 +78,7 @@ export default {
                 outline: 3px solid var(--secondary);
 
                 svg {
-                    fill: var(--secondary) !important;
+                    fill: var(--secondary);
                     stroke: var(--secondary);
                 }
             }

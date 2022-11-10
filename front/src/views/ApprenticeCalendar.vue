@@ -32,7 +32,7 @@ export default {
     },
     data() {
         return {
-            apprenticeship: this.$store.state.apprenticeship,
+            apprenticeship: (localStorage.getItem('apprenticeship') === 'true'),
             attributes: [],
             events: {},
             event: '',
