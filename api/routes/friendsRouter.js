@@ -35,7 +35,29 @@ router.get('/', authenticateToken, (req, res) => {
             let user = req.user.user;
             if (users.hasOwnProperty(user)) {
                 let friends = users[user]["friends"];
-                res.status(200).send(JSON.stringify(friends));
+                let studentsFileName = './src/students/students.json';
+                readFile(studentsFileName, (err, data) => {
+                    if (err) {
+                        res.status(500).send({ error: 'Internal server error' });
+                    } else {
+                        let students = JSON.parse(data);
+                        let friendsList = {};
+                        for (let i = 0; i < friends.length; i++) {
+                            if (students.hasOwnProperty(friends[i])) {
+                                friendsList[friends[i]] = students[friends[i]];
+                            }
+                        }
+                        let sortedFriendsList = {};
+                        let names = {};
+                        for (let key in friendsList) {
+                            names[friendsList[key]["NOM"]] = key;
+                        }
+                        Object.keys(names).sort().forEach(function (key) {
+                            sortedFriendsList[names[key]] = friendsList[names[key]];
+                        });
+                        res.status(200).send(sortedFriendsList);
+                    }
+                });
             } else {
                 res.status(404).send({ error: 'User not found' });
             }
