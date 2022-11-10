@@ -60,23 +60,32 @@ function generateRefreshToken(user) {
  */
 router.post('/', (req, res) => {
     let fileName = './src/users/users.json';
+    let user = req.body.username;
     let passHash = crypto.createHash('sha256').update(req.body.password).digest('hex');
+    /* if user contains @ */
+    if (user.includes('@')) {
+        if (user.split('@')[1] !== 'edu.univ-eiffel.fr') {
+            res.status(401).send({ error: 'Utilisateur ou mot de passe incorrect' });
+        } else {
+            user = user.split('@')[0];
+        }
+    }
     readFile(fileName, (err, data) => {
         if (err) {
             res.status(500).send({ error: 'Internal server error' });
         } else {
             let users = JSON.parse(data);
-            if (users.hasOwnProperty(req.body.username) && users[req.body.username]["password"] === passHash) {
-                const accessToken = generateAccessToken(req.body.username);
-                const refreshToken = generateRefreshToken(req.body.username);
+            if (users.hasOwnProperty(user) && users[user]["password"] === passHash) {
+                const accessToken = generateAccessToken(user);
+                const refreshToken = generateRefreshToken(user);
                 res.status(200).send({
                     accessToken: accessToken,
                     accessTokenExp: accessDurationExp,
                     refreshToken: refreshToken,
                     refreshTokenExp: refreshDurationExp,
-                    user: req.body.username,
-                    shareSchedule: users[req.body.username]["shareSchedule"],
-                    shareScheduleURL: users[req.body.username]["shareScheduleURL"]
+                    user: user,
+                    shareSchedule: users[user]["shareSchedule"],
+                    shareScheduleURL: users[user]["shareScheduleURL"]
                 });
             } else {
                 res.status(401).send({ error: 'Utilisateur ou mot de passe incorrect' });
