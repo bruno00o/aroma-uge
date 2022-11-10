@@ -3,7 +3,7 @@
     <form @submit.prevent="login">
         <div>
             <label for="username">
-                Nom d'utilisateur
+                Nom d'utilisateur <small>(prenom.nom ou email)</small>
             </label>
             <input v-model="username" type="text" name="username" id="username" value required>
         </div>
