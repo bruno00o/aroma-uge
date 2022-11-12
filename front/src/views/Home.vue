@@ -5,7 +5,6 @@
             <h3>{{ nextDay }}</h3>
             <p>{{ event }}</p>
             <h3 v-if="event === 'Cours'" class="next-course">Prochain cours</h3>
-            <p v-if="event === 'Cours'">{{ nexCourseDay }}</p>
             <div class="course" v-if="event === 'Cours'">
                 <p>{{ new Date(course.start).toLocaleTimeString(
                         'fr-FR', {
@@ -200,6 +199,7 @@ export default {
         width: 100%;
         max-height: calc(100vh - var(--header-height) - var(--nav-height));
         overflow-y: auto;
+        padding: 1em 1.5em;
         padding-top: 2em;
     }
 }

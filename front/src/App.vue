@@ -33,6 +33,12 @@ export default {
             } else if (to.name == 'login' && from.name == 'settings') {
                 this.name = localStorage.getItem('lastName') ? localStorage.getItem('lastName') : '';
                 this.firstname = localStorage.getItem('firstName') ? localStorage.getItem('firstName') : '';
+            } else if (to.name !== 'home') {
+                this.name = '';
+                this.firstname = '';
+            } else if (to.name == 'home') {
+                this.name = localStorage.getItem('lastName') ? localStorage.getItem('lastName') : '';
+                this.firstname = localStorage.getItem('firstName') ? localStorage.getItem('firstName') : '';
             }
         }
     },
@@ -110,7 +116,7 @@ span.requests-banner {
 
 @media screen and (max-width: 600px) {
     :root {
-        --header-height: 100px;
+        --header-height: 85px;
     }
 
     main {

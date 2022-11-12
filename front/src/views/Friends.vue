@@ -5,6 +5,7 @@
             <h3>Mes Amis</h3>
             <button id="requests" @click="goToRequests" aria-label="Voir les demandes d'amis">
                 <span v-if="requests.length > 0" class="requests-banner">{{ requests.length }}</span>
+                <p>Requêtes d'amis</p>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                     <path
                         d="M352 128c0 70.7-57.3 128-128 128s-128-57.3-128-128S153.3 0 224 0s128 57.3 128 128zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3zM504 312V248H440c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V136c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H552v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z" />
@@ -14,7 +15,7 @@
         <div id="friends">
             <div v-if="friends.length > 0" id="friends-container">
                 <div v-for="friend in friends" class="friend">
-                    <p>{{ friend }}</p>
+                    <p @click="open = true, friendToDelete = friend">{{ friend }}</p>
                     <div>
                         <button aria-label="Voir le planning de {{ friend }}"
                             @click="this.$router.push(`/friends/timetable/${friendsUsername[friend]}`)">
@@ -31,6 +32,21 @@
             </div>
         </div>
     </main>
+    <Teleport to="#app">
+        <div v-if="open" class="modal">
+            <p>Voulez-vous supprimer {{ friendToDelete }} de vos amis ?</p>
+            <small>Vous serez également supprimé de ces amis.</small>
+            <div>
+                <button @click="open = false"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                        <path
+                            d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z" />
+                    </svg></button>
+                <button @click="deleteFriend(friendToDelete)">Supprimer</button>
+                <button @click="open = false">Annuler</button>
+            </div>
+        </div>
+        <div v-if="open" class="modal-bg" @click="open = false"></div>
+    </Teleport>
 </template>
 
 <script>
@@ -45,7 +61,9 @@ export default {
         return {
             friends: [],
             friendsUsername: {},
-            requests: []
+            requests: [],
+            open: false,
+            friendToDelete: ""
         }
     },
     methods: {
@@ -78,7 +96,18 @@ export default {
         },
         goToRequests() {
             this.$router.push("/friends/requests");
-        }
+        },
+        deleteFriend(friend) {
+            axios.delete(`${this.$store.state.serverLocation}/friends/delete/${this.friendsUsername[friend]}`,
+                { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("user")).accessToken}` } })
+                .then(response => {
+                    this.friends.splice(this.friends.indexOf(friend), 1);
+                    this.open = false;
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        },
     },
     created() {
         this.getFriends();
@@ -104,10 +133,20 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 40px;
-        height: 40px;
+        gap: 10px;
         border: none;
         cursor: pointer;
+        padding: .3em .75em;
+
+        p {
+            color: white;
+            font-size: 1rem;
+
+        }
+
+        &:hover p {
+            color: var(--secondary) !important;
+        }
 
         svg {
             width: 25px;
@@ -135,6 +174,7 @@ export default {
             font-family: 'Tahoma UGE Bold', sans-serif;
             font-weight: bold;
             color: white;
+            cursor: pointer;
         }
 
         &:not(:last-child) {
@@ -161,6 +201,100 @@ export default {
 
 }
 
+.modal {
+    position: absolute;
+    z-index: 100;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--header);
+    border-radius: 10px;
+    padding: 2.5em 1em 1em 1em;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+
+    button {
+        background-color: white;
+        border: none;
+        cursor: pointer;
+        padding: .2em .5em;
+        width: 100px;
+        border-radius: 10px;
+
+        &:nth-of-type(2) {
+            margin-right: 2em;
+            color: var(--error);
+            font-family: 'Tahoma UGE Bold', sans-serif;
+            font-weight: bold;
+            border: 2px solid var(--error);
+
+            &:hover {
+                background-color: var(--error) !important;
+                color: white;
+            }
+        }
+
+        &:nth-of-type(3) {
+            color: var(--secondary);
+            font-family: 'Tahoma UGE Bold', sans-serif;
+            font-weight: bold;
+            border: 2px solid var(--secondary);
+
+            &:hover {
+                background-color: var(--secondary) !important;
+                color: white;
+            }
+        }
+
+        &:first-of-type {
+            position: absolute;
+            top: .5em;
+            right: .5em;
+            border: none;
+            background-color: transparent;
+            outline: none;
+            cursor: pointer;
+            width: unset;
+
+            svg {
+                width: 25px;
+                height: 25px;
+                fill: white
+            }
+
+            &:hover {
+                background-color: transparent !important;
+
+                svg {
+                    fill: var(--error) !important;
+                }
+            }
+        }
+    }
+
+    p, small {
+        font-family: 'Tahoma UGE Bold', sans-serif;
+        font-weight: bold;
+        color: white;
+        text-align: center;
+    }
+}
+
+.modal-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 2;
+}
+
 @media not (pointer: coarse) {
     button:hover {
         background-color: white !important;
@@ -169,5 +303,32 @@ export default {
     button:hover svg {
         fill: var(--secondary) !important;
     }
+}
+
+@media screen and (max-width: 600px) {
+
+    #friends-header {
+        #requests {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+
+            p {
+                display: none;
+            }
+        }
+    }
+
+    #friends {
+        .friend {
+            padding: .5em .75em;
+            font-size: .9rem;
+
+            &:not(:last-child) {
+                margin-bottom: 1em;
+            }
+        }
+    }
+
 }
 </style>

@@ -77,14 +77,19 @@ header {
 
         div {
             position: absolute;
-            left: 20px;
+            left: 1.5em;
         }
 
         img {
-            width: 80px;
+            width: 50px;
+            height: 50px;
         }
 
         h1 {
+            font-size: 1.5rem;
+        }
+
+        h2 {
             font-size: 1.5rem;
         }
 
