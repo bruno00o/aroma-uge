@@ -80,8 +80,7 @@ function dateFormat(strDate) {
     let hour = time.substring(0, 2);
     let minute = time.substring(2, 4);
     let seconds = time.substring(4, 6);
-    let newDate = new Date(year, month - 1, day, hour, minute, seconds);
-    newDate.setHours(newDate.getHours() + 2);
+    let newDate = new Date(Date.UTC(year, month - 1, day, hour, minute, seconds));
     return newDate;
 }
 

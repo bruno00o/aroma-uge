@@ -991,9 +991,9 @@
                         <ul>
                             <% calendar[day].forEach(function(event) { %>
                                 <li class="cd-schedule__event">
-                                    <% let start=new Date(event.start).toLocaleTimeString([], {hour: '2-digit' ,
+                                    <% let start=new Date(event.start).toLocaleTimeString('fr-FR', {timeZone:'CET', hour: '2-digit' ,
                                         minute:'2-digit'}); %>
-                                    <% let end=new Date(event.end).toLocaleTimeString([], {hour: '2-digit' ,
+                                    <% let end=new Date(event.end).toLocaleTimeString('fr-FR', {timeZone:'CET', hour: '2-digit' ,
                                         minute:'2-digit'}); %>
                                     <% let dataEvent = "event-autre"; %>
                                     <% if (event.summary.split(" ").includes("CM") || event.summary.split(" ").includes("Cours")) { %>
