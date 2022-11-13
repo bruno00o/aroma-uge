@@ -8,12 +8,12 @@
             <div class="course" v-if="event === 'Cours'">
                 <p>{{ new Date(course.start).toLocaleTimeString(
                         'fr-FR', {
-                        timeZone: 'UTC',
+                        timeZone: 'CET',
                         hour: '2-digit', minute: '2-digit'
                     })
                 }} -
                     {{ new Date(course.end).toLocaleTimeString([], {
-                            timeZone: 'UTC',
+                            timeZone: 'CET',
                             hour: '2-digit', minute: '2-digit'
                         })
                     }}
@@ -29,12 +29,12 @@
             <div class="course">
                 <p>{{ new Date(course.start).toLocaleTimeString(
                         'fr-FR', {
-                        timeZone: 'UTC',
+                        timeZone: 'CET',
                         hour: '2-digit', minute: '2-digit'
                     })
                 }} -
                     {{ new Date(course.end).toLocaleTimeString([], {
-                            timeZone: 'UTC',
+                            timeZone: 'CET',
                             hour: '2-digit', minute: '2-digit'
                         })
                     }}

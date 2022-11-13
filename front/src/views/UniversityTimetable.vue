@@ -37,12 +37,12 @@
                         <div v-for="course in timetable[day]" :key="course.id" class="course">
                             <p>{{ new Date(course.start).toLocaleTimeString(
                                     'fr-FR', {
-                                    timeZone: 'UTC',
+                                    timeZone: 'CET',
                                     hour: '2-digit', minute: '2-digit'
                                 })
                             }} -
                                 {{ new Date(course.end).toLocaleTimeString([], {
-                                        timeZone: 'UTC',
+                                        timeZone: 'CET',
                                         hour: '2-digit', minute: '2-digit'
                                     })
                                 }}
