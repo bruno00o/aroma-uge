@@ -12,7 +12,7 @@
                         hour: '2-digit', minute: '2-digit'
                     })
                 }} -
-                    {{ new Date(course.end).toLocaleTimeString([], {
+                    {{ new Date(course.end).toLocaleTimeString('fr-FR', {
                             timeZone: 'CET',
                             hour: '2-digit', minute: '2-digit'
                         })
@@ -33,7 +33,7 @@
                         hour: '2-digit', minute: '2-digit'
                     })
                 }} -
-                    {{ new Date(course.end).toLocaleTimeString([], {
+                    {{ new Date(course.end).toLocaleTimeString('fr-FR', {
                             timeZone: 'CET',
                             hour: '2-digit', minute: '2-digit'
                         })

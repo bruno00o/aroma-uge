@@ -33,18 +33,30 @@ export default {
     data() {
         return {
             apprenticeship: (localStorage.getItem('apprenticeship') === 'true'),
-            attributes: [],
+            date: new Date(),
+            attributes: [
+                {
+                    key: 'today',
+                    highlight: {
+                        color: 'orange',
+                        fillMode: 'solid',
+                    },
+                    dates: new Date(),
+                }
+            ],
             events: {},
             event: '',
-            date: '',
+            colors: { "Cours": "blue", "Entreprise": "green", "Férié": "red" },
             selectedAttributes: {
-                dot: true
-            }
+                highlight: {
+                    fillMode: 'outline',
+                }
+            },
         }
     },
     methods: {
         getEvents() {
-            const colors = { "Cours": "blue", "Entreprise": "green", "Férié": "red" };
+            let today = new Date();
             axios.get(`${this.$store.state.serverLocation}/calendar/apprenticeship`,
                 { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("user")).accessToken}` } })
                 .then(response => {
@@ -54,31 +66,52 @@ export default {
                         if (event === 'F') {
                             event = 'Férié';
                         }
-                        this.attributes.push({
-                            key: event,
-                            highlight: colors[event],
-                            dates: date,
-                        });
+                        if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
+                            let todayAttribute = this.attributes.find(attribute => attribute.key === "today");
+                            if (todayAttribute) {
+                                todayAttribute.highlight.color = this.colors[event];
+                                todayAttribute.key = event;
+                            }
+                        } else {
+                            this.attributes.push({
+                                key: event,
+                                highlight: {
+                                    color: this.colors[event],
+                                    fillMode: 'light'
+                                },
+                                dates: date,
+                            });
+                        }
                         this.events[key] = event;
                     }
                 })
                 .catch(error => {
                     console.log(error);
                 })
+        },
+        displayEvent() {
+            if (this.date && this.date instanceof Date) {
+                this.date = this.date.toLocaleDateString('fr-FR');
+                if (this.events[this.date]) {
+                    this.event = this.events[this.date];
+                    let color = this.colors[this.event];
+                    this.selectedAttributes.highlight.color = color;
+                    /* fake click outside of window */
+                    setTimeout(() => {
+                        document.getElementById("content").click();
+                    }, 100);
+                } else {
+                    this.event = "Aucun événement";
+                }
+            }
         }
     },
     created() {
         this.getEvents();
+        this.displayEvent();
     },
     updated() {
-        if (this.date && this.date instanceof Date) {
-            this.date = this.date.toLocaleDateString('fr-FR');
-            if (this.events[this.date]) {
-                this.event = this.events[this.date];
-            } else {
-                this.event = "Aucun événement";
-            }
-        }
+        this.displayEvent();
     }
 }
 </script>
