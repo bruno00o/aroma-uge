@@ -7,6 +7,9 @@ function getMaxId(todo) {
     let todoActive = todo.active;
     let todoDone = todo.done;
     let ids = Object.keys(todoActive).concat(Object.keys(todoDone));
+    if (ids.length === 0) {
+        return 0;
+    }
     return Math.max(...ids);
 }
 
