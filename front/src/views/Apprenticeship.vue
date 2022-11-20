@@ -5,6 +5,8 @@
             <h3>En entreprise</h3>
             <p>{{ date }}</p>
             <button @click="$router.push('/apprenticeship/calendar')">Consulter le calendrier d'alternance</button>
+            <hr>
+            <ToDo location="apprenticeship" name="apprentissage"/>
         </section>
         <section v-else>
             <h3>En formation</h3>
@@ -16,10 +18,13 @@
 <script>
 import axios from "axios";
 import Nav from "../components/Nav.vue";
+import ToDo from "../components/ToDo.vue";
+
 export default {
     name: "Apprenticeship",
     components: {
-        Nav
+        Nav,
+        ToDo
     },
     data() {
         return {
@@ -54,7 +59,7 @@ export default {
 <style lang="scss">
 #content {
     button {
-        margin-top: 20px;
+        margin: 20px 0;
         padding: 10px 20px;
         border: none;
         border-radius: 20pt;
@@ -91,6 +96,7 @@ export default {
         button {
             width: 100%;
             font-size: .95em;
+            padding: 10px 0;
         }
     }
 }

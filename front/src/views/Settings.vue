@@ -8,12 +8,29 @@
                 <div id="share-toggle"></div>
             </label>
         </form>
-        <p class="info">Vous pouvez partager votre emploi du temps avec vos proches en activant l'option ci-dessous. Celui-ci sera visible par quiconque disposant du lien.</p>
+        <p class="info">Vous pouvez partager votre emploi du temps avec vos proches en activant l'option ci-dessous.
+            Celui-ci sera visible par quiconque disposant du lien.</p>
         <a :href="shareUrl" v-if="share" target="_blank" id="share-url">
             <button>
                 Lien de partage de l'emploi du temps
             </button>
         </a>
+
+        <h3>Installer Aroma UGE</h3>
+        <p class="info">
+            Cette application est une PWA (Progressive Web App). Vous pouvez donc l'installer sur votre appareil en l'ajoutant à l'écran d'accueil.
+        </p>
+
+        <h3>Informations</h3>
+        <p class="info">
+            Cette application est en cours de développement. Si vous rencontrez des problèmes, n'hésitez pas
+            à nous contacter : <a href="mailto:support@aroma-uge.tech">support@aroma-uge.tech</a>
+        </p>
+
+        <p class="info">
+            Vous pouvez utilisez l'API de l'application pour développer votre propre application. Pour plus d'informations, rendez-vous sur <a href="https://api.aroma-uge.tech" target="_blank">api.aroma-uge.tech</a>
+        </p>
+
         <h3>Déconnexion</h3>
         <button @click="logout" id="logout">
             Se déconnecter
@@ -60,6 +77,10 @@ export default {
     color: var(--primary) !important;
     font-size: 1rem !important;
     margin-bottom: .5em;
+
+    a {
+        color: var(--primary) !important;
+    }
 }
 
 #share-url {
@@ -67,9 +88,11 @@ export default {
     display: flex;
     justify-content: center;
     text-decoration: none;
+
     button {
         font-size: 1rem;
         margin-top: 0;
+        margin-bottom: 0;
     }
 }
 
@@ -78,7 +101,7 @@ button#logout {
 }
 
 h3:not(:first-child) {
-    margin-top: 2rem;
+    margin-top: 1rem;
 }
 
 #share-schedule {
@@ -116,6 +139,7 @@ h3:not(:first-child) {
         border-radius: 100px;
         position: relative;
         transition: background-color .4s;
+
         &:after {
             content: '';
             position: absolute;
@@ -129,8 +153,9 @@ h3:not(:first-child) {
         }
     }
 
-    input:checked + #share-label #share-toggle {
+    input:checked+#share-label #share-toggle {
         background: var(--secondary);
+
         &:after {
             left: calc(100% - 3px);
             transform: translateX(-100%);
@@ -146,6 +171,7 @@ h3:not(:first-child) {
             width: 100%;
         }
     }
+
     #share-schedule {
         gap: 1em;
         justify-content: space-between;

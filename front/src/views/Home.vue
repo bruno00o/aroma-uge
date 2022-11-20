@@ -4,6 +4,7 @@
         <section v-if="apprenticeship">
             <h3>{{ nextDay }}</h3>
             <p>{{ event }}</p>
+            <hr v-if="event === 'Cours'">
             <h3 v-if="event === 'Cours'" class="next-course">Prochain cours</h3>
             <div class="course" v-if="event === 'Cours'">
                 <p>{{ new Date(course.start).toLocaleTimeString(
@@ -22,6 +23,9 @@
                 <p>{{ course.location }}</p>
                 <p>{{ course.description }}</p>
             </div>
+            <hr>
+            <ToDo location="apprenticeship" name="apprentissage" v-if="event === 'Entreprise'" />
+            <ToDo location="university" name="université" v-if="event === 'Cours'" />
         </section>
         <section v-else>
             <h3>Prochain cours</h3>
@@ -50,11 +54,13 @@
 
 <script>
 import Nav from "../components/Nav.vue";
+import ToDo from "../components/ToDo.vue";
 import axios from "axios";
 export default {
     name: "Home",
     components: {
-        Nav
+        Nav,
+        ToDo
     },
     data() {
         return {
@@ -192,6 +198,12 @@ export default {
             margin-bottom: .5em;
         }
     }
+
+    hr {
+        width: 100%;
+        border: 1px solid var(--primary);
+        margin: 1.5em 0;
+    }
 }
 
 @media screen and (max-width: 600px) {
@@ -200,7 +212,7 @@ export default {
         max-height: calc(100vh - var(--header-height) - var(--nav-height));
         overflow-y: auto;
         padding: 1em 1.5em;
-        padding-top: 2em;
+        padding-top: 1em;
     }
 }
 </style>

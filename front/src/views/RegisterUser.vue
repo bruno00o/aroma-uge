@@ -5,7 +5,7 @@
             <label for="email">
                 Adresse email universitaire
             </label>
-            <input v-model="email" type="text" name="email" id="email" value required>
+            <input v-model="email" type="text" name="email" id="email" value required spellcheck="false">
         </div>
 
         <div>

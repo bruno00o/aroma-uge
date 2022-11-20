@@ -7,11 +7,15 @@
             <button @click="$router.push('/university/timetable')">
                 Consulter mon emploi du temps
             </button>
+            <hr>
+            <ToDo location="university" name="université"/>
         </section>
         <section v-else>
             <button @click="$router.push('/university/timetable')">
                 Consulter mon emploi du temps
             </button>
+            <hr>
+            <ToDo location="university" name="université"/>
         </section>
     </main>
 </template>
@@ -19,10 +23,13 @@
 <script>
 import axios from "axios";
 import Nav from "../components/Nav.vue";
+import ToDo from "../components/ToDo.vue";
+
 export default {
     name: "University",
     components: {
-        Nav
+        Nav,
+        ToDo
     },
     data() {
         return {

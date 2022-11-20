@@ -9,7 +9,7 @@
         <router-link :to="{ name: 'register' }">
             Inscription
         </router-link>
-    </div>    
+    </div>
 </template>
 
 <script>
@@ -151,10 +151,20 @@ button[type="submit"]+div {
     color: #C73E1D !important
 }
 
+#credits {
+    position: absolute;
+    bottom: 2em;
+    color: var(--primary);
+
+    .heart {
+        color: var(--error);
+    }
+}
+
 @media screen and (max-width: 600px) {
     #loginRegister {
-        margin-top: 40%;
-    }  
+        margin-top: 10vh;
+    }
 }
 
 @media screen and (max-width: 300px) {
