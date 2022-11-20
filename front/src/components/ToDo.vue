@@ -2,7 +2,7 @@
     <div class="todo-wrapper">
         <div class="todo-header">
             <h3>Rappels {{ name }}</h3>
-            <button @click="open = true" class="add-todo">
+            <button @click="open = true" class="add-todo" aria-label="Ajouter un rappel">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                     <path
                         d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
@@ -23,7 +23,7 @@
                             {{ todo }}
                         </div>
                     </label>
-                    <button @click="deleteTodoItem(todo)" class="delete-todo">
+                    <button @click="deleteTodoItem(todo)" class="delete-todo" aria-label="Supprimer le rappel">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                             <path
                                 d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z" />
@@ -45,7 +45,7 @@
                 <input type="text" v-model="todoText" placeholder="Nouveau rappel">
                 <div>
                     <button type="button" @click="open = false"><svg xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 320 512">
+                            viewBox="0 0 320 512" aria-label="Fermer popup">
                             <path
                                 d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z" />
                         </svg></button>
@@ -296,6 +296,10 @@ export default {
                         fill: #fff;
                     }
                 }
+
+                &:last-of-type {
+                    margin-bottom: 1em;
+                }
             }
         }
     }
@@ -317,14 +321,21 @@ export default {
     justify-content: center;
     align-items: center;
     gap: 1em;
+    color: white;
+
+    p {
+        font-family: 'Tahoma UGE Bold', sans-serif;
+    }
 
     form {
         height: unset;
-        width: unset;
+        width: 100%;
         min-height: unset;
 
         div {
-            display: unset;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
         }
 
         input {
@@ -334,75 +345,78 @@ export default {
             border-radius: 10px;
             padding: 0 1em;
             outline: none;
-        }
-    }
-
-    button {
-        background-color: white;
-        border: none;
-        cursor: pointer;
-        padding: .2em .5em;
-        width: 100px;
-        border-radius: 10px;
-
-        &:nth-of-type(2) {
-            margin-right: 2em;
-            color: var(--error);
-            font-family: 'Tahoma UGE Bold', sans-serif;
-            font-weight: bold;
-            border: 2px solid var(--error);
-
-            &:hover {
-                background-color: var(--error) !important;
-                color: white;
-            }
+            font-size: 16px;
         }
 
-        &:nth-of-type(3) {
-            color: var(--secondary);
-            font-family: 'Tahoma UGE Bold', sans-serif;
-            font-weight: bold;
-            border: 2px solid var(--secondary);
-
-            &:hover {
-                background-color: var(--secondary) !important;
-                color: white;
-            }
-        }
-
-        &:first-of-type {
-            position: absolute;
-            top: .5em;
-            right: .5em;
+        button {
+            background-color: white;
             border: none;
-            background-color: transparent;
-            outline: none;
             cursor: pointer;
-            width: unset;
+            padding: .2em .5em;
+            width: 100px;
+            border-radius: 10px;
+            font-size: small;
 
-            svg {
-                width: 25px;
-                height: 25px;
-                fill: white
+            &:nth-of-type(2) {
+                margin-right: 2em;
+                color: var(--error);
+                font-family: 'Tahoma UGE Bold', sans-serif;
+                font-weight: bold;
+                border: 2px solid var(--error);
+
+                &:hover {
+                    background-color: var(--error) !important;
+                    color: white;
+                }
             }
 
-            &:hover {
-                background-color: transparent !important;
+            &:nth-of-type(3) {
+                color: var(--secondary);
+                font-family: 'Tahoma UGE Bold', sans-serif;
+                font-weight: bold;
+                border: 2px solid var(--secondary);
+
+                &:hover {
+                    background-color: var(--secondary) !important;
+                    color: white;
+                }
+            }
+
+            &:first-of-type {
+                position: absolute;
+                top: .5em;
+                right: .5em;
+                border: none;
+                background-color: transparent;
+                outline: none;
+                cursor: pointer;
+                width: unset;
 
                 svg {
-                    fill: var(--error) !important;
+                    width: 25px;
+                    height: 25px;
+                    fill: white
+                }
+
+                &:hover {
+                    background-color: transparent !important;
+
+                    svg {
+                        fill: var(--error) !important;
+                    }
                 }
             }
         }
+
+        p,
+        small {
+            font-family: 'Tahoma UGE Bold', sans-serif;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+        }
     }
 
-    p,
-    small {
-        font-family: 'Tahoma UGE Bold', sans-serif;
-        font-weight: bold;
-        color: white;
-        text-align: center;
-    }
 }
 
 .modal-bg {

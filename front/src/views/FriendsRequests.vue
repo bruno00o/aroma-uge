@@ -118,6 +118,8 @@ export default {
     },
     created() {
         this.getRequests();
+        let input = document.querySelector("form");
+        console.log(input);
     }
 }
 </script>

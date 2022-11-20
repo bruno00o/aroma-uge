@@ -98,6 +98,7 @@ export default {
 
 button#logout {
     margin-top: 0;
+    margin-bottom: 4em;
 }
 
 h3:not(:first-child) {

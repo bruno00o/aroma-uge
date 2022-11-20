@@ -150,6 +150,7 @@ export default {
         width: 100%;
         margin: 0;
         transition: all 0.2s ease-in-out;
+        padding: .5em 1em;
 
         /* &:hover {
             background-color: white;
