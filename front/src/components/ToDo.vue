@@ -236,6 +236,7 @@ export default {
                         border: 2px solid white;
                         background-color: transparent;
                         cursor: pointer;
+                        color: white;
                     }
 
                     &+svg {
@@ -246,6 +247,7 @@ export default {
                         position: absolute;
                         left: 19.5px;
                         pointer-events: none;
+                        color: white;
                     }
 
                     &:checked {
@@ -276,6 +278,7 @@ export default {
                     -moz-user-select: none;
                     -webkit-user-select: none;
                     cursor: pointer;
+                    color: white;
                 }
 
                 .delete-todo {
