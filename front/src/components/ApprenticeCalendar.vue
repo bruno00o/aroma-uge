@@ -83,6 +83,14 @@ export default {
                         }
                         this.events[key] = event;
                     }
+                    let res = this.displayEvent();
+                    if (res) {
+                        this.date = res.date;
+                        this.event = res.event;
+                        if (res.color) {
+                            this.selectedAttributes.highlight.color = res.color;
+                        }
+                    }
                 })
                 .catch(error => {
                     console.log(error);
@@ -95,19 +103,19 @@ export default {
                     this.event = this.events[this.date];
                     let color = this.colors[this.event];
                     this.selectedAttributes.highlight.color = color;
-                    /* fake click outside of window */
-                    setTimeout(() => {
-                        document.getElementById("content").click();
-                    }, 100);
                 } else {
                     this.event = "Aucun événement";
+                }
+                return {
+                    date: this.date,
+                    event: this.event,
+                    color: this.selectedAttributes.highlight.color
                 }
             }
         }
     },
     created() {
         this.getEvents();
-        this.displayEvent();
     },
     updated() {
         this.displayEvent();

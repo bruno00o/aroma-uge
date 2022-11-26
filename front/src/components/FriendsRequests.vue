@@ -1,5 +1,4 @@
 <template>
-    <Nav :show="false" />
     <main id="content">
         <router-link to="/friends">
             <button id="backButton">
@@ -55,12 +54,8 @@
 
 <script>
 import axios from "axios";
-import Nav from "../components/Nav.vue";
 export default {
     name: "FriendsRequests",
-    components: {
-        Nav
-    },
     data() {
         return {
             requests: [],

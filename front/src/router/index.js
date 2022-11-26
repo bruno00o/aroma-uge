@@ -7,12 +7,14 @@ import ForgotPass from '../views/ForgotPass.vue'
 import Apprenticeship from '../views/Apprenticeship.vue'
 import ApprenticeMain from '../components/ApprenticeMain.vue'
 import University from '../views/University.vue'
+import UniversityMain from '../components/UniversityMain.vue'
 import Friends from '../views/Friends.vue'
+import FriendsMain from '../components/FriendsMain.vue'
 import Settings from '../views/Settings.vue'
-import FriendsRequests from '../views/FriendsRequests.vue'
+import FriendsRequests from '../components/FriendsRequests.vue'
 import ApprenticeCalendar from '../components/ApprenticeCalendar.vue'
-import UniversityTimetable from '../views/UniversityTimetable.vue'
-import FriendsTimetable from '../views/FriendsTimetable.vue'
+import UniversityTimetable from '../components/UniversityTimetable.vue'
+import FriendsTimetable from '../components/FriendsTimetable.vue'
 
 const serverLocation = "https://api.aroma-uge.tech";
 
@@ -78,7 +80,25 @@ const routes = [
         component: University,
         meta: {
             requiresAuth: true,
-        }
+        },
+        children: [
+            {
+                path: '',
+                name: 'universityMain',
+                component: UniversityMain,
+                meta: {
+                    requiresAuth: true,
+                }
+            },
+            {
+                path: 'timetable',
+                name: 'universityTimetable',
+                component: UniversityTimetable,
+                meta: {
+                    requiresAuth: true,
+                }
+            }
+        ]
     },
     {
         path: '/friends',
@@ -86,7 +106,33 @@ const routes = [
         component: Friends,
         meta: {
             requiresAuth: true,
-        }
+        },
+        children: [
+            {
+                path: '',
+                name: 'friendsMain',
+                component: FriendsMain,
+                meta: {
+                    requiresAuth: true,
+                }
+            },
+            {
+                path: 'requests',
+                name: 'friendsRequests',
+                component: FriendsRequests,
+                meta: {
+                    requiresAuth: true,
+                }
+            },
+            {
+                path: 'timetable/:id',
+                name: 'friendsTimetable',
+                component: FriendsTimetable,
+                meta: {
+                    requiresAuth: true,
+                }
+            }
+        ]
     },
     {
         path: '/settings',
@@ -96,30 +142,6 @@ const routes = [
             requiresAuth: true,
         }
     },
-    {
-        path: '/friends/requests',
-        name: 'friendsRequests',
-        component: FriendsRequests,
-        meta: {
-            requiresAuth: true,
-        }
-    },
-    {
-        path: '/university/timetable',
-        name: 'universityTimetable',
-        component: UniversityTimetable,
-        meta: {
-            requiresAuth: true,
-        }
-    },
-    {
-        path: '/friends/timetable/:id',
-        name: 'friendsTimetable',
-        component: FriendsTimetable,
-        meta: {
-            requiresAuth: true,
-        }
-    }
 ]
 
 const router = createRouter({
