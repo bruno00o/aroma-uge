@@ -1,5 +1,4 @@
 <template>
-    <Nav />
     <main id="content" v-if="apprenticeship">
         <router-link to="/apprenticeship">
             <button id="backButton">
@@ -19,7 +18,7 @@
 </template>
 
 <script>
-import Nav from "../components/Nav.vue";
+import Nav from "./Nav.vue";
 import 'v-calendar/dist/style.css';
 import { DatePicker } from 'v-calendar';
 import axios from "axios";

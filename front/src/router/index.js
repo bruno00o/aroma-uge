@@ -5,11 +5,12 @@ import RegisterUser from '../views/RegisterUser.vue'
 import LoginUser from '../views/LoginUser.vue'
 import ForgotPass from '../views/ForgotPass.vue'
 import Apprenticeship from '../views/Apprenticeship.vue'
+import ApprenticeMain from '../components/ApprenticeMain.vue'
 import University from '../views/University.vue'
 import Friends from '../views/Friends.vue'
 import Settings from '../views/Settings.vue'
 import FriendsRequests from '../views/FriendsRequests.vue'
-import ApprenticeCalendar from '../views/ApprenticeCalendar.vue'
+import ApprenticeCalendar from '../components/ApprenticeCalendar.vue'
 import UniversityTimetable from '../views/UniversityTimetable.vue'
 import FriendsTimetable from '../views/FriendsTimetable.vue'
 
@@ -51,7 +52,25 @@ const routes = [
         component: Apprenticeship,
         meta: {
             requiresAuth: true,
-        }
+        },
+        children: [
+            {
+                path: '',
+                name: 'apprenticeMain',
+                component: ApprenticeMain,
+                meta: {
+                    requiresAuth: true,
+                }
+            },
+            {
+                path: 'calendar',
+                name: 'apprenticeCalendar',
+                component: ApprenticeCalendar,
+                meta: {
+                    requiresAuth: true,
+                }
+            }
+        ]
     },
     {
         path: '/university',
@@ -81,14 +100,6 @@ const routes = [
         path: '/friends/requests',
         name: 'friendsRequests',
         component: FriendsRequests,
-        meta: {
-            requiresAuth: true,
-        }
-    },
-    {
-        path: '/apprenticeship/calendar',
-        name: 'apprenticeCalendar',
-        component: ApprenticeCalendar,
         meta: {
             requiresAuth: true,
         }

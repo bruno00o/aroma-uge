@@ -77,7 +77,6 @@ export default {
                     this.requests = response.data;
                 })
                 .catch(error => {
-                    console.log(error);
                 })
         },
         addFriend() {
@@ -118,8 +117,6 @@ export default {
     },
     created() {
         this.getRequests();
-        let input = document.querySelector("form");
-        console.log(input);
     }
 }
 </script>

@@ -205,7 +205,7 @@ export default {
         .todo-list {
             display: flex;
             flex-direction: column;
-            margin-top: 1em;
+            margin-top: 1.5em;
             gap: .75em;
 
             .todo-item {
@@ -279,6 +279,8 @@ export default {
                     -webkit-user-select: none;
                     cursor: pointer;
                     color: white;
+                    max-width: 85%;
+                    word-break: break-word;
                 }
 
                 .delete-todo {
@@ -292,11 +294,21 @@ export default {
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                    background-color: var(--error) !important;
 
                     svg {
                         width: 80%;
                         height: 80%;
                         fill: #fff;
+                    }
+
+                    &:hover {
+                        outline: 0px !important;
+                        background-color: white !important;
+
+                        svg {
+                            fill: var(--error) !important;
+                        }
                     }
                 }
 

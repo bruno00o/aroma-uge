@@ -125,6 +125,10 @@ export default {
     width: 100%;
     margin-bottom: 20px;
 
+    h3 {
+        margin-bottom: 0;
+    }
+
     #requests {
         position: relative;
         padding: 0;

@@ -203,6 +203,9 @@ export default {
         width: 100%;
         border: 1px solid var(--primary);
         margin: 1.5em 0;
+        background-color: var(--primary);
+        /* max-width: 600px;
+        align-self: center; */
     }
 }
 
