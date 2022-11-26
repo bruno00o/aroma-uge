@@ -126,7 +126,7 @@ router.post('/apprenticeship/add/', authenticateToken, (req, res) => {
 
 /**
  * @swagger
- * /apprenticeship/todone/{id}:
+ * /todo/apprenticeship/todone/{id}:
  *  post:
  *     security:
  *        - accessToken: []
@@ -185,7 +185,7 @@ router.post('/apprenticeship/todone/:id/', authenticateToken, (req, res) => {
 
 /**
  * @swagger
- * /apprenticeship/toactive/{id}:
+ * /todo/apprenticeship/toactive/{id}:
  *  post:
  *     security:
  *        - accessToken: []
@@ -244,7 +244,7 @@ router.post('/apprenticeship/toactive/:id/', authenticateToken, (req, res) => {
 
 /**
  * @swagger
- * /apprenticeship/delete/{id}:
+ * /todo/apprenticeship/delete/{id}:
  *  delete:
  *     security:
  *        - accessToken: []
@@ -417,7 +417,7 @@ router.post('/university/add/', authenticateToken, (req, res) => {
 
 /**
  * @swagger
- * /university/todone/{id}:
+ * /todo/university/todone/{id}:
  *  post:
  *     security:
  *        - accessToken: []
@@ -476,7 +476,7 @@ router.post('/university/todone/:id/', authenticateToken, (req, res) => {
 
 /**
  * @swagger
- * /university/toactive/{id}:
+ * /todo/university/toactive/{id}:
  *  post:
  *     security:
  *        - accessToken: []
@@ -535,7 +535,7 @@ router.post('/university/toactive/:id/', authenticateToken, (req, res) => {
 
 /**
  * @swagger
- * /university/delete/{id}:
+ * /todo/university/delete/{id}:
  *  delete:
  *     security:
  *        - accessToken: []

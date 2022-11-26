@@ -353,8 +353,12 @@ async function getNextClass(students, user, date, res) {
             if (eventDate > date) {
                 if (nextClass === null) {
                     nextClass = event;
-                } else if (eventDate < new Date(nextClass.start)) {
-                    nextClass = event;
+                } else {
+                    let totalDuration = new Date(event.end) - new Date(event.start);
+                    if (eventDate < new Date(nextClass.end) - totalDuration / 2) {
+                        nextClass = event;
+                    }
+
                 }
             }
         });

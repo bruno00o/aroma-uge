@@ -5,6 +5,7 @@ const authenticateToken = require('./modules/authenticateToken').authenticateTok
 const getTimeTable = require('./modules/calendarModule').getTimeTable;
 const getWeekTimetable = require('./modules/calendarModule').getWeekTimetable;
 const generateSchedule = require('./modules/calendarModule').generateSchedule;
+const getNextClass = require('./modules/calendarModule').getNextClass;
 
 /**
  * @swagger
@@ -139,7 +140,7 @@ router.post('/request/:id', authenticateToken, (req, res) => {
             if (users.hasOwnProperty(requestedUser)) {
                 let requestedUserRequests = users[requestedUser]["requests"];
                 let userFriends = users[username]["friends"];
-                if (requestedUserRequests.indexOf(username) === -1  && requestedUser !== username && userFriends.indexOf(requestedUser) === -1) {
+                if (requestedUserRequests.indexOf(username) === -1 && requestedUser !== username && userFriends.indexOf(requestedUser) === -1) {
                     requestedUserRequests.push(username);
                     users[requestedUser]["requests"] = requestedUserRequests;
                     writeFile(fileName, JSON.stringify(users), (err) => {
@@ -390,6 +391,58 @@ router.get('/timetable/:id', authenticateToken, (req, res) => {
                         } else {
                             res.status(404).send({ error: 'Friend not found' });
                         }
+                    }
+                });
+            } else {
+                res.status(404).send({ error: 'User not found or friend not found' });
+            }
+        }
+    });
+});
+
+/**
+ * @swagger
+ * /friends/nextclass/{username}:
+ *  get:
+ *     security:
+ *        - accessToken: []
+ *     description: Récupère le prochain cours d'un ami
+ *     tags:
+ *        - Amis
+ *     parameters:
+ *        - username:
+ *          name: username
+ *          description: username (prenom.nom) de l'amis à supprimer
+ *          in: path
+ *          required: true
+ *          type: string
+ *     responses:
+ *        200:
+ *          description: Planning récupéré
+ *        401:
+ *          description: Token invalide
+ *        404:
+ *          description: Ami non trouvé
+ *        500:
+ *          description: Internal server error
+ */
+router.get('/nextclass/:id', authenticateToken, (req, res) => {
+    let fileName = './src/users/users.json';
+    let studentsFileName = './src/students/students.json';
+    readFile(fileName, (err, data) => {
+        if (err) {
+            res.status(500).send({ error: 'Internal server error' });
+        } else {
+            let users = JSON.parse(data);
+            let friend = req.params.id;
+            let username = req.user.user;
+            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(friend) !== -1) {
+                readFile(studentsFileName, (err, data) => {
+                    if (err) {
+                        res.status(500).send({ error: 'Internal server error' });
+                    } else {
+                        let students = JSON.parse(data);
+                        getNextClass(students, friend, new Date(), res);
                     }
                 });
             } else {
