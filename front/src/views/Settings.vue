@@ -141,7 +141,7 @@ h3:not(:first-child) {
         position: relative;
         transition: background-color .4s;
 
-        &:after {
+        &::after {
             content: '';
             position: absolute;
             top: 3px;
@@ -157,7 +157,7 @@ h3:not(:first-child) {
     input:checked+#share-label #share-toggle {
         background: var(--secondary);
 
-        &:after {
+        &::after {
             left: calc(100% - 3px);
             transform: translateX(-100%);
         }

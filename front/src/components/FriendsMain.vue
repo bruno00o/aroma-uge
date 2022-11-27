@@ -13,11 +13,11 @@
         </div>
         <div id="friends">
             <div v-if="friends.length > 0" id="friends-container">
-                <div v-for="friend in friends" class="friend">
-                    <p @click="open = true, friendToDelete = friend">{{ friend }}</p>
+                <div v-for="friend in friends" class="friend" @click.stop="this.$router.push(`/friends/details/${friendsUsername[friend]}`)">
+                    <p>{{ friend }}</p>
                     <div>
                         <button aria-label="Voir le planning de {{ friend }}"
-                            @click="this.$router.push(`/friends/timetable/${friendsUsername[friend]}`)">
+                            @click.stop="this.$router.push(`/friends/timetable/${friendsUsername[friend]}`)">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                                 <path
                                     d="M128 0c17.7 0 32 14.3 32 32V64H288V32c0-17.7 14.3-32 32-32s32 14.3 32 32V64h48c26.5 0 48 21.5 48 48v48H0V112C0 85.5 21.5 64 48 64H96V32c0-17.7 14.3-32 32-32zM0 192H448V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V192zm64 80v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm128 0v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H208c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H336zM64 400v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H208zm112 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H336c-8.8 0-16 7.2-16 16z" />
@@ -31,21 +31,6 @@
             </div>
         </div>
     </main>
-    <Teleport to="#app">
-        <div v-if="open" class="modal">
-            <p>Voulez-vous supprimer {{ friendToDelete }} de vos amis ?</p>
-            <small>Vous serez également supprimé de ces amis.</small>
-            <div>
-                <button @click="open = false"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                        <path
-                            d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z" />
-                    </svg></button>
-                <button @click="deleteFriend(friendToDelete)">Supprimer</button>
-                <button @click="open = false">Annuler</button>
-            </div>
-        </div>
-        <div v-if="open" class="modal-bg" @click="open = false"></div>
-    </Teleport>
 </template>
 
 <script>
@@ -92,17 +77,6 @@ export default {
         },
         goToRequests() {
             this.$router.push("/friends/requests");
-        },
-        deleteFriend(friend) {
-            axios.delete(`${this.$store.state.serverLocation}/friends/delete/${this.friendsUsername[friend]}`,
-                { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("user")).accessToken}` } })
-                .then(response => {
-                    this.friends.splice(this.friends.indexOf(friend), 1);
-                    this.open = false;
-                })
-                .catch(error => {
-                    console.log(error);
-                })
         },
     },
     created() {
@@ -169,13 +143,18 @@ export default {
         background-color: var(--header);
         border-radius: 10px;
         padding: 1em;
+        cursor: pointer;
+        transition: background-color .1s ease-in-out;
+
+        &:hover {
+            background-color: var(--primary-variation);
+        }
 
         p {
             margin: 0;
             font-family: 'Tahoma UGE Bold', sans-serif;
             font-weight: bold;
             color: white;
-            cursor: pointer;
         }
 
         &:not(:last-child) {
@@ -194,107 +173,15 @@ export default {
             svg {
                 width: 25px;
                 height: 25px;
-                fill: white
+                fill: white;
             }
+        }
 
+        &:has(button:hover) {
+            background-color: var(--header);
         }
     }
 
-}
-
-.modal {
-    position: absolute;
-    z-index: 100;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: var(--header);
-    border-radius: 10px;
-    padding: 2.5em 1em 1em 1em;
-    width: 90%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1em;
-
-    button {
-        background-color: white;
-        border: none;
-        cursor: pointer;
-        padding: .2em .5em;
-        width: 100px;
-        border-radius: 10px;
-
-        &:nth-of-type(2) {
-            margin-right: 2em;
-            color: var(--error);
-            font-family: 'Tahoma UGE Bold', sans-serif;
-            font-weight: bold;
-            border: 2px solid var(--error);
-
-            &:hover {
-                background-color: var(--error) !important;
-                color: white;
-            }
-        }
-
-        &:nth-of-type(3) {
-            color: var(--secondary);
-            font-family: 'Tahoma UGE Bold', sans-serif;
-            font-weight: bold;
-            border: 2px solid var(--secondary);
-
-            &:hover {
-                background-color: var(--secondary) !important;
-                color: white;
-            }
-        }
-
-        &:first-of-type {
-            position: absolute;
-            top: .5em;
-            right: .5em;
-            border: none;
-            background-color: transparent;
-            outline: none;
-            cursor: pointer;
-            width: unset;
-
-            svg {
-                width: 25px;
-                height: 25px;
-                fill: white
-            }
-
-            &:hover {
-                background-color: transparent !important;
-
-                svg {
-                    fill: var(--error) !important;
-                }
-            }
-        }
-    }
-
-    p,
-    small {
-        font-family: 'Tahoma UGE Bold', sans-serif;
-        font-weight: bold;
-        color: white;
-        text-align: center;
-    }
-}
-
-.modal-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.75);
-    z-index: 2;
 }
 
 @media not (pointer: coarse) {

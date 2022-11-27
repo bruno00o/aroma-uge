@@ -1,15 +1,18 @@
 <template>
     <main id="content">
-        <router-link to="/friends">
-            <button id="backButton">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                    <path
-                        d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
-                </svg>
-            </button>
-        </router-link>
-        <h3 v-if="requests.length <= 0">Vous n'avez aucune demande d'amis en attente 😔</h3>
-        <h3 v-else>Demandes d'amis</h3>
+        <div id="header-page">
+            <router-link to="/friends">
+                <button id="backButton">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                        <path
+                            d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+                    </svg>
+                </button>
+            </router-link>
+            <h3>Demandes d'amis</h3>
+        </div>
+        <h4 v-if="requests.length <= 0">Vous n'avez aucune demande d'amis en attente.</h4>
+        <h4 v-else>Demandes d'amis</h4>
         <div v-if="requests.length > 0" id="friends-container">
             <div v-for="request in requests" class="friends-requests">
                 <div class="friend">
@@ -31,9 +34,9 @@
                 </div>
             </div>
         </div>
-        <h3>
+        <h4>
             Demander quelqu'un en ami !
-        </h3>
+        </h4>
         <form @submit.prevent="addFriend">
             <div>
                 <input type="text" placeholder="Nom d'utilisateur" v-model="username" required>
@@ -117,8 +120,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h3 {
-    font-size: 1.25rem !important;
+#content {
+    position: relative;
+
+    #header-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1em;
+
+        h3 {
+            margin: 0;
+        }
+    }
+}
+
+h4 {
+    font-size: 1.1rem !important;
 }
 
 form {
@@ -175,12 +193,15 @@ form {
             display: flex;
             flex-direction: row;
             align-items: center;
+            justify-content: flex-end;
+            gap: .5em;
 
             button {
                 margin-left: 10px;
                 margin-top: 0 !important;
                 padding: 0 !important;
-                width: 30px;
+                margin: 0 !important;
+                width: 30px !important;
                 height: 30px;
                 border-radius: 50%;
                 display: flex;

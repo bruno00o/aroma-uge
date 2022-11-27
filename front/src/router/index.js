@@ -10,6 +10,7 @@ import University from '../views/University.vue'
 import UniversityMain from '../components/UniversityMain.vue'
 import Friends from '../views/Friends.vue'
 import FriendsMain from '../components/FriendsMain.vue'
+import FriendsDetails from '../components/FriendsDetails.vue'
 import Settings from '../views/Settings.vue'
 import FriendsRequests from '../components/FriendsRequests.vue'
 import ApprenticeCalendar from '../components/ApprenticeCalendar.vue'
@@ -128,6 +129,14 @@ const routes = [
                 path: 'timetable/:id',
                 name: 'friendsTimetable',
                 component: FriendsTimetable,
+                meta: {
+                    requiresAuth: true,
+                }
+            },
+            {
+                path: 'details/:id',
+                name: 'friendsDetails',
+                component: FriendsDetails,
                 meta: {
                     requiresAuth: true,
                 }

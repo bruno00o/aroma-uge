@@ -14,10 +14,12 @@
                 <div v-for="todo in todoList" :key="todos[todo].id" class="todo-item">
                     <input type="checkbox" :id="todos[todo].id" :checked="!todos[todo].active"
                         @change="toggleDone(todo)">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <path
-                            d="M470.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 338.7 425.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
-                    </svg>
+                    <div class="checkbox-tick">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                            <path
+                                d="M470.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 338.7 425.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                        </svg>
+                    </div>
                     <label :for="todos[todo].id">
                         <div class="todo-item-text">
                             {{ todo }}
@@ -218,59 +220,47 @@ export default {
 
                 input[type="checkbox"] {
                     visibility: hidden;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    width: 20px;
-                    margin-right: 1em;
+                    height: 0;
+                    width: 0;
 
-                    &::after {
-                        content: "";
-                        width: 15px;
-                        height: 15px;
-                        visibility: visible;
+                    &+.checkbox-tick {
                         display: flex;
                         justify-content: center;
                         align-items: center;
-                        border-radius: 3px;
+                        width: 20px;
+                        margin-right: 1em;
                         border: 2px solid white;
-                        background-color: transparent;
+                        border-radius: 5px;
+                        height: 20px;
                         cursor: pointer;
-                        color: white;
-                    }
+                        transition: all .1s ease-in-out;
 
-                    &+svg {
-                        visibility: hidden;
-                        width: 14px;
-                        height: 14px;
-                        fill: white;
-                        position: absolute;
-                        left: 19.5px;
-                        pointer-events: none;
-                        color: white;
-                    }
-
-                    &:checked {
-                        /*  &::after {
-                            background-color: white;
-                        } */
-
-                        &+svg {
-                            visibility: visible;
-
-                            &+label {
-                                text-decoration: line-through;
-                            }
+                        svg {
+                            width: 80%;
+                            height: 80%;
+                            fill: white;
+                            opacity: 0;
+                            transition: all .1s ease-in-out;
                         }
                     }
 
-                    &:hover {
-                        &::after {
-                            background-color: rgba(255, 255, 255, .2);
+                    &:checked+.checkbox-tick {
+                        svg {
+                            opacity: 1;
+                        }
+
+                        &+label {
+                            text-decoration: line-through;
                         }
                     }
-
                 }
+
+                &:hover {
+                    .checkbox-tick {
+                        background-color: rgba(255, 255, 255, .2);
+                    }
+                }
+
 
                 label {
                     user-select: none;

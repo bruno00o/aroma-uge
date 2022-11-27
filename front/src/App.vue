@@ -69,6 +69,7 @@ export default {
     --header: #171C8F;
     --background: #FFFCFF;
     --highlight: #090A35;
+    --primary-variation: #1F25C1;
     --header-height: 150px;
     --nav-height: 56px;
 }

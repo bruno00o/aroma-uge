@@ -6,23 +6,7 @@
             <p>{{ event }}</p>
             <hr v-if="event === 'Cours'">
             <h3 v-if="event === 'Cours'" class="next-course">Prochain cours</h3>
-            <div class="course" v-if="event === 'Cours'">
-                <p>{{ new Date(course.start).toLocaleTimeString(
-                        'fr-FR', {
-                        timeZone: 'CET',
-                        hour: '2-digit', minute: '2-digit'
-                    })
-                }} -
-                    {{ new Date(course.end).toLocaleTimeString('fr-FR', {
-                            timeZone: 'CET',
-                            hour: '2-digit', minute: '2-digit'
-                        })
-                    }}
-                </p>
-                <p><strong>{{ course.summary }}</strong></p>
-                <p>{{ course.location }}</p>
-                <p>{{ course.description }}</p>
-            </div>
+            <NextClassVue v-if="event === 'Cours'" type="student" />
             <hr>
             <ToDo location="apprenticeship" name="apprentissage" v-if="event === 'Entreprise'" />
             <ToDo location="university" name="université" v-if="event === 'Cours'" />
@@ -30,23 +14,7 @@
         <section v-else>
             <h3>Prochain cours</h3>
             <p>{{ nexCourseDay }}</p>
-            <div class="course">
-                <p>{{ new Date(course.start).toLocaleTimeString(
-                        'fr-FR', {
-                        timeZone: 'CET',
-                        hour: '2-digit', minute: '2-digit'
-                    })
-                }} -
-                    {{ new Date(course.end).toLocaleTimeString('fr-FR', {
-                            timeZone: 'CET',
-                            hour: '2-digit', minute: '2-digit'
-                        })
-                    }}
-                </p>
-                <p><strong>{{ course.summary }}</strong></p>
-                <p>{{ course.location }}</p>
-                <p>{{ course.description }}</p>
-            </div>
+            <NextClassVue type="student" />
         </section>
 
     </main>
@@ -55,12 +23,15 @@
 <script>
 import Nav from "../components/Nav.vue";
 import ToDo from "../components/ToDo.vue";
+import NextClassVue from "../components/NextClass.vue";
+
 import axios from "axios";
 export default {
     name: "Home",
     components: {
         Nav,
-        ToDo
+        ToDo,
+        NextClassVue
     },
     data() {
         return {
@@ -174,28 +145,6 @@ export default {
             fill: var(--primary) !important;
             width: 80%;
             height: 80%;
-        }
-    }
-
-    .course {
-        background-color: var(--header);
-        border-radius: 5px;
-        padding: 10px;
-        margin: 10px 0;
-
-        p {
-            color: white;
-            font-size: 1.1rem;
-        }
-
-        p:first-child {
-            opacity: .7;
-            font-size: .9rem;
-            margin-bottom: .5em;
-        }
-
-        p:not(:last-child) {
-            margin-bottom: .5em;
         }
     }
 
