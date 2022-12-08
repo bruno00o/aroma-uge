@@ -61,7 +61,7 @@ router.get('/next/', authenticateToken, (req, res) => {
             if (actualDate.getHours() >= 18) {
                 i = 1;
             }
-            let lastDate = new Date(keys[0]);
+            let lastDate = new Date(keys[keys.length - 1]);
             let nextDate = new Date(actualDate);
             nextDate.setDate(nextDate.getDate() + i);
             if (nextDate > lastDate) {
