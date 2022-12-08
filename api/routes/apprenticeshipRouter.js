@@ -122,7 +122,7 @@ router.get('/next/:element', authenticateToken, (req, res) => {
             let keys = Object.keys(calendar);
             let actualDate = new Date();
             let i = 1;
-            let lastDate = new Date(keys[0]);
+            let lastDate = new Date(keys[keys.length - 1]);
             let nextDate = new Date(actualDate);
             nextDate.setDate(nextDate.getDate() + i);
             if (nextDate > lastDate) {
