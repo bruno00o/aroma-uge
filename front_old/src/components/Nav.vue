@@ -201,12 +201,11 @@ nav {
 
 @media all and (display-mode: standalone) {
     #content {
-        max-height: calc(100vh - var(--header-height) - var(--nav-height) - 2.5em) !important;
-
+        max-height: calc(100vh - var(--header-height) - var(--nav-height) - env(safe-area-inset-bottom)) !important;
     }
 
     nav {
-        padding-bottom: 2.5em !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
     }
 }
 </style>

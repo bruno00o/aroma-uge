@@ -305,6 +305,13 @@ export default {
                 &:last-of-type {
                     margin-bottom: 1em;
                 }
+
+                @media screen and (display-mode: standalone) {
+                    &:last-of-type {
+                        margin-bottom: 4em;
+                    }
+                }
+
             }
         }
     }
