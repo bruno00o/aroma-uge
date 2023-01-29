@@ -21,7 +21,6 @@ onBeforeMount(() => {
 
   if (studentStore.getStudentApprenticeship) {
     getNextDayApprentice(userStore.getAccessToken).then((res) => {
-      console.log("apprentice", res);
       nextDay.value = daysFromNowString(frDateToDate(res.date));
     });
   }
@@ -35,7 +34,7 @@ onBeforeMount(() => {
   <MainHeader h1="Entreprise" />
   <main>
     <section v-if="dataFetched">
-      <h2>Votre prochain jour en entreprise</h2>
+      <h2>Prochain jour en entreprise</h2>
       <h3>{{ nextDay }}</h3>
     </section>
   </main>

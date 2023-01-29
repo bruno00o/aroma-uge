@@ -78,7 +78,6 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
     const userStore = useUserStore();
     if (!userStore.isAuthenticated || localStorage.getItem("user") === null) {
-      console.log("not authenticated");
       next({ name: "login" });
     }
   }

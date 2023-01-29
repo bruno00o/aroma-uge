@@ -6,7 +6,7 @@ import { useUserStore } from "@/stores/user";
 import { ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import { logout as serviceLogout } from "@/services/services";
-import { getActualTheme, changeTheme } from "@/utils/utils";
+import { getActualTheme, changeTheme, isInstalled, isIOS } from "@/utils/utils";
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -118,7 +118,28 @@ const isActualTheme = () => {
 actualTheme.value = isActualTheme();
 
 const themes = getCSSThemes();
-console.log(themes);
+
+const deferedPrompt: any = ref(null);
+
+window.addEventListener("beforeinstallprompt", (e: any) => {
+  e.preventDefault();
+  deferedPrompt.value = e;
+});
+
+const install = () => {
+  if (deferedPrompt.value) {
+    deferedPrompt.value.prompt();
+    deferedPrompt.value.userChoice.then((choiceResult: any) => {
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the A2HS prompt");
+      } else {
+        console.log("User dismissed the A2HS prompt");
+      }
+      deferedPrompt.value = null;
+    });
+  }
+};
+
 </script>
 
 <template>
@@ -171,12 +192,15 @@ console.log(themes);
         </li>
       </ul>
     </section>
-    <section>
+    <section v-if="!isInstalled()">
       <h2>Installer Aroma UGE</h2>
       <p class="info">
         Cette application est une PWA (Progressive Web App). Vous pouvez donc
         l'installer sur votre appareil en l'ajoutant à l'écran d'accueil.
       </p>
+      <button class="main-button" @click="install" v-if="!isIOS()">
+        Installer Aroma UGE
+      </button>
     </section>
     <section>
       <h2>Informations</h2>
@@ -204,6 +228,9 @@ console.log(themes);
 </template>
 
 <style scoped lang="scss">
+.main-button {
+  margin: 0.5em 0;
+}
 #share-schedule {
   display: flex;
   flex-direction: row;

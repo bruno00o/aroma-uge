@@ -18,18 +18,14 @@ userStore.loadUser();
 
 async function loadStudent() {
   await studentStore.loadStudent();
-  console.log(studentStore.student);
 }
 
 router.beforeResolve(async (to, from, next) => {
-  console.log("beforeResolve");
-  console.log(to.path);
   if (
     to.path === "/login" ||
     to.path === "/register" ||
     to.path === "/forgot"
   ) {
-    console.log("login");
     dataFetched.value = true;
     next();
     return;

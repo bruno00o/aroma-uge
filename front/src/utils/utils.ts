@@ -75,3 +75,22 @@ export const changeTheme = (theme: string, color: string) => {
 export const getWindowWidth = () => {
   return window.innerWidth;
 };
+
+export const isInstalled = () => {
+  return window.matchMedia("(display-mode: standalone)").matches;
+};
+
+export const isIOS = () => {
+  return (
+    [
+      "iPad Simulator",
+      "iPhone Simulator",
+      "iPod Simulator",
+      "iPad",
+      "iPhone",
+      "iPod",
+    ] as string[]
+  ).includes(navigator.platform) ||
+    // iPad on iOS 13 detection
+    (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+}

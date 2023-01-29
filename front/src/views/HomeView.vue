@@ -26,7 +26,6 @@ onBeforeMount(() => {
 
   if (studentStore.getStudentApprenticeship) {
     getNextEventApprentice(userStore.getAccessToken).then((res) => {
-      console.log(res);
       nextDay.value = daysFromNowString(frDateToDate(res.date));
       nextEvent.value = eventToNiceString(res.event);
     });
