@@ -139,7 +139,6 @@ const install = () => {
     });
   }
 };
-
 </script>
 
 <template>

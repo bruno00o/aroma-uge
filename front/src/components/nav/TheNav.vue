@@ -89,10 +89,11 @@ nav {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         color: white;
         text-decoration: none;
         gap: 0.25em;
+        height: 52px;
 
         &.router-link-exact-active {
           opacity: 1;
@@ -109,8 +110,11 @@ nav {
 }
 
 @media screen and (max-width: 620px) {
-  nav ul li a p {
-    display: none;
+  nav ul li a {
+    height: unset;
+    p {
+      display: none;
+    }
   }
 }
 </style>
