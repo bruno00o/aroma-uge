@@ -1,0 +1,72 @@
+:root {
+  --primary-color: #324376;
+  --secondary-color: #62C332;
+  --secondary-color-hover: #5AB22E;
+  --main-text-color: #13192B;
+  --light-bg-color: #F1F3F9;
+  --dark-bg-color: #13192B;
+  
+  --bleu-theme: #324376;
+  --vert-theme: #77B28C;
+  --violet-theme: #8C77B2;
+  --rouge-theme: #D64933;
+  --rose-theme: #EF959D;
+
+  --error-color: #E3655B;
+  --success-color: #62C332;
+
+  --app-height: 100%;
+
+  --header-height: 84px;
+  --header-max-width: 1200px;
+  --nav-height: 54px;
+}
+
+.vert-theme {
+  --primary-color: #77B28C;
+  --secondary-color: #B4654A;
+  --secondary-color-hover: #9F5941;
+  --main-text-color: #16271C;
+  --light-bg-color: #F2F8F4;
+  --dark-bg-color: #16271C;
+}
+
+.violet-theme {
+  --primary-color: #8C77B2;
+  --secondary-color: #C08497;
+  --secondary-color-hover: #B36B82;
+  --main-text-color: #1D1924;
+  --light-bg-color: #F4F3F7;
+  --dark-bg-color: #1D1924;
+}
+
+.rouge-theme {
+  --primary-color: #D64933;
+  --secondary-color: #F7B32B;
+  --secondary-color-hover: #F6AB13;
+  --main-text-color: #33100A;
+  --light-bg-color: #FCF0EE;
+  --dark-bg-color: #33100A;
+}
+
+.rose-theme {
+  --primary-color: #EF959D;
+  --secondary-color: #F3B61F;
+  --secondary-color-hover: #E9AA0C;
+  --main-text-color: #460B10;
+  --light-bg-color: #FCEDEF;
+  --dark-bg-color: #460B10;
+}
+
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --main-text-color: white;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  :root {
+    --header-height: 100px;
+  }
+}

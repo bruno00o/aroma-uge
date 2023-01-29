@@ -80,9 +80,9 @@ router.post('/', (req, res) => {
                 const refreshToken = generateRefreshToken(user);
                 res.status(200).send({
                     accessToken: accessToken,
-                    accessTokenExp: accessDurationExp,
+                    accessTokenExpirationDate: new Date(Date.now() + 1800000),
                     refreshToken: refreshToken,
-                    refreshTokenExp: refreshDurationExp,
+                    refreshTokenExpirationDate: new Date(Date.now() + 604800000),
                     user: user,
                     shareSchedule: users[user]["shareSchedule"],
                     shareScheduleURL: users[user]["shareScheduleURL"]
@@ -128,7 +128,10 @@ router.post('/refresh', (req, res) => {
                     delete user.iat;
                     delete user.exp;
                     const accessToken = generateAccessToken(user.user);
-                    res.status(200).send({ accessToken: accessToken });
+                    res.status(200).send({ 
+                        accessToken: accessToken,
+                        accessTokenExpirationDate: new Date(Date.now() + 1800000),
+                    });
                 } else {
                     res.status(401).send({ error: 'Token is not valid' });
                 }
