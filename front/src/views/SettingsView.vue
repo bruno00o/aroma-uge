@@ -162,7 +162,7 @@ console.log(themes);
           :style="{
             '--theme-color': theme.value,
           }"
-          @click="actualTheme = changeTheme(theme.name)"
+          @click="actualTheme = changeTheme(theme.name, theme.value)"
           :class="{
             'actual-theme': actualTheme === theme.name,
           }"

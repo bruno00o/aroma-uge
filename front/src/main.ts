@@ -14,7 +14,11 @@ const appHeight = () => {
 window.addEventListener("resize", appHeight);
 appHeight();
 
-changeTheme(getSavedTheme() || "--bleu-theme");
+const { theme, color } = getSavedTheme();
+
+if (theme && color) {
+  changeTheme(theme, color);
+}
 
 const app = createApp(App);
 

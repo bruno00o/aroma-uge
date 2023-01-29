@@ -39,8 +39,9 @@ export const eventToNiceString = (event: string) => {
   return event;
 };
 
-export const saveTheme = (theme: string) => {
+export const saveTheme = (theme: string, color: string) => {
   localStorage.setItem("theme", theme);
+  localStorage.setItem("color", color);
 };
 
 export const getActualTheme = () => {
@@ -48,10 +49,13 @@ export const getActualTheme = () => {
 };
 
 export const getSavedTheme = () => {
-  return localStorage.getItem("theme");
+  return {
+    theme: localStorage.getItem("theme"),
+    color: localStorage.getItem("color"),
+  };
 };
 
-export const changeTheme = (theme: string) => {
+export const changeTheme = (theme: string, color: string) => {
   const body = document.querySelector("body");
   const classNames = theme.replace("--", "");
   if (body?.classList.length) {
@@ -60,10 +64,14 @@ export const changeTheme = (theme: string) => {
     });
   }
   body?.classList.add(classNames);
-  saveTheme(theme);
+  const metaThemeColor = document.querySelector("meta[name=theme-color]");
+  if (metaThemeColor) {
+    metaThemeColor.setAttribute("content", color);
+  }
+  saveTheme(theme, color);
   return theme;
 };
 
 export const getWindowWidth = () => {
   return window.innerWidth;
-}
+};

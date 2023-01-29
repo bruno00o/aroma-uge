@@ -161,6 +161,10 @@ a:hover {
 }
 
 @media screen and (max-width: 620px) {
+  nav {
+    padding-bottom: env(safe-area-inset-bottom);
+    height: calc(var(--nav-height) + env(safe-area-inset-bottom)) !important;
+  }
   header nav {
     display: none;
   }
