@@ -95,7 +95,7 @@ nav {
         gap: 0.25em;
         height: 52px;
 
-        &.router-link-exact-active {
+        &.router-link-active {
           opacity: 1;
         }
       }

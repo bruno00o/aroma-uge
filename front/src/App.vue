@@ -5,7 +5,7 @@ import { useUserStore } from "@/stores/user";
 import { useRouter } from "vue-router";
 import { useStudentStore } from "./stores/student";
 import { logout } from "./services/services";
-import { ref } from "vue";
+import { ref, onBeforeMount } from "vue";
 
 const loaderStore = useLoaderStore();
 const userStore = useUserStore();
@@ -20,7 +20,15 @@ async function loadStudent() {
   await studentStore.loadStudent();
 }
 
+const logoutUser = () => {
+  userStore.$reset();
+  studentStore.$reset();
+  logout();
+  router.push("/login");
+};
+
 router.beforeResolve(async (to, from, next) => {
+  console.log("Page change");
   if (
     to.path === "/login" ||
     to.path === "/register" ||
@@ -33,15 +41,17 @@ router.beforeResolve(async (to, from, next) => {
   loaderStore.startLoading();
   if (!userStore.checkAccessToken()) {
     userStore.updateAccessToken().catch(() => {
-      userStore.$reset();
-      logout();
-      next("/login");
+      logoutUser();
     });
   }
   await loadStudent();
   loaderStore.stopLoading();
   dataFetched.value = true;
   next();
+});
+
+onBeforeMount(() => {
+  console.log("App.vue");
 });
 </script>
 

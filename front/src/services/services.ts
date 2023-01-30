@@ -127,3 +127,27 @@ export const shareSchedule = async (accessToken: String, share: Boolean) => {
 
   return response.data;
 };
+
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response.status === 401) {
+      window.location.reload();
+      /* const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (user) {
+        refreshToken(user.refreshToken)
+          .then(() => {
+            window.location.reload();
+          })
+          .catch(() => {
+            logout();
+            window.location.reload();
+          });
+      } */
+    } else {
+      return Promise.reject(error);
+    }
+  }
+);

@@ -3,12 +3,14 @@ import MainHeader from "@/components/header/MainHeader.vue";
 import MobileNav from "@/components/nav/TheNav.vue";
 import { useLoaderStore } from "@/stores/loader";
 import { useUserStore } from "@/stores/user";
+import { useStudentStore } from "@/stores/student";
 import { ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import { logout as serviceLogout } from "@/services/services";
 import { getActualTheme, changeTheme, isInstalled, isIOS } from "@/utils/utils";
 
 const userStore = useUserStore();
+const studentStore = useStudentStore();
 const router = useRouter();
 
 const dataFetched = ref(false);
@@ -50,6 +52,7 @@ async function shareSchedule() {
 
 function logout() {
   userStore.$reset();
+  studentStore.$reset();
   serviceLogout();
   router.push("/login");
 }
@@ -301,7 +304,7 @@ ul {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 0.25em;
+    padding: 0.5em 0 0.5em 0.75em;
     cursor: pointer;
 
     &::before {
@@ -318,6 +321,7 @@ ul {
       font-weight: bold;
       background-color: var(--secondary-color);
       border-radius: 0.25em;
+      color: white;
     }
   }
 }

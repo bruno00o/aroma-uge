@@ -2,7 +2,9 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useLoaderStore } from "@/stores/loader";
 import { useUserStore } from "@/stores/user";
 import HomeView from "../views/HomeView.vue";
-import ApprenticeViewVue from "@/views/ApprenticeView.vue";
+import ApprenticeViewVue from "@/views/apprentice/LayoutView.vue";
+import AppreticeMainViewVue from "@/views/apprentice/ApprenticeMain.vue";
+import ApprenticeCalendarViewVue from "@/views/apprentice/ApprenticeCalendar.vue";
 import SettingsViewVue from "@/views/SettingsView.vue";
 import UniversityViewVue from "@/views/UniversityView.vue";
 import FriendsViewVue from "@/views/FriendsView.vue";
@@ -41,6 +43,24 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
       },
+      children: [
+        {
+          path: "",
+          name: "apprenticeship-main",
+          component: AppreticeMainViewVue,
+          meta: {
+            requiresAuth: true,
+          },
+        },
+        {
+          path: "calendar",
+          name: "apprenticeship-calendar",
+          component: ApprenticeCalendarViewVue,
+          meta: {
+            requiresAuth: true,
+          },
+        },
+      ],
     },
     {
       path: "/university",
