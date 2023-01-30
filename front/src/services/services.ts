@@ -114,6 +114,16 @@ export const getNextDayUniversity = async (accessToken: String) => {
   return response.data;
 };
 
+export const getCalendarApprentice = async (accessToken: String) => {
+  const response = await axios.get(`${API_URL}/calendar/apprenticeship`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
 export const shareSchedule = async (accessToken: String, share: Boolean) => {
   const response = await axios.post(
     `${API_URL}/partage-edt/${share}`,

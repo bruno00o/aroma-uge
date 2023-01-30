@@ -41,7 +41,7 @@ const lastName = studentStore.getStudentLastName;
 
 <template>
   <MainHeader small="Bienvenue" v-bind:h1="`${firstName} ${lastName}`" />
-  <main>
+  <main v-if="studentStore.getStudentApprenticeship">
     <section v-if="dataFetched">
       <h2>{{ nextDay }}</h2>
       <h3>{{ nextEvent }}</h3>

@@ -32,7 +32,7 @@ onBeforeMount(() => {
 
 <template>
   <MainHeader h1="Université" />
-  <main>
+  <main v-if="studentStore.getStudentApprenticeship">
     <section v-if="dataFetched">
       <h2>Prochain jour à l'université</h2>
       <h3>{{ nextDay }}</h3>

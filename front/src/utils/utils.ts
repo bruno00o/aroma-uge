@@ -10,6 +10,14 @@ export const dateToFrDate = (date: Date) => {
   });
 };
 
+export const dateToShortFrDate = (date: Date) => {
+  return date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
 export const daysFromNow = (date: Date) => {
   const now = new Date();
   const diff = date.getTime() - now.getTime();
@@ -33,7 +41,7 @@ export const eventToNiceString = (event: string) => {
       return "À l'université";
     case "Entreprise":
       return "En entreprise";
-    case "Férié":
+    case "F":
       return "Férié";
   }
   return event;

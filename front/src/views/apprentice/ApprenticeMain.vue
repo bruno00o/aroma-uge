@@ -30,7 +30,7 @@ onBeforeMount(() => {
 });
 </script>
 <template>
-  <main>
+  <main v-if="studentStore.getStudentApprenticeship">
     <section v-if="dataFetched">
       <h2>Prochain jour en entreprise</h2>
       <h3>{{ nextDay }}</h3>
@@ -41,6 +41,14 @@ onBeforeMount(() => {
         @click="router.push({ name: 'apprenticeship-calendar' })"
       >
         Consulter le calendrier d'alternance
+      </button>
+    </section>
+  </main>
+  <main v-else>
+    <section>
+      <h2>Vous n'êtes pas inscrit en alternance</h2>
+      <button @click="router.push({ name: 'home' })" class="main-button">
+        Retour à l'accueil
       </button>
     </section>
   </main>
