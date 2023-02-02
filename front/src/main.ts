@@ -1,7 +1,9 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { changeTheme, getSavedTheme } from "./utils/utils";
+import cloneDeep from "lodash.clonedeep";
 import SetupCalendar from "v-calendar";
+import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 
 import App from "./App.vue";
 import router from "./router";
@@ -23,7 +25,13 @@ if (theme && color) {
 
 const app = createApp(App);
 
-app.use(createPinia());
+const pinia = createPinia();
+pinia.use(({ store }) => {
+  const initialState = cloneDeep(store.$state);
+  store.$reset = (): void => store.$patch(cloneDeep(initialState));
+});
+pinia.use(piniaPluginPersistedState);
+app.use(pinia);
 app.use(router);
 app.use(SetupCalendar, {});
 

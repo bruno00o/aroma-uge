@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useLoaderStore } from "@/stores/loader";
 import { useUserStore } from "@/stores/user";
+import { useStudentStore } from "@/stores/student";
 import HomeView from "../views/HomeView.vue";
 import ApprenticeViewVue from "@/views/apprentice/LayoutView.vue";
 import AppreticeMainViewVue from "@/views/apprentice/ApprenticeMain.vue";
@@ -19,6 +20,7 @@ const router = createRouter({
       component: HomeView,
       meta: {
         requiresAuth: true,
+        requiresStudent: true,
       },
     },
     {
@@ -42,6 +44,7 @@ const router = createRouter({
       component: ApprenticeViewVue,
       meta: {
         requiresAuth: true,
+        requiresStudent: true,
       },
       children: [
         {
@@ -50,6 +53,7 @@ const router = createRouter({
           component: AppreticeMainViewVue,
           meta: {
             requiresAuth: true,
+            requiresStudent: true,
           },
         },
         {
@@ -58,6 +62,7 @@ const router = createRouter({
           component: ApprenticeCalendarViewVue,
           meta: {
             requiresAuth: true,
+            requiresStudent: true,
           },
         },
       ],
@@ -68,6 +73,7 @@ const router = createRouter({
       component: UniversityViewVue,
       meta: {
         requiresAuth: true,
+        requiresStudent: true,
       },
     },
     {
@@ -76,6 +82,7 @@ const router = createRouter({
       component: FriendsViewVue,
       meta: {
         requiresAuth: true,
+        requiresStudent: true,
       },
     },
     {
@@ -84,6 +91,7 @@ const router = createRouter({
       component: SettingsViewVue,
       meta: {
         requiresAuth: true,
+        requiresStudent: true,
       },
     },
     {
@@ -97,8 +105,20 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
     const userStore = useUserStore();
-    if (!userStore.isAuthenticated || localStorage.getItem("user") === null) {
+    if (!userStore.isAuthenticated) {
       next({ name: "login" });
+    }
+  }
+  next();
+});
+
+router.beforeResolve(async (to, from, next) => {
+  const loaderStore = useLoaderStore();
+  loaderStore.startLoading();
+  if (to.meta.requiresStudent) {
+    const studentStore = useStudentStore();
+    if (!studentStore.getStudent.NOM) {
+      await studentStore.loadStudent();
     }
   }
   next();

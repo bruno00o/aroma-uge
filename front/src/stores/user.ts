@@ -1,47 +1,57 @@
-import { defineStore, acceptHMRUpdate } from "pinia";
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
 import {
-  login,
+  login as loginService,
   refreshToken as refresh,
   shareSchedule as updateShare,
-  updateUser,
 } from "@/services/services";
 
-export const useUserStore = defineStore("user", {
-  state: () => ({
-    user: Array as any,
-    token: String as any,
-  }),
-  getters: {
-    isAuthenticated: (state) =>
-      state.user !== undefined || state.user !== null
-        ? state.user.accessToken !== undefined
-        : false,
-    getAccessToken: (state) => state.user.accessToken,
-    isSharingSchedule: (state) => state.user.shareSchedule,
-    getShareScheduleUrl: (state) => state.user.shareScheduleURL,
-  },
-  actions: {
-    loadUser() {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      if (user) {
-        this.user = user;
-        this.token = user.accessToken;
-      }
-    },
-    checkAccessToken() {
-      if (this.user) {
+export const useUserStore = defineStore(
+  "user",
+  () => {
+    const user = ref({
+      accessToken: "",
+      accessTokenExpirationDate: "",
+      refreshToken: "",
+      refreshTokenExpirationDate: "",
+      shareSchedule: false,
+      shareScheduleURL: "",
+      user: "",
+    });
+
+    const isAuthenticated = computed(() => {
+      return (
+        user.value.accessToken !== "" && user.value.accessToken !== undefined
+      );
+    });
+
+    const getAccessToken = computed(() => {
+      return user.value.accessToken;
+    });
+
+    const isSharingSchedule = computed(() => {
+      return user.value.shareSchedule;
+    });
+
+    const getShareScheduleUrl = computed(() => {
+      return user.value.shareScheduleURL;
+    });
+
+    const checkAccessToken = () => {
+      if (user.value) {
         const now = new Date();
-        const expires = new Date(this.user.accessTokenExpirationDate);
+        const expires = new Date(user.value.accessTokenExpirationDate);
         if (now > expires) {
           return false;
         }
         return true;
       }
       return false;
-    },
-    async updateAccessToken() {
+    };
+
+    const updateAccessToken = async () => {
       return new Promise((resolve, reject) => {
-        refresh(this.user.refreshToken)
+        refresh(user.value.refreshToken)
           .then((response) => {
             if (response) {
               resolve(true);
@@ -51,21 +61,32 @@ export const useUserStore = defineStore("user", {
             reject(false);
           });
       });
-    },
-    async login(email: string, password: string) {
-      const data = await login(email, password);
-      this.user = data;
-      this.token = data.accessToken;
-    },
-    async shareSchedule(share: Boolean) {
-      const data = await updateShare(this.user.accessToken, share);
-      this.user.shareSchedule = data.shareSchedule;
-      this.user.shareScheduleURL = data.shareScheduleURL;
-      updateUser(this.user);
-    },
-  },
-});
+    };
 
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot));
-}
+    const login = async (email: string, password: string) => {
+      const data = await loginService(email, password);
+      user.value = data as any;
+    };
+
+    const shareSchedule = async (share: boolean) => {
+      const data = await updateShare(user.value.accessToken, share);
+      user.value.shareSchedule = data.shareSchedule;
+      user.value.shareScheduleURL = data.shareScheduleURL;
+    };
+
+    return {
+      user,
+      isAuthenticated,
+      getAccessToken,
+      isSharingSchedule,
+      getShareScheduleUrl,
+      checkAccessToken,
+      updateAccessToken,
+      login,
+      shareSchedule,
+    };
+  },
+  {
+    persist: true,
+  }
+);

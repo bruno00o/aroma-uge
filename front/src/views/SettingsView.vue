@@ -6,7 +6,7 @@ import { useUserStore } from "@/stores/user";
 import { useStudentStore } from "@/stores/student";
 import { ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
-import { logout as serviceLogout } from "@/services/services";
+/* import { logout as serviceLogout } from "@/services/services"; */
 import { getActualTheme, changeTheme, isInstalled, isIOS } from "@/utils/utils";
 
 const userStore = useUserStore();
@@ -53,7 +53,7 @@ async function shareSchedule() {
 function logout() {
   userStore.$reset();
   studentStore.$reset();
-  serviceLogout();
+  /* serviceLogout(); */
   router.push("/login");
 }
 
