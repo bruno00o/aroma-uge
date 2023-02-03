@@ -18,6 +18,68 @@ export const dateToShortFrDate = (date: Date) => {
   });
 };
 
+export const dateTimeToFrDate = (date: Date) => {
+  return date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    minute: "2-digit",
+    hour: "2-digit",
+  });
+};
+
+export const timeToFrTime = (date: Date) => {
+  return date.toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+export const urlFrDate = (date: Date) => {
+  return dateToShortFrDate(date).split("/").join("-");
+};
+
+export const bestMonday = (date: Date) => {
+  date.setHours(0, 0, 0, 0);
+  /* TODO: make this function in API to get best monday based on the timetable */
+  if (date.getDay() === 6) {
+    date.setDate(date.getDate() + 2);
+  } else if (date.getDay() === 0) {
+    date.setDate(date.getDate() + 1);
+  } else {
+    date.setDate(date.getDate() - date.getDay() + 1);
+  }
+  return date;
+};
+
+export const nextMonday = (date: Date) => {
+  date.setHours(0, 0, 0, 0);
+  if (date.getDay() === 1) {
+    date.setDate(date.getDate() + 7);
+  } else {
+    date.setDate(date.getDate() - date.getDay() + 8);
+  }
+  return date;
+};
+
+export const previousMonday = (date: Date) => {
+  date.setHours(0, 0, 0, 0);
+  if (date.getDay() === 1) {
+    date.setDate(date.getDate() - 7);
+  } else {
+    date.setDate(date.getDate() - date.getDay() + 1);
+  }
+  return date;
+};
+
+export const getMondayByDate = (date: Date) => {
+  date.setHours(0, 0, 0, 0);
+  if (date.getDay() === 1) {
+    return date;
+  } else {
+    return previousMonday(date);
+  }
+};
+
 export const daysFromNow = (date: Date) => {
   const now = new Date();
   const diff = date.getTime() - now.getTime();

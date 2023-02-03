@@ -19,10 +19,13 @@ const logoutUser = () => {
   router.push("/login");
 };
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   loaderStore.startLoading();
   if (!userStore.checkAccessToken()) {
-    userStore.updateAccessToken().catch(() => {
+    userStore.user.accessToken = "";
+    console.log("Access token expired");
+    userStore.updateAccessToken().catch((err) => {
+      console.log(err);
       logoutUser();
     });
   }

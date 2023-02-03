@@ -9,10 +9,6 @@ export const login = async (username: String, password: String) => {
     password,
   });
 
-  if (response.data.accessToken) {
-    localStorage.setItem("user", JSON.stringify(response.data));
-  }
-
   return response.data;
 };
 
@@ -29,14 +25,14 @@ export const refreshToken = async (refreshToken: String) => {
         }
       )
       .then((response) => {
-        const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-        if (response.data.accessToken && user) {
-          user.accessToken = response.data.accessToken;
-          user.accessTokenExpirationDate =
-            response.data.accessTokenExpirationDate;
-          localStorage.setItem("user", JSON.stringify(user));
-          resolve(true);
+        if (
+          response.data.accessToken &&
+          response.data.accessTokenExpirationDate
+        ) {
+          resolve({
+            accessToken: response.data.accessToken,
+            accessTokenExpirationDate: response.data.accessTokenExpirationDate,
+          });
         }
       })
       .catch(() => {
@@ -128,6 +124,43 @@ export const shareSchedule = async (accessToken: String, share: Boolean) => {
   const response = await axios.post(
     `${API_URL}/partage-edt/${share}`,
     {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+export const getNextClass = async (accessToken: String) => {
+  const response = await axios.get(`${API_URL}/students/getnextclass`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const getStudentTimetable = async (accessToken: String) => {
+  const response = await axios.get(`${API_URL}/students/timetable`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const getWeekTimetable = async (accessToken: string, date: string) => {
+  const pattern = new RegExp(/^\d{1,2}-\d{1,2}-\d{4}$/);
+  if (!pattern.test(date)) {
+    return null;
+  }
+  const response = await axios.get(
+    `${API_URL}/students/weektimetable/${date}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,

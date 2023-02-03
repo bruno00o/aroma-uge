@@ -15,16 +15,13 @@ const dataFetched = ref(false);
 
 const nextDay = ref("");
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   const loaderStore = useLoaderStore();
   loaderStore.startLoading();
-
   if (studentStore.getStudentApprenticeship) {
-    getNextDayApprentice(userStore.getAccessToken).then((res) => {
-      nextDay.value = daysFromNowString(frDateToDate(res.date));
-    });
+    const res = await getNextDayApprentice(userStore.getAccessToken);
+    nextDay.value = daysFromNowString(frDateToDate(res.date));
   }
-
   loaderStore.stopLoading();
   dataFetched.value = true;
 });

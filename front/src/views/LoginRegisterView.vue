@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import LoginHeader from "@/components/header/LoginHeader.vue";
-import TheLogin from "@/components/TheLogin.vue";
-import TheRegister from "@/components/TheRegister.vue";
-import TheForgotPass from "@/components/TheForgotPass.vue";
+import TheLogin from "@/components/login-register/TheLogin.vue";
+import TheRegister from "@/components/login-register/TheRegister.vue";
+import TheForgotPass from "@/components/login-register/TheForgotPass.vue";
 
 defineProps<{}>();
 </script>

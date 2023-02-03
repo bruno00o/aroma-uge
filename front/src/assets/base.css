@@ -5,7 +5,7 @@
   --main-text-color: #13192B;
   --light-bg-color: #F1F3F9;
   --dark-bg-color: #13192B;
-  
+
   --bleu-theme: #324376;
   --vert-theme: #77B28C;
   --violet-theme: #8C77B2;
@@ -20,6 +20,13 @@
   --header-height: 84px;
   --header-max-width: 1200px;
   --nav-height: 54px;
+
+  --timetable-autre: #0090C1;
+  --timetable-cours: #791AC7;
+  --timetable-td: #04A777;
+  --timetable-tp: #FCBA04;
+  --timetable-exam: #F4442E;
+  --timetable-anglais: #D90368;
 }
 
 .vert-theme {
@@ -61,6 +68,26 @@
 
 @media screen and (prefers-color-scheme: dark) {
   :root {
+    --main-text-color: white;
+  }
+
+  .vert-theme {
+    --main-text-color: white;
+  }
+
+  .violet-theme {
+    --main-text-color: white;
+  }
+
+  .rouge-theme {
+    --main-text-color: white;
+  }
+
+  .rose-theme {
+    --main-text-color: white;
+  }
+
+  .bleu-theme {
     --main-text-color: white;
   }
 }

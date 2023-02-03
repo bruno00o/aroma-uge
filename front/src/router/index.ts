@@ -3,13 +3,15 @@ import { useLoaderStore } from "@/stores/loader";
 import { useUserStore } from "@/stores/user";
 import { useStudentStore } from "@/stores/student";
 import HomeView from "../views/HomeView.vue";
-import ApprenticeViewVue from "@/views/apprentice/LayoutView.vue";
 import AppreticeMainViewVue from "@/views/apprentice/ApprenticeMain.vue";
 import ApprenticeCalendarViewVue from "@/views/apprentice/ApprenticeCalendar.vue";
+import UniversityMainViewVue from "@/views/university/UniversityMain.vue";
+import UniversityTimetableViewVue from "@/views/university/UniversityTimetable.vue";
 import SettingsViewVue from "@/views/SettingsView.vue";
-import UniversityViewVue from "@/views/UniversityView.vue";
 import FriendsViewVue from "@/views/FriendsView.vue";
 import NotFoundViewVue from "@/views/NotFoundView.vue";
+
+import PageLayout from "@/views/PageLayout.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,7 +43,10 @@ const router = createRouter({
     {
       path: "/apprenticeship",
       name: "apprenticeship",
-      component: ApprenticeViewVue,
+      component: PageLayout,
+      props: {
+        title: "Entreprise",
+      },
       meta: {
         requiresAuth: true,
         requiresStudent: true,
@@ -70,11 +75,45 @@ const router = createRouter({
     {
       path: "/university",
       name: "university",
-      component: UniversityViewVue,
+      component: PageLayout,
+      props: {
+        title: "Université",
+      },
       meta: {
         requiresAuth: true,
         requiresStudent: true,
       },
+      children: [
+        {
+          path: "",
+          name: "university-main",
+          component: UniversityMainViewVue,
+          meta: {
+            requiresAuth: true,
+            requiresStudent: true,
+          },
+        },
+        {
+          path: "timetable",
+          name: "university-timetable",
+          component: UniversityTimetableViewVue,
+          meta: {
+            requiresAuth: true,
+            requiresStudent: true,
+          },
+          children: [
+            {
+              path: ":date",
+              name: "university-timetable-date",
+              component: UniversityTimetableViewVue,
+              meta: {
+                requiresAuth: true,
+                requiresStudent: true,
+              },
+            },
+          ],
+        },
+      ],
     },
     {
       path: "/friends",
@@ -125,18 +164,18 @@ router.beforeResolve(async (to, from, next) => {
 });
 
 router.beforeEach((to, from, next) => {
-  const loaderStore = useLoaderStore();
-  loaderStore.startLoading();
-  next();
-});
-
-router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
   if (to.name === "login" || to.name === "register" || to.name === "forgot") {
     if (userStore.isAuthenticated) {
       next({ name: "home" });
     }
   }
+  next();
+});
+
+router.beforeEach((to, from, next) => {
+  const loaderStore = useLoaderStore();
+  loaderStore.startLoading();
   next();
 });
 

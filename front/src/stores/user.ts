@@ -52,8 +52,11 @@ export const useUserStore = defineStore(
     const updateAccessToken = async () => {
       return new Promise((resolve, reject) => {
         refresh(user.value.refreshToken)
-          .then((response) => {
-            if (response) {
+          .then((response: any) => {
+            if (response.accessToken && response.accessTokenExpirationDate) {
+              user.value.accessToken = response.accessToken;
+              user.value.accessTokenExpirationDate =
+                response.accessTokenExpirationDate;
               resolve(true);
             }
           })

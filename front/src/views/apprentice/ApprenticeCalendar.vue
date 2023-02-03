@@ -49,26 +49,25 @@ const getEvent = (date: Date) => {
   return "Aucun événement";
 };
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   const loaderStore = useLoaderStore();
   loaderStore.startLoading();
 
   if (studentStore.getStudentApprenticeship) {
-    getCalendarApprentice(userStore.getAccessToken).then((res) => {
-      for (let key in res) {
-        let date = frDateToDate(key);
-        let color = getColorEvent(res[key]);
-        let event = eventToNiceString(res[key]);
-        calendar.value.push({
-          key: event,
-          highlight: {
-            color: color,
-            fillMode: "light",
-          },
-          dates: date,
-        });
-      }
-    });
+    const res = await getCalendarApprentice(userStore.getAccessToken);
+    for (let key in res) {
+      let date = frDateToDate(key);
+      let color = getColorEvent(res[key]);
+      let event = eventToNiceString(res[key]);
+      calendar.value.push({
+        key: event,
+        highlight: {
+          color: color,
+          fillMode: "light",
+        },
+        dates: date,
+      });
+    }
   }
 
   loaderStore.stopLoading();
@@ -96,7 +95,7 @@ onBeforeMount(() => {
       <h2>{{ dateToShortFrDate(date) }}</h2>
       <h3>{{ getEvent(date) }}</h3>
     </section>
-    <section>
+    <section v-if="dataFetched">
       <h2>Légende</h2>
       <div class="caption university">
         <p>Université</p>
