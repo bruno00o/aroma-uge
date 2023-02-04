@@ -171,6 +171,125 @@ export const getWeekTimetable = async (accessToken: string, date: string) => {
   return response.data;
 };
 
+export const getFriends = async (accessToken: String) => {
+  const response = await axios.get(`${API_URL}/friends`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const getFriendNextClass = async (
+  accessToken: String,
+  friendId: String
+) => {
+  const response = await axios.get(`${API_URL}/friends/nextclass/${friendId}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const deleteFriend = async (accessToken: String, friendId: String) => {
+  const response = await axios.delete(`${API_URL}/friends/delete/${friendId}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const friendsRequests = async (accessToken: String) => {
+  const response = await axios.get(`${API_URL}/friends/requests`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const acceptFriendRequest = async (
+  accessToken: String,
+  friendId: String
+) => {
+  const response = await axios.post(
+    `${API_URL}/friends/accept/${friendId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+export const declineFriendRequest = async (
+  accessToken: String,
+  friendId: String
+) => {
+  const response = await axios.post(
+    `${API_URL}/friends/decline/${friendId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+export const requestFriend = async (accessToken: String, friendId: String) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(
+        `${API_URL}/friends/request/${friendId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then((response) => {
+        resolve(response.data.message);
+      })
+      .catch((error) => {
+        reject(error.response.data.error);
+      });
+  });
+};
+
+export const getFriendWeekTimetable = async (
+  accessToken: string,
+  date: string,
+  friendId: string
+) => {
+  const pattern = new RegExp(/^\d{1,2}-\d{1,2}-\d{4}$/);
+  if (!pattern.test(date)) {
+    return null;
+  }
+  const response = await axios.get(
+    `${API_URL}/friends/weektimetable/${date}/${friendId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
 axios.interceptors.response.use(
   (response) => {
     return response;

@@ -4,11 +4,13 @@ import { useLoaderStore } from "@/stores/loader";
 import { useUserStore } from "@/stores/user";
 import { useRouter } from "vue-router";
 import { useStudentStore } from "./stores/student";
+import { useRequestsStore } from "./stores/requests";
 import { ref, onBeforeMount } from "vue";
 
 const loaderStore = useLoaderStore();
 const userStore = useUserStore();
 const studentStore = useStudentStore();
+const requestsStore = useRequestsStore();
 const router = useRouter();
 
 const dataFetched = ref(true);
@@ -29,6 +31,7 @@ onBeforeMount(async () => {
       logoutUser();
     });
   }
+  await requestsStore.loadFriendsRequests(userStore.getAccessToken);
   loaderStore.stopLoading();
   dataFetched.value = true;
 });

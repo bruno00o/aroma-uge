@@ -11,6 +11,7 @@ import {
   daysFromNowString,
   eventToNiceString,
 } from "@/utils/utils";
+import NextClass from "@/components/university/NextClass.vue";
 
 const studentStore = useStudentStore();
 const userStore = useUserStore();
@@ -42,6 +43,9 @@ const lastName = studentStore.getStudentLastName;
     <section v-if="dataFetched">
       <h2>{{ nextDay }}</h2>
       <h3>{{ nextEvent }}</h3>
+    </section>
+    <section v-if="dataFetched && nextEvent === 'À l\'université'">
+      <NextClass />
     </section>
   </main>
   <MobileNav />

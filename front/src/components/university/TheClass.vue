@@ -14,6 +14,7 @@ let props = defineProps<{
   location: string;
   description: string;
   date?: boolean;
+  push?: boolean;
 }>();
 
 const router = useRouter();
@@ -36,17 +37,15 @@ const getColor = () => {
 <template>
   <div
     @click="
-      date
+      push
         ? router.push({
             name: 'university-timetable-date',
             params: { date: urlFrDate(frDateToDate(props.start)) },
           })
         : null
     "
-    :style="[
-      `background-color: ${getColor()}`,
-      `cursor: ${date ? 'pointer' : 'default'}`,
-    ]"
+    :style="`background-color: ${getColor()}`"
+    :class="push ? 'next-class' : ''"
   >
     <p v-if="date" class="date">
       {{ dateToFrDate(frDateToDate(props.start)) }}
@@ -84,6 +83,11 @@ div {
   .date {
     font-size: 0.9rem;
     opacity: 0.7;
+  }
+
+  &.next-class {
+    cursor: pointer;
+    margin: 0.25em 0;
   }
 }
 </style>

@@ -43,6 +43,7 @@ onBeforeMount(async () => {
       :location="nextClass.location"
       :description="nextClass.description"
       :date="true"
+      :push="true"
     />
   </section>
 </template>

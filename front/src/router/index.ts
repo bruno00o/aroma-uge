@@ -6,12 +6,17 @@ import HomeView from "../views/HomeView.vue";
 import AppreticeMainViewVue from "@/views/apprentice/ApprenticeMain.vue";
 import ApprenticeCalendarViewVue from "@/views/apprentice/ApprenticeCalendar.vue";
 import UniversityMainViewVue from "@/views/university/UniversityMain.vue";
-import UniversityTimetableViewVue from "@/views/university/UniversityTimetable.vue";
+import FriendsMainViewVue from "@/views/friends/FriendsMain.vue";
+import FriendsProfileViewVue from "@/views/friends/FriendsProfile.vue";
+import FriendsRequestsViewVue from "@/views/friends/FriendsRequests.vue";
 import SettingsViewVue from "@/views/SettingsView.vue";
-import FriendsViewVue from "@/views/FriendsView.vue";
 import NotFoundViewVue from "@/views/NotFoundView.vue";
 
 import PageLayout from "@/views/PageLayout.vue";
+
+import TheTimetable from "@/components/TheTimetable.vue";
+
+import { getWeekTimetable, getFriendWeekTimetable } from "@/services/services";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -96,19 +101,25 @@ const router = createRouter({
         {
           path: "timetable",
           name: "university-timetable",
-          component: UniversityTimetableViewVue,
+          component: TheTimetable,
           meta: {
             requiresAuth: true,
             requiresStudent: true,
+          },
+          props: {
+            weekTimetable: getWeekTimetable,
           },
           children: [
             {
               path: ":date",
               name: "university-timetable-date",
-              component: UniversityTimetableViewVue,
+              component: TheTimetable,
               meta: {
                 requiresAuth: true,
                 requiresStudent: true,
+              },
+              props: {
+                weekTimetable: getWeekTimetable,
               },
             },
           ],
@@ -118,11 +129,55 @@ const router = createRouter({
     {
       path: "/friends",
       name: "friends",
-      component: FriendsViewVue,
+      component: PageLayout,
+      props: {
+        title: "Amis",
+      },
       meta: {
         requiresAuth: true,
         requiresStudent: true,
       },
+      children: [
+        {
+          path: "",
+          name: "friends-main",
+          component: FriendsMainViewVue,
+          meta: {
+            requiresAuth: true,
+            requiresStudent: true,
+          },
+        },
+        {
+          path: "requests",
+          name: "friends-requests",
+          component: FriendsRequestsViewVue,
+          meta: {
+            requiresAuth: true,
+            requiresStudent: true,
+          },
+        },
+        {
+          path: ":id",
+          name: "friends-profile",
+          component: FriendsProfileViewVue,
+          meta: {
+            requiresAuth: true,
+            requiresStudent: true,
+          },
+        },
+        {
+          path: ":id/timetable",
+          name: "friends-profile-timetable",
+          component: TheTimetable,
+          props: {
+            weekTimetable: getFriendWeekTimetable,
+          },
+          meta: {
+            requiresAuth: true,
+            requiresStudent: true,
+          },
+        },
+      ],
     },
     {
       path: "/settings",
@@ -141,7 +196,7 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+/* router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
     const userStore = useUserStore();
     if (!userStore.isAuthenticated) {
@@ -149,7 +204,7 @@ router.beforeEach((to, from, next) => {
     }
   }
   next();
-});
+}); */
 
 router.beforeResolve(async (to, from, next) => {
   const loaderStore = useLoaderStore();

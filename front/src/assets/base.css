@@ -1,5 +1,6 @@
 :root {
   --primary-color: #324376;
+  --primary-color-hover: #2B3964;
   --secondary-color: #62C332;
   --secondary-color-hover: #5AB22E;
   --main-text-color: #13192B;
@@ -31,6 +32,7 @@
 
 .vert-theme {
   --primary-color: #77B28C;
+  --primary-color-hover: #589D70;
   --secondary-color: #B4654A;
   --secondary-color-hover: #9F5941;
   --main-text-color: #16271C;
@@ -40,6 +42,7 @@
 
 .violet-theme {
   --primary-color: #8C77B2;
+  --primary-color-hover: #7A6AA3;
   --secondary-color: #C08497;
   --secondary-color-hover: #B36B82;
   --main-text-color: #1D1924;
@@ -49,6 +52,7 @@
 
 .rouge-theme {
   --primary-color: #D64933;
+  --primary-color-hover: #C23B2A;
   --secondary-color: #F7B32B;
   --secondary-color-hover: #F6AB13;
   --main-text-color: #33100A;
@@ -58,6 +62,7 @@
 
 .rose-theme {
   --primary-color: #EF959D;
+  --primary-color-hover: #E87F87;
   --secondary-color: #F3B61F;
   --secondary-color-hover: #E9AA0C;
   --main-text-color: #460B10;

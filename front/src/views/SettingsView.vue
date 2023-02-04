@@ -6,7 +6,6 @@ import { useUserStore } from "@/stores/user";
 import { useStudentStore } from "@/stores/student";
 import { ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
-/* import { logout as serviceLogout } from "@/services/services"; */
 import { getActualTheme, changeTheme, isInstalled, isIOS } from "@/utils/utils";
 
 const userStore = useUserStore();
@@ -142,6 +141,24 @@ const install = () => {
     });
   }
 };
+
+const share = () => {
+  if (navigator.share) {
+    navigator.share({
+      title: "Emploi du temps",
+      text: "Voici mon emploi du temps",
+      url: shareUrl.value,
+    });
+  } else {
+    const el = document.createElement("textarea");
+    el.value = shareUrl.value;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand("copy");
+    document.body.removeChild(el);
+    alert("Lien copié dans le presse papier");
+  }
+};
 </script>
 
 <template>
@@ -166,15 +183,9 @@ const install = () => {
         l'option ci-dessous. Celui-ci sera visible par quiconque disposant du
         lien.
       </p>
-      <a
-        :href="shareUrl"
-        v-if="shared"
-        target="_blank"
-        id="share-url"
-        class="main-button"
-      >
-        Lien de partage de l'emploi du temps
-      </a>
+      <div v-if="shared" id="share-url" class="main-button" @click="share">
+        Partager mon emploi du temps
+      </div>
     </section>
     <section>
       <h2>Thèmes</h2>
