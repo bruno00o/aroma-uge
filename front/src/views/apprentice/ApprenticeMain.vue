@@ -6,6 +6,7 @@ import { ref, onBeforeMount } from "vue";
 import { getNextDayApprentice } from "@/services/services";
 import { frDateToDate, daysFromNowString } from "@/utils/utils";
 import { useRouter } from "vue-router";
+import ToDo from "@/components/ToDo.vue";
 
 const studentStore = useStudentStore();
 const userStore = useUserStore();
@@ -39,6 +40,9 @@ onBeforeMount(async () => {
       >
         Consulter le calendrier d'alternance
       </button>
+    </section>
+    <section>
+      <ToDo h2="Rappels d'apprentissage" todoType="apprenticeship" />
     </section>
   </main>
   <main v-else>

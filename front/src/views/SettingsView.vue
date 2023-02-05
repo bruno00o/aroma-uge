@@ -181,7 +181,7 @@ const share = () => {
       <p class="info">
         Vous pouvez partager votre emploi du temps avec vos proches en activant
         l'option ci-dessous. Celui-ci sera visible par quiconque disposant du
-        lien.
+        lien (même s'il n'a pas d'accès à Aroma UGE).
       </p>
       <div v-if="shared" id="share-url" class="main-button" @click="share">
         Partager mon emploi du temps

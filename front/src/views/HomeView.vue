@@ -12,6 +12,7 @@ import {
   eventToNiceString,
 } from "@/utils/utils";
 import NextClass from "@/components/university/NextClass.vue";
+import ToDo from "@/components/ToDo.vue";
 
 const studentStore = useStudentStore();
 const userStore = useUserStore();
@@ -39,13 +40,19 @@ const lastName = studentStore.getStudentLastName;
 
 <template>
   <MainHeader small="Bienvenue" v-bind:h1="`${firstName} ${lastName}`" />
-  <main v-if="studentStore.getStudentApprenticeship">
-    <section v-if="dataFetched">
+  <main>
+    <section v-if="dataFetched && studentStore.getStudentApprenticeship">
       <h2>{{ nextDay }}</h2>
       <h3>{{ nextEvent }}</h3>
     </section>
     <section v-if="dataFetched && nextEvent === 'À l\'université'">
       <NextClass />
+    </section>
+    <section v-if="dataFetched && nextEvent === 'À l\'université'">
+      <ToDo h2="Rappels université" todoType="university" />
+    </section>
+    <section v-if="dataFetched && nextEvent === 'À l\'entreprise'">
+      <ToDo h2="Rappels d'entreprise" todoType="apprenticeship" />
     </section>
   </main>
   <MobileNav />

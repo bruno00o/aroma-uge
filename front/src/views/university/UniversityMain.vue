@@ -7,6 +7,7 @@ import { getNextDayUniversity } from "@/services/services";
 import { frDateToDate, daysFromNowString } from "@/utils/utils";
 import NextClass from "@/components/university/NextClass.vue";
 import { useRouter } from "vue-router";
+import ToDo from "@/components/ToDo.vue";
 
 const studentStore = useStudentStore();
 const userStore = useUserStore();
@@ -44,6 +45,9 @@ onBeforeMount(async () => {
       >
         Consulter l'emploi du temps complet
       </button>
+    </section>
+    <section>
+      <ToDo h2="Rappels université" todoType="university" />
     </section>
   </main>
 </template>

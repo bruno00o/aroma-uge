@@ -290,6 +290,103 @@ export const getFriendWeekTimetable = async (
   return response.data;
 };
 
+export const getTodoList = async (accessToken: String, todoType: String) => {
+  const response = await axios.get(`${API_URL}/todo/${todoType}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const addTodo = async (
+  accessToken: String,
+  todoType: String,
+  todo: String[]
+) => {
+  const response = await axios.post(`${API_URL}/todo/${todoType}/add`, todo, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const todoneTodo = async (
+  accessToken: String,
+  todoType: String,
+  todoId: String
+) => {
+  const response = await axios.post(
+    `${API_URL}/todo/${todoType}/todone/${todoId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+export const toactiveTodo = async (
+  accessToken: String,
+  todoType: String,
+  todoId: String
+) => {
+  const response = await axios.post(
+    `${API_URL}/todo/${todoType}/toactive/${todoId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+export const toggleTodo = async (
+  accessToken: String,
+  todoType: String,
+  todoId: String,
+  done: Boolean
+) => {
+  const path = done ? "todone" : "toactive";
+  const response = await axios.post(
+    `${API_URL}/todo/${todoType}/${path}/${todoId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+export const deleteTodo = async (
+  accessToken: String,
+  todoType: String,
+  todoId: String
+) => {
+  const response = await axios.delete(
+    `${API_URL}/todo/${todoType}/delete/${todoId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
 axios.interceptors.response.use(
   (response) => {
     return response;
