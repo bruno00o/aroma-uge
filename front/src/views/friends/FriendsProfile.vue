@@ -181,15 +181,15 @@ const deletedFriend = async () => {
       border: none;
       cursor: pointer;
       svg {
-        width: 1em;
-        height: 1em;
-        fill: var(--main-text-color);
+        width: 1.5em;
+        height: 1.5em;
+        fill: white;
       }
     }
 
     p {
-      font-size: 1em;
-      color: var(--main-text-color);
+      font-size: 1rem;
+      color: white;
     }
 
     &.show {
@@ -228,13 +228,13 @@ const deletedFriend = async () => {
     gap: 1em;
 
     h2 {
-      font-size: 1.25em;
-      color: var(--main-text-color);
+      font-size: 1.2rem;
+      color: white;
     }
 
     p {
-      font-size: 1em;
-      color: var(--main-text-color);
+      font-size: 1rem;
+      color: white;
     }
 
     .modal-buttons {
@@ -247,7 +247,7 @@ const deletedFriend = async () => {
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 1em;
+        font-size: 1rem;
         color: white;
         padding: 0.5em 1em;
         border-radius: 0.5em;

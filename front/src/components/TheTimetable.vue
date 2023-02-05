@@ -122,7 +122,7 @@ onBeforeMount(async () => {
         <BackButton />
         Emploi du temps
       </h2>
-      <h2 v-else>
+      <h2 v-else-if="friend.PRENOM && friend.NOM">
         <BackButton />
         Emploi du temps de
         {{

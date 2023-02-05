@@ -117,6 +117,10 @@ const declineAFriendRequest = async (username: string) => {
   gap: 1em;
   margin-top: 1em;
 
+  p {
+    font-size: 1.1rem;
+  }
+
   .request {
     display: flex;
     justify-content: space-between;
@@ -169,7 +173,7 @@ const declineAFriendRequest = async (username: string) => {
   form {
     display: flex;
     gap: 0.5em;
-    margin-bottom: 0.5em;
+    margin: 0.5em 0;
 
     input {
       flex: 1;
@@ -178,6 +182,7 @@ const declineAFriendRequest = async (username: string) => {
       outline: none;
       border-radius: 0.5em;
       background-color: white;
+      font-size: 1rem;
     }
 
     button {
@@ -187,6 +192,7 @@ const declineAFriendRequest = async (username: string) => {
       border-radius: 0.5em;
       background-color: var(--success-color);
       color: white;
+      font-size: 1rem;
     }
   }
 

@@ -117,14 +117,16 @@ h2 {
 
   .friend {
     display: flex;
-    padding: 1em;
+    padding: 0.65em 1em;
     border-radius: 0.5em;
     background-color: var(--primary-color);
     font-weight: 600;
+    font-size: 1.1rem;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: white;
 
     &:hover {
       background-color: var(--primary-color-hover);
