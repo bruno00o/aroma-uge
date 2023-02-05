@@ -23,6 +23,14 @@ const logoutUser = () => {
 
 onBeforeMount(async () => {
   loaderStore.startLoading();
+  if (
+    router.currentRoute.value.path === "/login" ||
+    router.currentRoute.value.path === "/register" ||
+    router.currentRoute.value.path === "/forgot"
+  ) {
+    loaderStore.stopLoading();
+    return;
+  }
   if (!userStore.checkAccessToken()) {
     userStore.user.accessToken = "";
     console.log("Access token expired");
@@ -31,7 +39,9 @@ onBeforeMount(async () => {
       logoutUser();
     });
   }
-  await requestsStore.loadFriendsRequests(userStore.getAccessToken);
+  if (userStore.isAuthenticated) {
+    await requestsStore.loadFriendsRequests(userStore.getAccessToken);
+  }
   loaderStore.stopLoading();
   dataFetched.value = true;
 });

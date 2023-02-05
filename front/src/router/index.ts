@@ -219,6 +219,16 @@ router.beforeEach((to, from, next) => {
 });
 
 router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
+  if (to.meta.requiresAuth) {
+    if (!userStore.isAuthenticated) {
+      next({ name: "login" });
+    }
+  }
+  next();
+});
+
+router.beforeEach((to, from, next) => {
   const loaderStore = useLoaderStore();
   loaderStore.startLoading();
   next();
