@@ -62,7 +62,6 @@ const getColor = () => {
 
 <style scoped lang="scss">
 div {
-  /* background-color: var(--primary-color); */
   background-color: var(--timetable-autre);
   padding: 0.8em 1em;
   border-radius: 0.5em;

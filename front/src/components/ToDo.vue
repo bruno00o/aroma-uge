@@ -182,6 +182,10 @@ h2 {
     padding: 0.5em;
     border-radius: 0.5em;
 
+    &:hover {
+      background-color: var(--primary-color-hover);
+    }
+
     input {
       position: relative;
       appearance: none;

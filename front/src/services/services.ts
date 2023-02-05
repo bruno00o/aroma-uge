@@ -41,14 +41,6 @@ export const refreshToken = async (refreshToken: String) => {
   });
 };
 
-/* export const updateUser = (user: any) => {
-  localStorage.setItem("user", JSON.stringify(user));
-};
-
-export const logout = () => {
-  localStorage.removeItem("user");
-}; */
-
 export const register = async (email: String, password: String) => {
   const response = await axios.post(`${API_URL}/register`, {
     email,
@@ -394,17 +386,6 @@ axios.interceptors.response.use(
   (error) => {
     if (error.response.status === 401) {
       window.location.reload();
-      /* const user = JSON.parse(localStorage.getItem("user") || "{}");
-      if (user) {
-        refreshToken(user.refreshToken)
-          .then(() => {
-            window.location.reload();
-          })
-          .catch(() => {
-            logout();
-            window.location.reload();
-          });
-      } */
     } else {
       return Promise.reject(error);
     }

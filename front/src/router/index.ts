@@ -196,16 +196,6 @@ const router = createRouter({
   ],
 });
 
-/* router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth) {
-    const userStore = useUserStore();
-    if (!userStore.isAuthenticated) {
-      next({ name: "login" });
-    }
-  }
-  next();
-}); */
-
 router.beforeResolve(async (to, from, next) => {
   const loaderStore = useLoaderStore();
   loaderStore.startLoading();

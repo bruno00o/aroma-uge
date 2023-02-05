@@ -52,7 +52,6 @@ async function shareSchedule() {
 function logout() {
   userStore.$reset();
   studentStore.$reset();
-  /* serviceLogout(); */
   router.push("/login");
 }
 

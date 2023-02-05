@@ -109,28 +109,6 @@ defineProps<{}>();
         }
       }
     }
-
-    /* button {
-      width: 100%;
-      padding: 10px;
-      border-radius: 5pt;
-      border: none;
-      background-color: var(--secondary-color);
-      color: white;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      outline: none;
-      transition: background-color 0.2s ease;
-
-      &:hover {
-        background-color: var(--secondary-color-hover);
-      }
-
-      &:focus {
-        background-color: var(--secondary-color-hover);
-      }
-    } */
   }
 
   .bottom-links {

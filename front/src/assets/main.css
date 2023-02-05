@@ -126,6 +126,24 @@ a:hover {
   color: var(--secondary-color-hover);
 }
 
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 10px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color-hover);
+}
+
 @media screen and (prefers-color-scheme: dark) {
   body {
     background-color: var(--dark-bg-color);
@@ -151,6 +169,7 @@ a:hover {
   #app main {
     max-width: 80vw;
     padding: 2em 0;
+    padding-right: 2em;
   }
 }
 

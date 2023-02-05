@@ -92,6 +92,10 @@ const declineAFriendRequest = async (username: string) => {
         <input type="text" placeholder="Nom d'utilisateur" v-model="username" />
         <button type="submit">Envoyer</button>
       </form>
+      <small
+        >Le nom d'utilisateur correspond à la partie précédant le @ dans
+        l'adresse mail universitaire</small
+      >
       <p v-if="requestSuccess" class="success">{{ requestSuccess }}</p>
       <p v-if="requestError" class="error">{{ requestError }}</p>
     </section>

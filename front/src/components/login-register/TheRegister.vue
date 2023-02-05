@@ -185,7 +185,6 @@ form {
       display: none;
       list-style: none;
       padding: 0;
-      /* margin-left: 2em; */
       margin-bottom: 0.5em;
       opacity: 0.75;
       font-weight: 500;
