@@ -37,13 +37,12 @@ const checkFriend = async (user, friend) => {
 };
 
 const getSortedFriendsList = async (friendsList) => {
-    let sortedFriendsList = {};
-    let friends = Object.keys(friendsList);
-    friends.sort();
-    for (let i = 0; i < friends.length; i++) {
-        sortedFriendsList[friends[i]] = friendsList[friends[i]];
-    }
-    return sortedFriendsList;
+    return Object.entries(friendsList)
+        .sort(([, a], [, b]) => a.NOM.localeCompare(b.NOM))
+        .reduce((acc, [id, friend]) => {
+            acc[id] = friend;
+            return acc;
+        }, {});
 };
 
 const getRequests = async (user) => {

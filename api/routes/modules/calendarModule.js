@@ -198,9 +198,13 @@ const addPastDays = async (calendar, username, date) => {
     if (pastCalendar.error) {
         return { error: pastCalendar.error, code: pastCalendar.code };
     }
-    const today = new Date().setHours(4, 0, 0, 0);
+    let maxDate = new Date(date);
+    maxDate.setDate(maxDate.getDate() + 6);
+    if (new Date() < maxDate) {
+        maxDate = new Date(new Date().setHours(4, 0, 0, 0));
+    }
     pastCalendar.forEach(event => {
-        if (event.start < today && event.start >= date) {
+        if (new Date(event.start) < maxDate && new Date(event.start) >= date) {
             const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             let eventDate = new Date(event.start);
             if (calendar[weekday[eventDate.getDay()]] === undefined) {
