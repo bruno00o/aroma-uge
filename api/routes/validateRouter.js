@@ -14,28 +14,12 @@ router.get('/favicon.ico', (req, res) => {
     res.sendFile(__dirname + '/views/src/img/favicon.ico');
 });
 
-router.get('/fonts/tahoma.ttf', (req, res) => {
-    res.sendFile(__dirname + '/views/src/fonts/tahoma.ttf');
-});
-
-router.get('/fonts/TAHOMABD.TTF', (req, res) => {
-    res.sendFile(__dirname + '/views/src/fonts/TAHOMABD.TTF');
-});
-
 router.get('/changepass/style.css', (req, res) => {
     res.sendFile(__dirname + '/views/src/css/style.css');
 });
 
 router.get('/changepass/favicon.ico', (req, res) => {
     res.sendFile(__dirname + '/views/src/img/favicon.ico');
-});
-
-router.get('/changepass/fonts/tahoma.ttf', (req, res) => {
-    res.sendFile(__dirname + '/views/src/fonts/tahoma.ttf');
-});
-
-router.get('/changepass/fonts/TAHOMABD.TTF', (req, res) => {
-    res.sendFile(__dirname + '/views/src/fonts/TAHOMABD.TTF');
 });
 
 router.get('/:token', (req, res) => {

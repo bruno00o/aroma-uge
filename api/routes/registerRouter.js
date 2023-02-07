@@ -1,9 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const crypto = require('crypto');
-const { readFile, writeFile } = require('fs');
+const { readFileSync, writeFileSync } = require('fs');
 const nodemailer = require('nodemailer');
 const router = express.Router();
+const { getUsers, getStudents, checkUser } = require('./utils/utils');
 
 /**
  * Generate a random string
@@ -35,19 +36,77 @@ router.get('/reset/favicon.ico', (req, res) => {
     res.sendFile(__dirname + '/views/src/img/favicon.ico');
 });
 
-/**
- * Load tahoma.ttf
- */
-router.get('/reset/fonts/tahoma.ttf', (req, res) => {
-    res.sendFile(__dirname + '/views/src/fonts/tahoma.ttf');
-});
+const checkPass = (password) => {
+    const paternMin = /[a-z]/;
+    const paternMaj = /[A-Z]/;
+    const paternNum = /[0-9]/;
+    const paternLength = /.{8,}/;
+    if (paternMin.test(password) && paternMaj.test(password) && paternNum.test(password) && paternLength.test(password)) {
+        return true;
+    }
+    return false;
+};
 
-/**
- * Load TAHOMABD.TTF
- */
-router.get('/reset/fonts/TAHOMABD.TTF', (req, res) => {
-    res.sendFile(__dirname + '/views/src/fonts/TAHOMABD.TTF');
-});
+const checkUserEmail = (res, domain) => {
+    if (domain !== 'edu.univ-eiffel.fr') {
+        res.status(400).send({ error: 'Utilisez une adresse email universitaire' });
+        return false;
+    }
+    return true;
+}
+
+const checkUserExists = async (res, username) => {
+    const users = await getUsers();
+    if (users.hasOwnProperty(username)) {
+        res.status(400).send({ error: 'Utilisateur déjà existant' });
+        return false;
+    }
+    return true;
+}
+
+const checkPassword = (res, password) => {
+    if (!checkPass(password)) {
+        res.status(400).send({ error: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre' });
+        return false;
+    }
+    return true;
+}
+
+const checkUserInDatabase = async (res, username) => {
+    const students = await getStudents();
+    if (!students.hasOwnProperty(username)) {
+        res.status(400).send({ error: 'Vous n\'êtes pas inscrit dans la base de données' });
+        return false;
+    }
+    return true;
+}
+
+const check = async (res, params) => {
+    const username = params.email.split('@')[0];
+    const domain = params.email.split('@')[1];
+    if (!checkUserEmail(res, domain)) {
+        return false;
+    }
+    if (!await checkUserExists(res, username)) {
+        return false;
+    }
+    if (!checkPassword(res, params.password)) {
+        return false;
+    }
+    if (!await checkUserInDatabase(res, username)) {
+        return false;
+    }
+    return true;
+}
+
+const buildMailOptionsRegister = (token, email, username) => {
+    return {
+        from: 'Aroma UGE <' + process.env.MAIL_USER + '>',
+        to: email,
+        subject: 'Validation de votre compte',
+        html: "<h1>Bienvenue sur Aroma UGE !</h1><p>Vous avez demandé à créer un compte sur Aroma UGE. Pour valider votre compte, veuillez cliquer sur le lien suivant :<br><br><a href='" + process.env.URL_API + "validate/" + token + "'>Valider mon compte</a></p><p>Votre nom d'utilisateur est " + username + ".</p><p>Si vous n'avez pas demandé à créer un compte, ignorez ce mail.</p><p>Cordialement,<br>L'équipe Aroma UGE</p><p><small>Ce mail a été envoyé automatiquement, merci de ne pas y répondre.</small></p><p><small>Si vous rencontrez des problèmes, veuillez contacter l'administrateur du site à l'adresse suivante : " + process.env.MAIL_SUPPORT + "</small></p>"
+    }
+}
 
 /**
  * @swagger
@@ -82,106 +141,60 @@ router.get('/reset/fonts/TAHOMABD.TTF', (req, res) => {
  *                 example: "motdepasse"
  *                 required: true
  */
-router.post('/', (req, res) => {
-    let params = req.body;
-    readFile('./src/users/users.json', (err, dataUsers) => {
-        if (err) {
+router.post('/', async (req, res) => {
+    const params = req.body;
+    if (!await check(res, params)) {
+        return;
+    }
+    const username = params.email.split('@')[0];
+    const token = random(40);
+    let validating = readFileSync('./src/users/validating.json', 'utf-8');
+    if (validating === '') {
+        validating = {};
+    }
+    validating = JSON.parse(validating);
+    validating[token] = {
+        username: username,
+        password: crypto.createHash('sha256').update(params.password).digest('hex'),
+    }
+    writeFileSync('./src/users/validating.json', JSON.stringify(validating));
+    const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        secure: true,
+        auth: {
+            user: process.env.MAIL_USER,
+            pass: process.env.MAIL_PASS
+        },
+    });
+    const mailOptions = buildMailOptionsRegister(token, params.email, username);
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
             res.status(500).send({ error: 'Internal server error' });
         } else {
-            let users = JSON.parse(dataUsers);
-            let username = params.email.split('@')[0];
-            let domain = params.email.split('@')[1];
-            let paternMin = /[a-z]/;
-            let paternMaj = /[A-Z]/;
-            let paternNum = /[0-9]/;
-            let paternLength = /.{8,}/;
-            if (domain !== 'edu.univ-eiffel.fr') {
-                res.status(400).send({ error: 'Utilisez une adresse email universitaire' });
-            } else if (users.hasOwnProperty(username)) {
-                res.status(400).send({ error: 'Utilisateur déjà existant' });
-            } else if (!paternMin.test(params.password) || !paternMaj.test(params.password) || !paternNum.test(params.password) || !paternLength.test(
-                params.password)) {
-                res.status(400).send({ error: 'Le mot de passe doit être plus sécurisé' });
-            } else {
-                if (err) {
-                    res.status(500).send({ error: 'Internal server error' });
-                } else {
-                    readFile('./src/students/students.json', (err, dataStudents) => {
-                        if (err) {
-                            res.status(500).send({ error: 'Internal server error' });
-                        } else {
-                            let students = JSON.parse(dataStudents);
-                            if (!students.hasOwnProperty(username) || !(students[username]["EMAIL"].includes(params.email))) {
-                                res.status(400).send({ error: 'L\'utlisateur n\'est pas étudiant ou l\'adresse email n\'est pas valide' });
-                            } else {
-                                var validating = {};
-                                var randomString = random(40);
-                                readFile('./src/users/validating.json', (err, dataValidating) => {
-                                    if (err) {
-                                        res.status(500).send({ error: 'Internal server error' });
-                                    } else {
-                                        validating = JSON.parse(dataValidating);
-                                        validating[randomString] = {
-                                            username: username,
-                                            password: crypto.createHash('sha256').update(params.password).digest('hex')
-                                        }
-                                        writeFile('./src/users/validating.json', JSON.stringify(validating), (err) => {
-                                            if (err) {
-                                                res.status(500).send({ error: 'Internal server error' });
-                                            } else {
-                                                var transporter = nodemailer.createTransport({
-                                                    host: process.env.SMTP_HOST,
-                                                    port: process.env.SMTP_PORT,
-                                                    secure: true,
-                                                    auth: {
-                                                        user: process.env.MAIL_USER,
-                                                        pass: process.env.MAIL_PASS
-                                                    },
-                                                });
-                                                let mailOptions = {
-                                                    from: 'Aroma UGE <' + process.env.MAIL_USER + '>',
-                                                    to: username + '@edu.univ-eiffel.fr',
-                                                    subject: 'Validation de votre compte',
-                                                    html: "<h1>Bienvenue sur Aroma UGE !</h1><p>Vous avez demandé à créer un compte sur Aroma UGE. Pour valider votre compte, veuillez cliquer sur le lien suivant :<br><br><a href='" + process.env.URL_API + "validate/" + randomString + "'>Valider mon compte</a></p><p>Votre nom d'utilisateur est " + username + ".</p><p>Si vous n'avez pas demandé à créer un compte, ignorez ce mail.</p><p>Cordialement,<br>L'équipe Aroma UGE</p><p><small>Ce mail a été envoyé automatiquement, merci de ne pas y répondre.</small></p><p><small>Si vous rencontrez des problèmes, veuillez contacter l'administrateur du site à l'adresse suivante : " + process.env.MAIL_SUPPORT + "</small></p>"
-                                                }
-                                                transporter.sendMail(mailOptions, (err, info) => {
-                                                    if (err) {
-                                                        res.status(500).send({ error: 'Internal server error' });
-                                                        console.log(err);
-                                                    } else {
-                                                        res.status(200).send({ success: 'Un email de validation a été envoyé à ' + username + '@edu.univ-eiffel.fr' });
-                                                    }
-                                                });
-                                            }
-                                        });
-                                        setTimeout(() => {
-                                            readFile('./src/users/validating.json', (err, dataValidating) => {
-                                                if (err) {
-                                                    res.status(500).send({ error: 'Internal server error' });
-                                                } else {
-                                                    validating = JSON.parse(dataValidating);
-                                                    if (validating.hasOwnProperty(randomString)) {
-                                                        delete validating[randomString];
-                                                        writeFile('./src/users/validating.json', JSON.stringify(validating), (err) => {
-                                                            if (err) {
-                                                                res.status(500).send({ error: 'Internal server error' });
-                                                            }
-                                                        }
-                                                        );
-                                                    }
-                                                }
-                                            });
-                                        }, 900000);
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-            }
+            res.status(200).send({ success: 'Un email de validation a été envoyé à ' + username + '@edu.univ-eiffel.fr, veuillez le consulter.' });
         }
     });
+
+    setTimeout(() => {
+        validating = readFileSync('./src/users/validating.json', 'utf-8');
+        if (validating === '') {
+            validating = {};
+        }
+        validating = JSON.parse(validating);
+        delete validating[token];
+        writeFileSync('./src/users/validating.json', JSON.stringify(validating));
+    }, 600000);
 });
+
+const buildMailOptionsForgot = (token, email) => {
+    return {
+        from: 'Aroma UGE <' + process.env.MAIL_USER + '>',
+        to: email,
+        subject: 'Réinitialisation de votre mot de passe',
+        html: "<h1>Vous avez demandé à réinitialiser votre mot de passe.</h1><p>Pour le réinitialiser, veuillez cliquer sur le lien suivant :<br><br><a href='" + process.env.URL_API + "register/reset/" + token + "'>Réinitialiser mon mot de passe</a></p><p>Si vous n'avez pas demandé à réinitialiser votre mot de passe, ignorez ce mail.</p><p>Cordialement,<br>L'équipe Aroma UGE</p><p><small>Ce mail a été envoyé automatiquement, merci de ne pas y répondre.</small></p><p><small>Si vous rencontrez des problèmes, veuillez contacter l'administrateur du site à l'adresse suivante : " + process.env.MAIL_SUPPORT + "</small></p>",
+    }
+}
 
 /**
  * @swagger
@@ -205,104 +218,69 @@ router.post('/', (req, res) => {
  *          required: true
  *          type: string
  */
-router.get('/forgot/:username', (req, res) => {
-    let username = req.params.username;
-    readFile('./src/users/users.json', (err, dataUsers) => {
-        if (err) {
+router.get('/forgot/:username', async (req, res) => {
+    const username = req.params.username;
+    if (!await checkUserInDatabase(res, username)) {
+        return;
+    }
+    if (!await checkUser(username, res)) {
+        res.status(400).send({ error: 'Cet utilisateur n\'existe pas.' });
+        return;
+    }
+    const token = random(40);
+    let resetting = readFileSync('./src/users/resetting.json', 'utf-8');
+    if (resetting === '') {
+        resetting = {};
+    }
+    resetting = JSON.parse(resetting);
+    resetting[token] = username;
+    writeFileSync('./src/users/resetting.json', JSON.stringify(resetting));
+    const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        secure: true,
+        auth: {
+            user: process.env.MAIL_USER,
+            pass: process.env.MAIL_PASS
+        },
+    });
+    const mailOptions = buildMailOptionsForgot(token, username + '@edu.univ-eiffel.fr');
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
             res.status(500).send({ error: 'Internal server error' });
         } else {
-            let users = JSON.parse(dataUsers);
-            if (users.hasOwnProperty(username)) {
-                var randomString = random(40);
-                readFile('./src/users/resetting.json', (err, dataResetting) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        let resetting = JSON.parse(dataResetting);
-                        resetting[randomString] = username;
-                        writeFile('./src/users/resetting.json', JSON.stringify(resetting), (err) => {
-                            if (err) {
-                                res.status(500).send({ error: 'Internal server error' });
-                            } else {
-                                var transporter = nodemailer.createTransport({
-                                    host: process.env.SMTP_HOST,
-                                    port: process.env.SMTP_PORT,
-                                    secure: true,
-                                    auth: {
-                                        user: process.env.MAIL_USER,
-                                        pass: process.env.MAIL_PASS
-                                    },
-                                });
-                                let mailOptions = {
-                                    from: 'Aroma UGE <' + process.env.MAIL_USER + '>',
-                                    to: username + '@edu.univ-eiffel.fr',
-                                    subject: 'Réinitialisation de votre mot de passe',
-                                    html: "<h1>Vous avez demandé à réinitialiser votre mot de passe.</h1><p>Pour le réinitialiser, veuillez cliquer sur le lien suivant :<br><br><a href='" + process.env.URL_API + "register/reset/" + randomString + "'>Réinitialiser mon mot de passe</a></p><p>Si vous n'avez pas demandé à réinitialiser votre mot de passe, ignorez ce mail.</p><p>Cordialement,<br>L'équipe Aroma UGE</p><p><small>Ce mail a été envoyé automatiquement, merci de ne pas y répondre.</small></p><p><small>Si vous rencontrez des problèmes, veuillez contacter l'administrateur du site à l'adresse suivante : " + process.env.MAIL_SUPPORT + "</small></p>"
-                                }
-                                transporter.sendMail(mailOptions, (err, info) => {
-                                    if (err) {
-                                        console.log(err);
-                                        res.status(500).send({ error: 'Internal server error' });
-                                    }
-                                    else {
-                                        res.status(200).send({ success: 'Un email de réinitialisation a été envoyé à ' + username + '@edu.univ-eiffel.fr' });
-                                    }
-                                });
-                            }
-                        });
-                        setTimeout(() => {
-                            readFile('./src/users/resetting.json', (err, dataResetting) => {
-                                if (err) {
-                                    res.status(500).send({ error: 'Internal server error' });
-                                } else {
-                                    resetting = JSON.parse(dataResetting);
-                                    if (resetting.hasOwnProperty(randomString)) {
-                                        delete resetting[randomString];
-                                        writeFile('./src/users/resetting.json', JSON.stringify(resetting), (err) => {
-                                            if (err) {
-                                                res.status(500).send({ error: 'Internal server error' });
-                                            }
-                                        }
-                                        );
-                                    }
-                                }
-                            });
-                        }, 900000);
-                    }
-                });
-            } else {
-                res.status(400).send({ error: 'L\'utilisateur ' + username + ' n\'existe pas' });
-            }
+            res.status(200).send({ success: 'Un email de réinitialisation a été envoyé à ' + username + '@edu.univ-eiffel.fr, veuillez le consulter.' });
         }
     });
+
+    setTimeout(() => {
+        resetting = readFileSync('./src/users/resetting.json', 'utf-8');
+        if (resetting === '') {
+            resetting = {};
+        }
+        resetting = JSON.parse(resetting);
+        delete resetting[token];
+        writeFileSync('./src/users/resetting.json', JSON.stringify(resetting));
+    }, 600000);
 });
 
-router.get('/reset/:randomString', (req, res) => {
-    let randomString = req.params.randomString;
-    readFile('./src/users/resetting.json', (err, dataResetting) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let resetting = JSON.parse(dataResetting);
-            if (resetting.hasOwnProperty(randomString)) {
-                let username = resetting[randomString];
-                readFile('./src/users/users.json', (err, dataUsers) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        let users = JSON.parse(dataUsers);
-                        if (users.hasOwnProperty(username)) {
-                            res.sendFile('./views/reset.html', { root: __dirname });
-                        } else {
-                            res.status(400).send({ error: 'L\'utilisateur n\'existe pas' });
-                        }
-                    }
-                });
-            } else {
-                res.status(400).sendFile('./views/passwordChangeFailed.html', { root: __dirname });
-            }
-        }
-    });
+router.get('/reset/:token', (req, res) => {
+    const token = req.params.token;
+    let resetting = readFileSync('./src/users/resetting.json', 'utf-8');
+    if (resetting === '') {
+        resetting = {};
+    }
+    resetting = JSON.parse(resetting);
+    if (!resetting.hasOwnProperty(token)) {
+        res.status(400).sendFile('./views/passwordChangeFailed.html', { root: __dirname });
+        return;
+    }
+    const username = resetting[token];
+    if (!checkUser(username)) {
+        res.status(400).sendFile('./views/passwordChangeFailed.html', { root: __dirname });
+        return;
+    }
+    res.sendFile('./views/reset.html', { root: __dirname });
 });
 
 module.exports = router;

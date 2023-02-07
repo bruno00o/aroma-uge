@@ -17,7 +17,6 @@ const loginRouter = require('./routes/loginRouter');
 const apprenticeshipRouter = require('./routes/apprenticeshipRouter')
 const todoRouter = require('./routes/todoRouter');
 const studentsRouter = require('./routes/studentsRouter');
-const adminRouter = require('./routes/adminRouter');
 const friendsRouter = require('./routes/friendsRouter');
 const shareScheduleRouter = require('./routes/shareScheduleRouter');
 
@@ -37,10 +36,9 @@ app.use('/register', registerRouter);
 app.use('/validate', validateRouter);
 app.use('/login', loginRouter);
 
-app.use('/calendar/apprenticeship', apprenticeshipRouter);
+app.use('/apprenticeship', apprenticeshipRouter);
 app.use('/todo', todoRouter);
 app.use('/students', studentsRouter);
-app.use('/admin', adminRouter);
 app.use('/friends', friendsRouter);
 app.use('/partage-edt', shareScheduleRouter);
 

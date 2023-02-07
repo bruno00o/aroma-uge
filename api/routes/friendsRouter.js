@@ -1,11 +1,150 @@
 const express = require('express');
-const { readFile, writeFile } = require('fs');
+const { writeFileSync } = require('fs');
 const router = express.Router();
 const authenticateToken = require('./modules/authenticateToken').authenticateToken;
-const getTimeTable = require('./modules/calendarModule').getTimeTable;
+const getTimetable = require('./modules/calendarModule').getTimetable;
 const getWeekTimetable = require('./modules/calendarModule').getWeekTimetable;
-const generateSchedule = require('./modules/calendarModule').generateSchedule;
 const getNextClass = require('./modules/calendarModule').getNextClass;
+const { getUsers, getStudents, checkUser } = require('./utils/utils.js');
+
+const getFriends = async (user) => {
+    const users = await getUsers();
+    if (users.hasOwnProperty(user)) {
+        return users[user]["friends"];
+    }
+    return { error: 'Internal server error' };
+};
+
+const getFriendsList = async (friends) => {
+    const students = await getStudents();
+    let friendsList = {};
+    for (let i = 0; i < friends.length; i++) {
+        if (students.hasOwnProperty(friends[i])) {
+            friendsList[friends[i]] = students[friends[i]];
+        }
+    }
+    return friendsList;
+};
+
+const checkFriend = async (user, friend) => {
+    const users = await getUsers();
+    if (users.hasOwnProperty(user)) {
+        if (users[user]["friends"].includes(friend)) {
+            return true;
+        }
+    }
+    return false;
+};
+
+const getSortedFriendsList = async (friendsList) => {
+    let sortedFriendsList = {};
+    let friends = Object.keys(friendsList);
+    friends.sort();
+    for (let i = 0; i < friends.length; i++) {
+        sortedFriendsList[friends[i]] = friendsList[friends[i]];
+    }
+    return sortedFriendsList;
+};
+
+const getRequests = async (user) => {
+    const users = await getUsers();
+    if (users.hasOwnProperty(user)) {
+        return users[user]["requests"];
+    }
+    return { error: 'Internal server error' };
+};
+
+const sendRequest = async (user, friend) => {
+    const users = await getUsers();
+    if (!users.hasOwnProperty(user)) {
+        return { error: 'Utilisateur non trouvé', code: 404 };
+    }
+    if (!users.hasOwnProperty(friend)) {
+        return { error: 'Ami non trouvé', code: 404 };
+    }
+    if (users[friend]["requests"].includes(user)) {
+        return { error: 'Requête déjà envoyée', code: 400 };
+    }
+    if (users[user]["requests"].includes(friend)) {
+        return { error: 'Requête déjà envoyée', code: 400 };
+    }
+    if (users[user]["friends"].includes(friend)) {
+        return { error: 'Déjà amis', code: 400 };
+    }
+    if (users[friend]["friends"].includes(user)) {
+        return { error: 'Déjà amis', code: 400 };
+    }
+    if (user == friend) {
+        return { error: 'Vous ne pouvez pas vous demandez en ami', code: 400 };
+    }
+    users[friend]["requests"].push(user);
+    writeFileSync('./src/users/users.json', JSON.stringify(users));
+
+    return { success: 'Requête envoyée', code: 200 };
+};
+
+const acceptRequest = async (user, friend) => {
+    const users = await getUsers();
+    if (!users.hasOwnProperty(user)) {
+        return { error: 'Utilisateur non trouvé', code: 404 };
+    }
+    if (!users.hasOwnProperty(friend)) {
+        return { error: 'Ami non trouvé', code: 404 };
+    }
+    if (!users[user]["requests"].includes(friend)) {
+        return { error: 'Requête non trouvée', code: 404 };
+    }
+    if (users[user]["friends"].includes(friend)) {
+        return { error: 'Déjà amis', code: 400 };
+    }
+    if (users[friend]["friends"].includes(user)) {
+        return { error: 'Déjà amis', code: 400 };
+    }
+    users[user]["requests"].splice(users[user]["requests"].indexOf(friend), 1);
+    users[user]["friends"].push(friend);
+    users[friend]["friends"].push(user);
+    writeFileSync('./src/users/users.json', JSON.stringify(users));
+
+    return { success: 'Requête acceptée', code: 200 };
+};
+
+const declineRequest = async (user, friend) => {
+    const users = await getUsers();
+    if (!users.hasOwnProperty(user)) {
+        return { error: 'Utilisateur non trouvé', code: 404 };
+    }
+    if (!users.hasOwnProperty(friend)) {
+        return { error: 'Ami non trouvé', code: 404 };
+    }
+    if (!users[user]["requests"].includes(friend)) {
+        return { error: 'Requête non trouvée', code: 404 };
+    }
+    users[user]["requests"].splice(users[user]["requests"].indexOf(friend), 1);
+    writeFileSync('./src/users/users.json', JSON.stringify(users));
+
+    return { success: 'Requête refusée', code: 200 };
+};
+
+const removeFriend = async (user, friend) => {
+    const users = await getUsers();
+    if (!users.hasOwnProperty(user)) {
+        return { error: 'Utilisateur non trouvé', code: 404 };
+    }
+    if (!users.hasOwnProperty(friend)) {
+        return { error: 'Ami non trouvé', code: 404 };
+    }
+    if (!users[user]["friends"].includes(friend)) {
+        return { error: 'Ami non trouvé', code: 404 };
+    }
+    if (!users[friend]["friends"].includes(user)) {
+        return { error: 'Ami non trouvé', code: 404 };
+    }
+    users[user]["friends"].splice(users[user]["friends"].indexOf(friend), 1);
+    users[friend]["friends"].splice(users[friend]["friends"].indexOf(user), 1);
+    writeFileSync('./src/users/users.json', JSON.stringify(users));
+
+    return { success: 'Ami supprimé', code: 200 };
+};
 
 /**
  * @swagger
@@ -26,44 +165,28 @@ const getNextClass = require('./modules/calendarModule').getNextClass;
  *        500:
  *          description: Internal server error
  */
-router.get('/', authenticateToken, (req, res) => {
-    let fileName = './src/users/users.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            let user = req.user.user;
-            if (users.hasOwnProperty(user)) {
-                let friends = users[user]["friends"];
-                let studentsFileName = './src/students/students.json';
-                readFile(studentsFileName, (err, data) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        let students = JSON.parse(data);
-                        let friendsList = {};
-                        for (let i = 0; i < friends.length; i++) {
-                            if (students.hasOwnProperty(friends[i])) {
-                                friendsList[friends[i]] = students[friends[i]];
-                            }
-                        }
-                        let sortedFriendsList = {};
-                        let names = {};
-                        for (let key in friendsList) {
-                            names[friendsList[key]["NOM"]] = key;
-                        }
-                        Object.keys(names).sort().forEach(function (key) {
-                            sortedFriendsList[names[key]] = friendsList[names[key]];
-                        });
-                        res.status(200).send(sortedFriendsList);
-                    }
-                });
-            } else {
-                res.status(404).send({ error: 'User not found' });
-            }
-        }
-    });
+router.get('/', authenticateToken, async (req, res) => {
+    const user = req.user.user;
+    if (!await checkUser(user)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    const friends = await getFriends(user);
+    if (friends.error) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
+    }
+    const friendsList = await getFriendsList(friends);
+    if (friendsList.error) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
+    }
+    const sortedFriendsList = await getSortedFriendsList(friendsList);
+    if (sortedFriendsList.error) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
+    }
+    res.status(200).send(sortedFriendsList);
 });
 
 /**
@@ -85,21 +208,18 @@ router.get('/', authenticateToken, (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.get('/requests/', authenticateToken, (req, res) => {
-    let fileName = './src/users/users.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            let username = req.user.user;
-            if (users.hasOwnProperty(username)) {
-                res.status(200).send(users[username]["requests"]);
-            } else {
-                res.status(404).send({ error: 'User not found' });
-            }
-        }
-    });
+router.get('/requests/', authenticateToken, async (req, res) => {
+    const user = req.user.user;
+    if (!await checkUser(user)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    const requests = await getRequests(user);
+    if (requests.error) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
+    }
+    res.status(200).send(requests);
 });
 
 /**
@@ -128,36 +248,24 @@ router.get('/requests/', authenticateToken, (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.post('/request/:id', authenticateToken, (req, res) => {
-    let fileName = './src/users/users.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            let requestedUser = req.params.id;
-            let username = req.user.user;
-            if (users.hasOwnProperty(requestedUser)) {
-                let requestedUserRequests = users[requestedUser]["requests"];
-                let userFriends = users[username]["friends"];
-                if (requestedUserRequests.indexOf(username) === -1 && requestedUser !== username && userFriends.indexOf(requestedUser) === -1) {
-                    requestedUserRequests.push(username);
-                    users[requestedUser]["requests"] = requestedUserRequests;
-                    writeFile(fileName, JSON.stringify(users), (err) => {
-                        if (err) {
-                            res.status(500).send({ error: 'Internal server error' });
-                        } else {
-                            res.status(200).send({ message: 'Requête envoyée' });
-                        }
-                    });
-                } else {
-                    res.status(400).send({ error: 'Requête déjà envoyée ou utilisateur déjà ami. Impossible de s\'ajouter soi-même en ami.' });
-                }
-            } else {
-                res.status(404).send({ error: 'Utilisateur non trouvé' });
-            }
-        }
-    });
+router.post('/request/:username', authenticateToken, async (req, res) => {
+    const user = req.user.user;
+    const friend = req.params.username;
+    if (!await checkUser(user)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    if (!await checkUser(friend)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        console.log('Utilisateur non trouvé');
+        return;
+    }
+    const request = await sendRequest(user, friend);
+    if (request.error) {
+        res.status(request.code).send({ error: request.error });
+        return;
+    }
+    res.status(200).send({ message: request.success });
 });
 
 /**
@@ -186,46 +294,23 @@ router.post('/request/:id', authenticateToken, (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.post('/accept/:id', authenticateToken, (req, res) => {
-    let fileName = './src/users/users.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            let acceptedUser = req.params.id;
-            let username = req.user.user;
-            if (users.hasOwnProperty(username) && users[username]["requests"].indexOf(acceptedUser) !== -1) {
-                let acceptedUserFriends = users[acceptedUser]["friends"];
-                if (acceptedUserFriends.indexOf(username) === -1) {
-                    acceptedUserFriends.push(username);
-                }
-                users[acceptedUser]["friends"] = acceptedUserFriends;
-                let usernameFriends = users[username]["friends"];
-                if (usernameFriends.indexOf(acceptedUser) === -1) {
-                    usernameFriends.push(acceptedUser);
-                }
-                users[username]["friends"] = usernameFriends;
-                let usernameRequests = users[username]["requests"];
-                usernameRequests.splice(usernameRequests.indexOf(acceptedUser), 1);
-                users[username]["requests"] = usernameRequests;
-                let acceptedUserRequests = users[acceptedUser]["requests"];
-                if (acceptedUserRequests.indexOf(username) !== -1) {
-                    acceptedUserRequests.splice(acceptedUserRequests.indexOf(username), 1);
-                }
-                users[acceptedUser]["requests"] = acceptedUserRequests;
-                writeFile(fileName, JSON.stringify(users), (err) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        res.status(200).send({ message: 'Requête acceptée' });
-                    }
-                });
-            } else {
-                res.status(404).send({ error: 'Requête non trouvée' });
-            }
-        }
-    });
+router.post('/accept/:id', authenticateToken, async (req, res) => {
+    const user = req.user.user;
+    const friend = req.params.id;
+    if (!await checkUser(user)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    if (!await checkUser(friend)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    const accept = await acceptRequest(user, friend);
+    if (accept.error) {
+        res.status(accept.code).send({ error: accept.error });
+        return;
+    }
+    res.status(200).send({ message: accept.success });
 });
 
 /**
@@ -254,34 +339,23 @@ router.post('/accept/:id', authenticateToken, (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.post('/decline/:id', authenticateToken, (req, res) => {
-    let fileName = './src/users/users.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            let declinedUser = req.params.id;
-            let username = req.user.user;
-            if (users.hasOwnProperty(username) && users[username]["requests"].indexOf(declinedUser) !== -1) {
-                let declinedUserRequests = users[declinedUser]["requests"];
-                declinedUserRequests.splice(declinedUserRequests.indexOf(username), 1);
-                users[declinedUser]["requests"] = declinedUserRequests;
-                let usernameRequests = users[username]["requests"];
-                usernameRequests.splice(usernameRequests.indexOf(declinedUser), 1);
-                users[username]["requests"] = usernameRequests;
-                writeFile(fileName, JSON.stringify(users), (err) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        res.status(200).send({ message: 'Requête déclinée' });
-                    }
-                });
-            } else {
-                res.status(404).send({ error: 'Requête non trouvée' });
-            }
-        }
-    });
+router.post('/decline/:id', authenticateToken, async (req, res) => {
+    const user = req.user.user;
+    const friend = req.params.id;
+    if (!await checkUser(user)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    if (!await checkUser(friend)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    const decline = await declineRequest(user, friend);
+    if (decline.error) {
+        res.status(decline.code).send({ error: decline.error });
+        return;
+    }
+    res.status(200).send({ message: decline.success });
 });
 
 /**
@@ -310,34 +384,23 @@ router.post('/decline/:id', authenticateToken, (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.delete('/delete/:id', authenticateToken, (req, res) => {
-    let fileName = './src/users/users.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            let deletedUser = req.params.id;
-            let username = req.user.user;
-            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(deletedUser) !== -1) {
-                let deletedUserFriends = users[deletedUser]["friends"];
-                deletedUserFriends.splice(deletedUserFriends.indexOf(username), 1);
-                users[deletedUser]["friends"] = deletedUserFriends;
-                let usernameFriends = users[username]["friends"];
-                usernameFriends.splice(usernameFriends.indexOf(deletedUser), 1);
-                users[username]["friends"] = usernameFriends;
-                writeFile(fileName, JSON.stringify(users), (err) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        res.status(200).send({ message: 'Ami supprimé' });
-                    }
-                });
-            } else {
-                res.status(404).send({ error: 'Ami non trouvé' });
-            }
-        }
-    });
+router.delete('/delete/:id', authenticateToken, async (req, res) => {
+    const user = req.user.user;
+    const friend = req.params.id;
+    if (!await checkUser(user)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    if (!await checkUser(friend)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    const deleted = await removeFriend(user, friend);
+    if (deleted.error) {
+        res.status(deleted.code).send({ error: deleted.error });
+        return;
+    }
+    res.status(200).send({ message: deleted.success });
 });
 
 /**
@@ -366,43 +429,32 @@ router.delete('/delete/:id', authenticateToken, (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.get('/timetable/:id', authenticateToken, (req, res) => {
-    let fileName = './src/users/users.json';
-    let studentsFileName = './src/students/students.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            let friend = req.params.id;
-            let username = req.user.user;
-            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(friend) !== -1) {
-                readFile(studentsFileName, (err, data) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        let students = JSON.parse(data);
-                        if (students.hasOwnProperty(friend)) {
-                            getTimeTable(students, friend).then((timetable) => {
-                                res.status(200).send(timetable);
-                            }).catch((err) => {
-                                res.status(500).send({ error: 'Internal server error' });
-                            });
-                        } else {
-                            res.status(404).send({ error: 'Friend not found' });
-                        }
-                    }
-                });
-            } else {
-                res.status(404).send({ error: 'User not found or friend not found' });
-            }
-        }
-    });
+router.get('/timetable/:id', authenticateToken, async (req, res) => {
+    const user = req.user.user;
+    const friend = req.params.id;
+    if (!await checkUser(user)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    if (!await checkUser(friend)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    if (!await checkFriend(user, friend)) {
+        res.status(404).send({ error: 'Ami non trouvé' });
+        return;
+    }
+    const timetable = await getTimetable(friend);
+    if (timetable.error) {
+        res.status(timetable.code).send({ error: timetable.error });
+        return;
+    }
+    res.status(200).send(timetable);
 });
 
 /**
  * @swagger
- * /friends/nextclass/{username}:
+ * /friends/next-class/{username}:
  *  get:
  *     security:
  *        - accessToken: []
@@ -426,35 +478,37 @@ router.get('/timetable/:id', authenticateToken, (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.get('/nextclass/:id', authenticateToken, (req, res) => {
-    let fileName = './src/users/users.json';
-    let studentsFileName = './src/students/students.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            let friend = req.params.id;
-            let username = req.user.user;
-            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(friend) !== -1) {
-                readFile(studentsFileName, (err, data) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        let students = JSON.parse(data);
-                        getNextClass(students, friend, new Date(), res);
-                    }
-                });
-            } else {
-                res.status(404).send({ error: 'User not found or friend not found' });
-            }
-        }
-    });
+router.get('/next-class/:id', authenticateToken, async (req, res) => {
+    const user = req.user.user;
+    const friend = req.params.id;
+    if (!await checkUser(user)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    if (!await checkUser(friend)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    if (!await checkFriend(user, friend)) {
+        res.status(404).send({ error: 'Ami non trouvé' });
+        return;
+    }
+    const nextClass = await getNextClass(friend);
+    if (nextClass.error) {
+        res.status(nextClass.code).send({ error: nextClass.error });
+        return;
+    }
+    res.status(200).send(nextClass);
 });
+
+const checkDate = (date) => {
+    const regex = new RegExp('^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[012])-(19|20)\\d\\d$');
+    return regex.test(date);
+};
 
 /**
  * @swagger
- * /friends/weektimetable/{date}/{username}:
+ * /friends/week-timetable/{date}/{username}:
  *  get:
  *     security:
  *        - accessToken: []
@@ -484,150 +538,34 @@ router.get('/nextclass/:id', authenticateToken, (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.get('/weektimetable/:date/:id', authenticateToken, (req, res) => {
-    let fileName = './src/users/users.json';
-    let studentsFileName = './src/students/students.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            let friend = req.params.id;
-            let username = req.user.user;
-            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(friend) !== -1) {
-                readFile(studentsFileName, (err, data) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        let students = JSON.parse(data);
-                        if (students.hasOwnProperty(friend)) {
-                            let date = req.params.date;
-                            if (date.match(/^\d{2}-\d{2}-\d{4}$/)) {
-                                let fileName = './src/students/students.json';
-                                readFile(fileName, (err, data) => {
-                                    if (err) {
-                                        res.status(500).send({ error: 'Internal server error' });
-                                    } else {
-                                        let students = JSON.parse(data);
-                                        let dateArray = date.split('-');
-                                        let dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
-                                        if (dateObj.getDay() === 1) {
-                                            getWeekTimetable(students, friend, dateObj).then((calendar) => {
-                                                res.status(200).send(calendar);
-                                            }).catch((err) => {
-                                                res.status(500).send({ error: 'Internal server error' });
-                                            });
-                                        } else {
-                                            res.status(400).send({ error: 'Date must be a Monday' });
-                                        }
-                                    }
-                                });
-                            } else {
-                                res.status(400).send({ error: 'Bad request' });
-                            }
-                        } else {
-                            res.status(404).send({ error: 'Friend not found' });
-                        }
-                    }
-                });
-            } else {
-                res.status(404).send({ error: 'User not found or friend not found' });
-            }
-        }
-    });
-});
-
-router.get('/genschedule/:date/style.css', (req, res) => {
-    res.sendFile('style.css', { 'root': __dirname + '/../views/schedule-view/assets/css/' });
-});
-
-router.get('/genschedule/:date/util.js', (req, res) => {
-    res.sendFile('util.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
-});
-
-router.get('/genschedule/:date/main.js', (req, res) => {
-    res.sendFile('main.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
-});
-
-/**
- * @swagger
- * /friends/genschedule/{date}/{username}:
- *  get:
- *     security:
- *        - accessToken: []
- *     description: Récupère le planning d'un ami au format html
- *     tags:
- *        - Amis
- *     parameters:
- *        - date:
- *          name: date
- *          description: date format dd-mm-yyyy (doit être un lundi)
- *          in: path
- *          required: true
- *          type: string
- *        - username:
- *          name: username
- *          description: username (prenom.nom) de l'amis à supprimer
- *          in: path
- *          required: true
- *          type: string
- *     responses:
- *        200:
- *          description: Planning récupéré
- *        401:
- *          description: Token invalide
- *        404:
- *          description: Ami non trouvé
- *        500:
- *          description: Internal server error
- */
-router.get('/genschedule/:date/:id', authenticateToken, (req, res) => {
-    let fileName = './src/users/users.json';
-    let studentsFileName = './src/students/students.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            let friend = req.params.id;
-            let username = req.user.user;
-            if (users.hasOwnProperty(username) && users[username]["friends"].indexOf(friend) !== -1) {
-                readFile(studentsFileName, (err, data) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        let students = JSON.parse(data);
-                        if (students.hasOwnProperty(friend)) {
-                            let date = req.params.date;
-                            if (date.match(/^\d{2}-\d{2}-\d{4}$/)) {
-                                let fileName = './src/students/students.json';
-                                readFile(fileName, (err, data) => {
-                                    if (err) {
-                                        res.status(500).send({ error: 'Internal server error' });
-                                    } else {
-                                        let students = JSON.parse(data);
-                                        let dateArray = date.split('-');
-                                        let dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
-                                        if (dateObj.getDay() === 1) {
-                                            generateSchedule(students, friend, dateObj, res, false);
-                                        } else {
-                                            res.status(400).send({ error: 'Date must be a Monday' });
-                                        }
-                                    }
-                                });
-                            } else {
-                                res.status(400).send({ error: 'Bad request' });
-                            }
-                        } else {
-                            res.status(404).send({ error: 'Friend not found' });
-                        }
-                    }
-                });
-            } else {
-                res.status(404).send({ error: 'User not found or friend not found' });
-            }
-        }
-    });
+router.get('/week-timetable/:date/:id', authenticateToken, async (req, res) => {
+    const user = req.user.user;
+    const friend = req.params.id;
+    let date = req.params.date;
+    if (!await checkUser(user)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    if (!await checkUser(friend)) {
+        res.status(404).send({ error: 'Utilisateur non trouvé' });
+        return;
+    }
+    if (!checkDate(date)) {
+        res.status(400).send({ error: 'Date invalide' });
+        return;
+    }
+    if (!await checkFriend(user, friend)) {
+        res.status(404).send({ error: 'Ami non trouvé' });
+        return;
+    }
+    date = date.split('-');
+    date = new Date(date[2], date[1] - 1, date[0]);
+    const weekTimetable = await getWeekTimetable(friend, date);
+    if (weekTimetable.error) {
+        res.status(weekTimetable.code).send({ error: weekTimetable.error });
+        return;
+    }
+    res.status(200).send(weekTimetable);
 });
 
 module.exports = router;

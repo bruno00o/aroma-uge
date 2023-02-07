@@ -43,9 +43,11 @@ const requestAFriend = async () => {
   requestFriend(userStore.getAccessToken, username.value)
     .then((res) => {
       requestSuccess.value = res as string;
+      requestError.value = "";
     })
     .catch((err) => {
       requestError.value = err as string;
+      requestSuccess.value = "";
     });
 
   loaderStore.stopLoading();
@@ -138,6 +140,7 @@ const declineAFriendRequest = async (username: string) => {
       text-overflow: ellipsis;
       white-space: nowrap;
       padding-right: 1em;
+      color: white;
     }
 
     .buttons {

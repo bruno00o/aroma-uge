@@ -1,12 +1,4 @@
-@font-face {
-    font-family: "Tahoma UGE";
-    src: url("./fonts/tahoma.ttf") format("truetype");
-}
-
-@font-face {
-    font-family: "Tahoma Bold";
-    src: url("./fonts/TAHOMABD.TTF") format("truetype");
-}
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600&display=swap');
 
 * {
     margin: 0;
@@ -15,7 +7,8 @@
 }
 
 body {
-    font-family: "Tahoma UGE", sans-serif;
+    font-family: 'Urbanist', sans-serif;
+    font-weight: 500;
     background-color: #FFFCFF;
     text-align: center;
     color: #171C8F;
@@ -31,9 +24,11 @@ h1 {
     color: white;
     padding: 1em 0;
     text-align: center;
-    font-family: "Tahoma Bold";
+    font-family: 'Urbanist', sans-serif;
+    font-weight: 600;
     border-radius: 0 0 20pt 20pt;
     margin-bottom: 1em;
+    max-width: 1200px;
 }
 
 h2 {
@@ -60,6 +55,7 @@ form input {
     padding: .5em .4em;
     margin-bottom: .75em;
     border-radius: 5px;
+    font-family: 'Urbanist', sans-serif;
 }
 
 form input:focus {
@@ -69,7 +65,9 @@ form input:focus {
 form #submit-btn {
     width: 70%;
     align-self: center;
-    font-family: "Tahoma Bold";
+    font-family: 'Urbanist', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
     color: white;
     background: #4CB944;
     border: none;
@@ -113,7 +111,9 @@ form ul li.valid {
 }
 
 @media screen and (max-width: 450px) {
-    form, h2 {
+
+    form,
+    h2 {
         max-width: 90%;
     }
 }

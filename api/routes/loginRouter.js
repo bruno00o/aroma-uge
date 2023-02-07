@@ -6,6 +6,7 @@ const { readFile } = require('fs');
 const router = express.Router();
 const accessDurationExp = '1800s';
 const refreshDurationExp = '7d';
+const { getUsers } = require('./utils/utils');
 
 /**
  * Generate a new access token
@@ -58,40 +59,31 @@ function generateRefreshToken(user) {
  *                 example: "motdepasse"
  *                 required: true
  */
-router.post('/', (req, res) => {
-    let fileName = './src/users/users.json';
-    let user = req.body.username;
-    let passHash = crypto.createHash('sha256').update(req.body.password).digest('hex');
-    /* if user contains @ */
+router.post('/', async (req, res) => {
+    const user = req.body.username;
+    const passHash = crypto.createHash('sha256').update(req.body.password).digest('hex');
     if (user.includes('@')) {
         if (user.split('@')[1] !== 'edu.univ-eiffel.fr') {
             res.status(401).send({ error: 'Utilisateur ou mot de passe incorrect' });
-        } else {
-            user = user.split('@')[0];
+            return;
         }
     }
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let users = JSON.parse(data);
-            if (users.hasOwnProperty(user) && users[user]["password"] === passHash) {
-                const accessToken = generateAccessToken(user);
-                const refreshToken = generateRefreshToken(user);
-                res.status(200).send({
-                    accessToken: accessToken,
-                    accessTokenExpirationDate: new Date(Date.now() + 1800000),
-                    refreshToken: refreshToken,
-                    refreshTokenExpirationDate: new Date(Date.now() + 604800000),
-                    user: user,
-                    shareSchedule: users[user]["shareSchedule"],
-                    shareScheduleURL: users[user]["shareScheduleURL"]
-                });
-            } else {
-                res.status(401).send({ error: 'Utilisateur ou mot de passe incorrect' });
-            }
-        }
-    });
+    const users = await getUsers();
+    if (users.hasOwnProperty(user) && users[user]["password"] === passHash) {
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
+        res.status(200).send({
+            accessToken: accessToken,
+            accessTokenExpirationDate: new Date(Date.now() + 1800000),
+            refreshToken: refreshToken,
+            refreshTokenExpirationDate: new Date(Date.now() + 604800000),
+            user: user,
+            shareSchedule: users[user]["shareSchedule"],
+            shareScheduleURL: users[user]["shareScheduleURL"]
+        });
+        return;
+    }
+    res.status(401).send({ error: 'Utilisateur ou mot de passe incorrect' });
 });
 
 /**
@@ -111,33 +103,24 @@ router.post('/', (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.post('/refresh', (req, res) => {
-    console.log(req.headers['Authorization']);
+router.post('/refresh', async (req, res) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    if (token == null) return res.sendStatus(401);
-    let fileName = './src/users/users.json';
+    if (token == null) return res.status(401).send({ error: 'Token is not valid' });
+    let users = await getUsers();
     jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(401);
-        readFile(fileName, (err, data) => {
-            if (err) {
-                res.status(500).send({ error: 'Internal server error' });
-            } else {
-                let users = JSON.parse(data);
-                if (users.hasOwnProperty(user.user)) {
-                    delete user.iat;
-                    delete user.exp;
-                    const accessToken = generateAccessToken(user.user);
-                    res.status(200).send({ 
-                        accessToken: accessToken,
-                        accessTokenExpirationDate: new Date(Date.now() + 1800000),
-                    });
-                } else {
-                    res.status(401).send({ error: 'Token is not valid' });
-                }
-            }
+        if (err) return res.status(401).send({ error: 'Token is not valid' });
+        if (users.hasOwnProperty(user.user)) {
+            delete user.iat;
+            delete user.exp;
+            const accessToken = generateAccessToken(user.user);
+            res.status(200).send({
+                accessToken: accessToken,
+                accessTokenExpirationDate: new Date(Date.now() + 1800000),
+            });
+        } else {
+            res.status(401).send({ error: 'Token is not valid' });
         }
-        );
     });
 });
 

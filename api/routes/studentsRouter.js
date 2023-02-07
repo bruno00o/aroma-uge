@@ -4,12 +4,10 @@ const { readFile } = require('fs');
 const puppeteer = require('puppeteer');
 const router = express.Router();
 const authenticateToken = require('./modules/authenticateToken').authenticateToken;
-const getTimeTable = require('./modules/calendarModule').getTimeTable;
+const getTimetable = require('./modules/calendarModule').getTimetable;
 const getWeekTimetable = require('./modules/calendarModule').getWeekTimetable;
-const generateSchedule = require('./modules/calendarModule').generateSchedule;
-const generateOneDay = require('./modules/calendarModule').generateOneDay;
-const generateNextClass = require('./modules/calendarModule').generateNextClass;
 const getNextClass = require('./modules/calendarModule').getNextClass;
+const { getStudents } = require('./utils/utils');
 
 /**
  * @swagger
@@ -30,22 +28,18 @@ const getNextClass = require('./modules/calendarModule').getNextClass;
  *        500:
  *          description: Internal server error
  */
-router.get('/info/', authenticateToken, (req, res) => {
-    let fileName = './src/students/students.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let students = JSON.parse(data);
-            let user = req.user.user;
-            if (students.hasOwnProperty(user)) {
-                let groups = students[user];
-                res.status(200).send(JSON.stringify(groups));
-            } else {
-                res.status(404).send({ error: 'User not found' });
-            }
-        }
-    });
+router.get('/info', authenticateToken, async (req, res) => {
+    const username = req.user.user;
+    const students = await getStudents();
+    if (!students) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
+    }
+    if (!students.hasOwnProperty(username)) {
+        res.status(404).send({ error: 'User not found' });
+        return;
+    }
+    res.status(200).send(students[username]);
 });
 
 /**
@@ -67,26 +61,28 @@ router.get('/info/', authenticateToken, (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.get('/timetable/', authenticateToken, (req, res) => {
-    let fileName = './src/students/students.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let students = JSON.parse(data);
-            let user = req.user.user;
-            getTimeTable(students, user).then((calendar) => {
-                res.status(200).send(calendar);
-            }).catch((err) => {
-                res.status(500).send({ error: 'Internal server error' });
-            });
-        }
-    });
+router.get('/timetable', authenticateToken, async (req, res) => {
+    const username = req.user.user;
+    const students = await getStudents();
+    if (!students) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
+    }
+    if (!students.hasOwnProperty(username)) {
+        res.status(404).send({ error: 'User not found' });
+        return;
+    }
+    const calendar = await getTimetable(username);
+    if (!calendar) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
+    }
+    res.status(200).send(calendar);
 });
 
 /**
  * @swagger
- * /students/weektimetable/{date}:
+ * /students/week-timetable/{date}:
  *  get:
  *     security:
  *        - accessToken: []
@@ -110,82 +106,39 @@ router.get('/timetable/', authenticateToken, (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.get('/weektimetable/:date', authenticateToken, (req, res) => {
-    let date = req.params.date;
-    if (date.match(/^\d{2}-\d{2}-\d{4}$/)) {
-        let fileName = './src/students/students.json';
-        readFile(fileName, (err, data) => {
-            if (err) {
-                res.status(500).send({ error: 'Internal server error' });
-            } else {
-                let students = JSON.parse(data);
-                let user = req.user.user;
-                let dateArray = date.split('-');
-                let dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
-                if (dateObj.getDay() === 1) {
-                    getWeekTimetable(students, user, dateObj).then((calendar) => {
-                        res.status(200).send(JSON.stringify(calendar));
-                    }).catch((err) => {
-                        res.status(500).send({ error: 'Internal server error' });
-                    });
-                } else {
-                    res.status(400).send({ error: 'Date must be a Monday' });
-                }
-            }
-        });
-    } else {
-        res.status(400).send({ error: 'Bad request' });
+router.get('/week-timetable/:date', authenticateToken, async (req, res) => {
+    const username = req.user.user;
+    const students = await getStudents();
+    if (!students) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
     }
-});
-
-router.get('/genschedule/style.css', (req, res) => {
-    res.sendFile('style.css', { 'root': __dirname + '/../views/schedule-view/assets/css/' });
-});
-
-router.get('/genschedule/util.js', (req, res) => {
-    res.sendFile('util.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
-});
-
-router.get('/genschedule/main.js', (req, res) => {
-    res.sendFile('main.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
-});
-
-/**
- * @swagger
- * /students/genschedule/today:
- *  get:
- *     security:
- *        - accessToken: []
- *     description: Renvoie l'emploi du temps de l'étudiant pour le jour actuel sous forme de page html
- *     tags:
- *        - Étudiant
- *     responses:
- *        200:
- *          description: Emploi du temps de l'étudiant renvoyé
- *        401:
- *          description: Token invalide
- *        404:
- *          description: Utilisateur non trouvé
- *        500:
- *          description: Internal server error
- */
- router.get('/genschedule/today', authenticateToken, (req, res) => {
-    let date = new Date();
-    let fileName = './src/students/students.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let students = JSON.parse(data);
-            let user = req.user.user;
-            generateOneDay(students, user, date, res);
-        }
-    });
+    if (!students.hasOwnProperty(username)) {
+        res.status(404).send({ error: 'User not found' });
+        return;
+    }
+    const date = req.params.date;
+    if (!date.match(/^\d{2}-\d{2}-\d{4}$/)) {
+        res.status(400).send({ error: 'Bad request' });
+        return;
+    }
+    const dateArray = date.split('-');
+    const dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
+    if (dateObj.getDay() !== 1) {
+        res.status(400).send({ error: 'Date must be a Monday' });
+        return;
+    }
+    const calendar = await getWeekTimetable(username, dateObj);
+    if (!calendar) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
+    }
+    res.status(200).send(calendar);
 });
 
 /**
  * @swagger
- * /students/getnextclass:
+ * /students/next-class:
  *  get:
  *     security:
  *        - accessToken: []
@@ -202,157 +155,19 @@ router.get('/genschedule/main.js', (req, res) => {
  *        500:
  *          description: Internal server error
  */
- router.get('/getnextclass', authenticateToken, (req, res) => {
-    let date = new Date();
-    let fileName = './src/students/students.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let students = JSON.parse(data);
-            let user = req.user.user;
-            getNextClass(students, user, date, res);
-        }
-    });
-});
-
-/**
- * @swagger
- * /students/genschedule/nextclass:
- *  get:
- *     security:
- *        - accessToken: []
- *     description: Renvoie l'emploi du temps de l'étudiant pour le jour suivant sous forme de page html
- *     tags:
- *        - Étudiant
- *     responses:
- *        200:
- *          description: Emploi du temps de l'étudiant renvoyé
- *        401:
- *          description: Token invalide
- *        404:
- *          description: Utilisateur non trouvé
- *        500:
- *          description: Internal server error
- */
- router.get('/genschedule/nextclass', authenticateToken, (req, res) => {
-    let date = new Date();
-    let fileName = './src/students/students.json';
-    readFile(fileName, (err, data) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let students = JSON.parse(data);
-            let user = req.user.user;
-            generateNextClass(students, user, date, res);
-        }
-    });
-});
-
-
-/**
- * @swagger
- * /students/genschedule/{date}:
- *  get:
- *     security:
- *        - accessToken: []
- *     description: Renvoie l'emploi du temps de l'étudiant pour la semaine de la date donnée sous forme de page html. Attention, les jours passés ne sont pas affichés
- *     tags:
- *        - Étudiant
- *     parameters:
- *        - date:
- *          name: date
- *          description: date format dd-mm-yyyy (doit être un lundi)
- *          in: path
- *          required: true
- *          type: string
- *     responses:
- *        200:
- *          description: Emploi du temps de l'étudiant renvoyé
- *        401:
- *          description: Token invalide
- *        404:
- *          description: Utilisateur non trouvé
- *        500:
- *          description: Internal server error
- */
-router.get('/genschedule/:date', authenticateToken, (req, res) => {
-    let date = req.params.date;
-    if (date.match(/^\d{2}-\d{2}-\d{4}$/)) {
-        let fileName = './src/students/students.json';
-        readFile(fileName, (err, data) => {
-            if (err) {
-                res.status(500).send({ error: 'Internal server error' });
-            } else {
-                let students = JSON.parse(data);
-                let user = req.user.user;
-                let dateArray = date.split('-');
-                let dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
-                if (dateObj.getDay() === 1) {
-                    generateSchedule(students, user, dateObj, res, false);
-                } else {
-                    res.status(400).send({ error: 'Date must be a Monday' });
-                }
-            }
-        });
-    } else {
-        res.status(400).send({ error: 'Bad request' });
+router.get('/next-class', authenticateToken, async (req, res) => {
+    const students = await getStudents();
+    if (!students) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
     }
-});
-
-/**
- * @swagger
- * /students/imgschedule/{date}:
- *  get:
- *     security:
- *        - accessToken: []
- *     description: Renvoie l'emploi du temps de l'étudiant pour la semaine de la date donnée sous forme d'une image png
- *     tags:
- *        - Étudiant
- *     parameters:
- *        - date:
- *          name: date
- *          description: date format dd-mm-yyyy (doit être un lundi)
- *          in: path
- *          required: true
- *          type: string
- *     responses:
- *        200:
- *          description: Emploi du temps de l'étudiant renvoyé
- *        401:
- *          description: Token invalide
- *        404:
- *          description: Utilisateur non trouvé
- *        500:
- *          description: Internal server error
- */
-router.get('/imgschedule/:date', authenticateToken, (req, res) => {
-    let date = req.params.date;
-    if (date.match(/^\d{2}-\d{2}-\d{4}$/)) {
-        let dateArray = date.split('-');
-        let dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
-        if (dateObj.getDay() === 1) {
-            (async () => {
-                const browser = await puppeteer.launch();
-                const page = await browser.newPage();
-                await page.setRequestInterception(true);
-                page.on('request', (request) => {
-                    const headers = request.headers();
-                    headers["Authorization"] = req.headers['authorization'];
-                    request.continue({ headers });
-                });
-                await page.setViewport({ width: 1400, height: 1200 });
-                await page.goto(process.env.URL_API + 'students/genschedule/' + req.params.date, { waitUntil: 'networkidle2' });
-                await page.screenshot({ path: './src/students/timetables/' + req.user.user + '.png', fullPage: true });
-                await browser.close();
-                res.status(200).sendFile(req.user.user + '.png', { 'root': __dirname + '/../src/students/timetables/' });
-            })();
-        } else {
-            res.status(400).send({ error: 'Date must be a Monday' });
-        }
-    } else {
-        res.status(400).send({ error: 'Bad request' });
+    const user = req.user.user;
+    const nextClass = await getNextClass(user);
+    if (nextClass.error) {
+        res.status(nextClass.code).send({ error: nextClass.error });
+        return;
     }
+    res.status(200).send(nextClass);
 });
 
 module.exports = router;

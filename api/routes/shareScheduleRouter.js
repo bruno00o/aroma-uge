@@ -4,6 +4,7 @@ const router = express.Router();
 const authenticateToken = require('./modules/authenticateToken').authenticateToken;
 const { readFileSync, writeFileSync, readFile } = require('fs');
 const generateSchedule = require('./modules/calendarModule').generateSchedule;
+const { getStudents, getUsers, checkUser } = require('./utils/utils');
 
 /**
  * @swagger
@@ -22,21 +23,21 @@ const generateSchedule = require('./modules/calendarModule').generateSchedule;
  *        500:
  *          description: Internal server error
  */
-router.get('/', authenticateToken, (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     const username = req.user.user;
-    const users = JSON.parse(readFileSync('./src/users/users.json', 'utf-8'));
-    if (users[username]) {
-        if (users[username]["shareSchedule"] === true) {
-            res.status(200).send({
-                sharing: true,
-                url: users[username]["shareScheduleURL"]
-            });
-        } else {
-            res.status(200).send({ sharing: false });
-        }
-    } else {
-        res.status(500).send({ error: "Internal server error" });
+    const users = await getUsers();
+    if (!users.hasOwnProperty(username)) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
     }
+    if (users[username].shareSchedule) {
+        res.status(200).send({
+            sharing: true,
+            url: users[username].shareScheduleURL
+        });
+        return;
+    }
+    res.status(200).send({ sharing: false });
 });
 
 /**
@@ -67,37 +68,36 @@ router.get('/', authenticateToken, (req, res) => {
  *        500:
  *          description: Internal server error
  */
-router.post('/:bool', authenticateToken, (req, res) => {
+router.post('/:bool', authenticateToken, async (req, res) => {
     if (req.params.bool !== 'true' && req.params.bool !== 'false') {
         res.status(400).send({ error: 'Invalid boolean value' });
         return;
     }
     const bool = req.params.bool === 'true' ? true : false;
     const user = req.user.user;
-    const users = JSON.parse(readFileSync('./src/users/users.json', 'utf-8'));
-    if (users[user]) {
-        if (users[user]["shareSchedule"] === bool) {
-            let url = users[user]["shareScheduleURL"];
-            res.status(200).send({
-                message: 'Sharing schedule is already ' + bool,
-                shareSchedule: bool,
-                shareScheduleURL: url
-            });
-            return;
-        } else {
-            users[user]["shareSchedule"] = bool;
-            let url = bool ? process.env.URL_API + 'partage-edt/' + user : '';
-            users[user]["shareScheduleURL"] = url;
-            writeFileSync('./src/users/users.json', JSON.stringify(users));
-            res.status(200).send({
-                message: 'Sharing schedule changed',
-                shareSchedule: bool,
-                shareScheduleURL: url
-            });
-        }
-    } else {
-        res.send('Error');
+    const users = await getUsers();
+    if (!users.hasOwnProperty(user)) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
     }
+    if (users[user].shareSchedule === bool) {
+        let url = users[user].shareScheduleURL;
+        res.status(200).send({
+            message: 'Sharing schedule is already ' + bool,
+            shareSchedule: bool,
+            shareScheduleURL: url
+        });
+        return;
+    }
+    users[user].shareSchedule = bool;
+    let url = bool ? process.env.URL_API + 'partage-edt/' + user : '';
+    users[user].shareScheduleURL = url;
+    writeFileSync('./src/users/users.json', JSON.stringify(users));
+    res.status(200).send({
+        message: 'Sharing schedule changed',
+        shareSchedule: bool,
+        shareScheduleURL: url
+    });
 });
 
 router.get('/style.css', (req, res) => {
@@ -109,17 +109,11 @@ router.get('/util.js', (req, res) => {
 router.get('/main.js', (req, res) => {
     res.sendFile('main.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
 });
-router.get('/icons/manifest-icon-192.png', (req, res) => {
-    res.sendFile('manifest-icon-192.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
+router.get('/favicon.ico', (req, res) => {
+    res.sendFile('favicon.ico', { 'root': __dirname + '/../views/schedule-view/assets/img/' });
 });
-router.get('/icons/manifest-icon-512.png', (req, res) => {
-    res.sendFile('manifest-icon-512.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
-});
-router.get('/apple-icon-180.png', (req, res) => {
-    res.sendFile('apple-icon-180.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
-});
-router.get('/service-worker.js', (req, res) => {
-    res.sendFile('service-worker.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
+router.get('/style.css', (req, res) => {
+    res.sendFile('style.css', { 'root': __dirname + '/../views/schedule-view/assets/css/' });
 });
 router.get('/:user/style.css', (req, res) => {
     res.sendFile('style.css', { 'root': __dirname + '/../views/schedule-view/assets/css/' });
@@ -130,17 +124,11 @@ router.get('/:user/util.js', (req, res) => {
 router.get('/:user/main.js', (req, res) => {
     res.sendFile('main.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
 });
-router.get('/:user/icons/manifest-icon-192.png', (req, res) => {
-    res.sendFile('manifest-icon-192.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
+router.get('/:user/favicon.ico', (req, res) => {
+    res.sendFile('favicon.ico', { 'root': __dirname + '/../views/schedule-view/assets/img/' });
 });
-router.get('/:user/icons/manifest-icon-512.png', (req, res) => {
-    res.sendFile('manifest-icon-512.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
-});
-router.get('/:user/apple-icon-180.png', (req, res) => {
-    res.sendFile('apple-icon-180.png', { 'root': __dirname + '/../views/schedule-view/assets/images/icons' });
-});
-router.get('/:user/service-worker.js', (req, res) => {
-    res.sendFile('service-worker.js', { 'root': __dirname + '/../views/schedule-view/assets/js/' });
+router.get('/:user/style.css', (req, res) => {
+    res.sendFile('style.css', { 'root': __dirname + '/../views/schedule-view/assets/css/' });
 });
 
 /**
@@ -168,7 +156,6 @@ router.get('/:user/service-worker.js', (req, res) => {
 router.get('/:user', (req, res) => {
     const user = req.params.user;
     const users = JSON.parse(readFileSync('./src/users/users.json', 'utf-8'));
-    const students = JSON.parse(readFileSync('./src/students/students.json', 'utf-8'));
     if (users[user] && users[user]["shareSchedule"]) {
         let date = new Date();
         let previousMonday = new Date(date);
@@ -184,7 +171,7 @@ router.get('/:user', (req, res) => {
             nextMonday.setDate(date.getDate() + 2);
             previousMonday = nextMonday;
         }
-        generateSchedule(students, user, previousMonday, res, true);
+        generateSchedule(user, previousMonday, res, true);
     } else {
         res.status(404).send({ error: 'Not found' });
     }
@@ -221,14 +208,13 @@ router.get('/:user', (req, res) => {
 router.get('/:user/:date', (req, res) => {
     const user = req.params.user;
     const users = JSON.parse(readFileSync('./src/users/users.json', 'utf-8'));
-    const students = JSON.parse(readFileSync('./src/students/students.json', 'utf-8'));
     if (users[user] && users[user]["shareSchedule"]) {
         let date = req.params.date;
         if (date.match(/^\d{2}-\d{2}-\d{4}$/)) {
             let dateArray = date.split('-');
             let dateObj = new Date(dateArray[2], dateArray[1] - 1, dateArray[0]);
             if (dateObj.getDay() === 1) {
-                generateSchedule(students, user, dateObj, res, true);
+                generateSchedule(user, dateObj, res, true);
             } else {
                 res.status(400).send({ error: 'Date must be a Monday' });
             }
