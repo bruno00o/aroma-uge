@@ -111,7 +111,7 @@ function changeDateCalendar(calendar) {
     return calendar;
 }
 
-function deleteSameEvents(calendar) {
+/* function deleteSameEvents(calendar) {
     calendar.forEach(event => {
         calendar.forEach(event1 => {
             if (event.start === event1.start && event.end === event1.end) {
@@ -120,7 +120,22 @@ function deleteSameEvents(calendar) {
         });
     });
     return calendar;
+} */
+
+function deleteSameEvents(calendar) {
+    let processedEvents = new Set();
+    for (let i = 0; i < calendar.length; i++) {
+        let event = calendar[i];
+        if (processedEvents.has(event.start + event.end)) {
+            calendar.splice(i, 1);
+            i--;
+        } else {
+            processedEvents.add(event.start + event.end);
+        }
+    }
+    return calendar;
 }
+
 
 /**
  * Return the timetable of the user (working only for L3 info students)
@@ -340,7 +355,6 @@ async function generateOneDay(students, user, date, res) {
             res.render('schedule-view/scheduleOneDay', { calendar: resCalendar });
         }
     }).catch((err) => {
-        console.log(err);
         res.status(500).send({ error: 'Internal server error' });
     });
 }
