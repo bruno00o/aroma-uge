@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://api.aroma-uge.tech";
-/* const API_URL = "http://localhost:8080"; */
+/* const API_URL = "https://api.aroma-uge.tech"; */
+const API_URL = "http://localhost:8080";
 
 export const login = async (username: String, password: String) => {
   const response = await axios.post(`${API_URL}/login`, {
@@ -67,7 +67,7 @@ export const getStudentInfo = async (accessToken: String) => {
 };
 
 export const getNextEventApprentice = async (accessToken: String) => {
-  const response = await axios.get(`${API_URL}/calendar/apprenticeship/next`, {
+  const response = await axios.get(`${API_URL}/apprenticeship/next`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -78,7 +78,7 @@ export const getNextEventApprentice = async (accessToken: String) => {
 
 export const getNextDayApprentice = async (accessToken: String) => {
   const response = await axios.get(
-    `${API_URL}/calendar/apprenticeship/next/Entreprise`,
+    `${API_URL}/apprenticeship/next/Entreprise`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -90,20 +90,17 @@ export const getNextDayApprentice = async (accessToken: String) => {
 };
 
 export const getNextDayUniversity = async (accessToken: String) => {
-  const response = await axios.get(
-    `${API_URL}/calendar/apprenticeship/next/Cours`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  const response = await axios.get(`${API_URL}/apprenticeship/next/Cours`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 
   return response.data;
 };
 
 export const getCalendarApprentice = async (accessToken: String) => {
-  const response = await axios.get(`${API_URL}/calendar/apprenticeship`, {
+  const response = await axios.get(`${API_URL}/apprenticeship/calendar`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -127,7 +124,7 @@ export const shareSchedule = async (accessToken: String, share: Boolean) => {
 };
 
 export const getNextClass = async (accessToken: String) => {
-  const response = await axios.get(`${API_URL}/students/getnextclass`, {
+  const response = await axios.get(`${API_URL}/students/next-class`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -152,7 +149,7 @@ export const getWeekTimetable = async (accessToken: string, date: string) => {
     return null;
   }
   const response = await axios.get(
-    `${API_URL}/students/weektimetable/${date}`,
+    `${API_URL}/students/week-timetable/${date}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -177,11 +174,14 @@ export const getFriendNextClass = async (
   accessToken: String,
   friendId: String
 ) => {
-  const response = await axios.get(`${API_URL}/friends/nextclass/${friendId}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const response = await axios.get(
+    `${API_URL}/friends/next-class/${friendId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
 
   return response.data;
 };
@@ -253,6 +253,7 @@ export const requestFriend = async (accessToken: String, friendId: String) => {
         }
       )
       .then((response) => {
+        console.log(response);
         resolve(response.data.message);
       })
       .catch((error) => {
@@ -271,7 +272,7 @@ export const getFriendWeekTimetable = async (
     return null;
   }
   const response = await axios.get(
-    `${API_URL}/friends/weektimetable/${date}/${friendId}`,
+    `${API_URL}/friends/week-timetable/${date}/${friendId}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,

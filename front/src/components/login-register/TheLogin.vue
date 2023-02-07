@@ -4,6 +4,7 @@ import { useUserStore } from "@/stores/user";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
+import { useRequestsStore } from "@/stores/requests";
 
 const username = ref("");
 const password = ref("");
@@ -11,6 +12,7 @@ const error = ref("");
 const loading = ref(false);
 
 const router = useRouter();
+const requestsStore = useRequestsStore();
 
 const login = async () => {
   return new Promise<String>((resolve, reject) => {
@@ -22,7 +24,8 @@ const login = async () => {
 
     userStore
       .login(username.value, password.value)
-      .then(() => {
+      .then(async () => {
+        await requestsStore.loadFriendsRequests(userStore.getAccessToken);
         router.push("/");
         resolve("Connexion réussie");
       })

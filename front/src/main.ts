@@ -6,6 +6,7 @@ import SetupCalendar from "v-calendar";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 import { useUserStore } from "./stores/user";
 import { useStudentStore } from "./stores/student";
+import { useRequestsStore } from "./stores/requests";
 
 import App from "./App.vue";
 import router from "./router";
@@ -45,8 +46,10 @@ const startApp = async () => {
       await userStore.updateAccessToken();
     } catch (error) {
       const studentStore = useStudentStore();
+      const requestsStore = useRequestsStore();
       userStore.$reset();
       studentStore.$reset();
+      requestsStore.$reset();
       router.push({ name: "login" });
     }
   }

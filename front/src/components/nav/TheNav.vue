@@ -85,7 +85,6 @@ nav {
       position: relative;
 
       a {
-        opacity: 0.5;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -95,8 +94,16 @@ nav {
         gap: 0.25em;
         height: 52px;
 
+        svg,
+        p {
+          opacity: 0.5;
+        }
+
         &.router-link-active {
-          opacity: 1;
+          svg,
+          p {
+            opacity: 1;
+          }
         }
       }
 

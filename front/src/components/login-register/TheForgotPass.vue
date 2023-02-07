@@ -17,11 +17,14 @@ const forgotWithLoading = async () => {
   try {
     const data = await forgot(username.value);
     success.value = data.success;
+    error.value = "";
     setTimeout(() => {
       router.push("/login");
     }, 5000);
   } catch (err: any) {
+    console.log(err);
     error.value = err.response.data.error;
+    console.log(error.value);
     success.value = "";
   } finally {
     loading.value = false;

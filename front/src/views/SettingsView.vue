@@ -4,12 +4,14 @@ import MobileNav from "@/components/nav/TheNav.vue";
 import { useLoaderStore } from "@/stores/loader";
 import { useUserStore } from "@/stores/user";
 import { useStudentStore } from "@/stores/student";
+import { useRequestsStore } from "@/stores/requests";
 import { ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import { getActualTheme, changeTheme, isInstalled, isIOS } from "@/utils/utils";
 
 const userStore = useUserStore();
 const studentStore = useStudentStore();
+const requestsStore = useRequestsStore();
 const router = useRouter();
 
 const dataFetched = ref(false);
@@ -52,6 +54,7 @@ async function shareSchedule() {
 function logout() {
   userStore.$reset();
   studentStore.$reset();
+  requestsStore.$reset();
   router.push("/login");
 }
 

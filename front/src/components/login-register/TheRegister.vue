@@ -27,9 +27,10 @@ const registerWithLoading = async () => {
   try {
     const data = await register(email.value, password.value);
     success.value = data.success;
+    error.value = "";
     setTimeout(() => {
       router.push("/login");
-    }, 5000);
+    }, 6000);
   } catch (err: any) {
     error.value = err.response.data.error;
     success.value = "";
@@ -157,6 +158,7 @@ const vFocus = {
 
     <div v-if="success">
       <p class="success-text">{{ success }}</p>
+      <br />
       <p class="success-text">
         Vous allez être redirigé vers la page de connexion
       </p>
