@@ -92,8 +92,8 @@ onBeforeMount(async () => {
           weekdays: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
         }"
       />
-      <h2>{{ dateToShortFrDate(date) }}</h2>
-      <h3>{{ getEvent(date) }}</h3>
+      <h2 v-if="date">{{ dateToShortFrDate(date) }}</h2>
+      <h3 v-if="date">{{ getEvent(date) }}</h3>
     </section>
     <section v-if="dataFetched">
       <h2>Légende</h2>

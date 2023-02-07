@@ -4,6 +4,8 @@ import { changeTheme, getSavedTheme } from "./utils/utils";
 import cloneDeep from "lodash.clonedeep";
 import SetupCalendar from "v-calendar";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
+import { useUserStore } from "./stores/user";
+import { useStudentStore } from "./stores/student";
 
 import App from "./App.vue";
 import router from "./router";
@@ -23,16 +25,33 @@ if (theme && color) {
   changeTheme(theme, color);
 }
 
-const app = createApp(App);
+const startApp = async () => {
+  const app = createApp(App);
 
-const pinia = createPinia();
-pinia.use(({ store }) => {
-  const initialState = cloneDeep(store.$state);
-  store.$reset = (): void => store.$patch(cloneDeep(initialState));
-});
-pinia.use(piniaPluginPersistedState);
-app.use(pinia);
-app.use(router);
-app.use(SetupCalendar, {});
+  const pinia = createPinia();
+  pinia.use(({ store }) => {
+    const initialState = cloneDeep(store.$state);
+    store.$reset = (): void => store.$patch(cloneDeep(initialState));
+  });
+  pinia.use(piniaPluginPersistedState);
+  app.use(pinia);
+  app.use(router);
+  app.use(SetupCalendar, {});
 
-app.mount("#app");
+  const userStore = useUserStore();
+
+  if (!userStore.checkAccessToken()) {
+    try {
+      await userStore.updateAccessToken();
+    } catch (error) {
+      const studentStore = useStudentStore();
+      userStore.$reset();
+      studentStore.$reset();
+      router.push({ name: "login" });
+    }
+  }
+
+  app.mount("#app");
+};
+
+startApp();

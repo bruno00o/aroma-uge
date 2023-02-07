@@ -50,4 +50,18 @@ onBeforeMount(async () => {
       <ToDo h2="Rappels université" todoType="university" />
     </section>
   </main>
+  <main v-else>
+    <NextClass />
+    <section v-if="dataFetched">
+      <button
+        class="main-button"
+        @click="router.push({ name: 'university-timetable' })"
+      >
+        Consulter l'emploi du temps complet
+      </button>
+    </section>
+    <section>
+      <ToDo h2="Rappels" todoType="university" />
+    </section>
+  </main>
 </template>

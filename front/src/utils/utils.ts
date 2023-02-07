@@ -11,6 +11,9 @@ export const dateToFrDate = (date: Date) => {
 };
 
 export const dateToShortFrDate = (date: Date) => {
+  if (date === null) {
+    return "";
+  }
   return date.toLocaleDateString("fr-FR", {
     day: "2-digit",
     month: "2-digit",

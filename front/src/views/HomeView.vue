@@ -45,14 +45,38 @@ const lastName = studentStore.getStudentLastName;
       <h2>{{ nextDay }}</h2>
       <h3>{{ nextEvent }}</h3>
     </section>
-    <section v-if="dataFetched && nextEvent === 'À l\'université'">
+    <section
+      v-if="
+        dataFetched &&
+        studentStore.getStudentApprenticeship &&
+        nextEvent === 'À l\'université'
+      "
+    >
       <NextClass />
     </section>
-    <section v-if="dataFetched && nextEvent === 'À l\'université'">
+    <section
+      v-if="
+        dataFetched &&
+        studentStore.getStudentApprenticeship &&
+        nextEvent === 'À l\'université'
+      "
+    >
       <ToDo h2="Rappels université" todoType="university" />
     </section>
-    <section v-if="dataFetched && nextEvent === 'À l\'entreprise'">
+    <section
+      v-if="
+        dataFetched &&
+        studentStore.getStudentApprenticeship &&
+        nextEvent === 'À l\'entreprise'
+      "
+    >
       <ToDo h2="Rappels d'entreprise" todoType="apprenticeship" />
+    </section>
+    <section v-if="!studentStore.getStudentApprenticeship">
+      <NextClass />
+    </section>
+    <section v-if="!studentStore.getStudentApprenticeship">
+      <ToDo h2="Rappels" todoType="university" />
     </section>
   </main>
   <MobileNav />

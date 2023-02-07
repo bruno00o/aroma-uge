@@ -29,23 +29,28 @@ const loadTodos = async () => {
   const res = await getTodoList(
     userStore.getAccessToken,
     props.todoType as string
-  );
+  ).catch(() => {
+    loaderStore.stopLoading();
+    dataFetched.value = true;
+    return;
+  });
 
-  for (const todo in res.active) {
-    todos.value.push({
-      id: todo,
-      text: res.active[todo],
-      done: false,
-    });
+  if (res) {
+    for (const todo in res.active) {
+      todos.value.push({
+        id: todo,
+        text: res.active[todo],
+        done: false,
+      });
+    }
+    for (const todo in res.done) {
+      todos.value.push({
+        id: todo,
+        text: res.done[todo],
+        done: true,
+      });
+    }
   }
-  for (const todo in res.done) {
-    todos.value.push({
-      id: todo,
-      text: res.done[todo],
-      done: true,
-    });
-  }
-
   loaderStore.stopLoading();
   dataFetched.value = true;
 };

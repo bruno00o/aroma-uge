@@ -40,7 +40,7 @@ onBeforeMount(async () => {
           </svg>
         </button>
       </h2>
-      <div class="friends">
+      <div class="friends" v-if="Object.keys(friends).length > 0">
         <div
           class="friend"
           v-for="friend in friends"
@@ -81,6 +81,7 @@ onBeforeMount(async () => {
           </button>
         </div>
       </div>
+      <p v-else>Vous n'avez pas encore d'amis</p>
     </section>
   </main>
 </template>
