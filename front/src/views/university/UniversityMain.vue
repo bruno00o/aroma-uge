@@ -65,3 +65,9 @@ onBeforeMount(async () => {
     </section>
   </main>
 </template>
+
+<style scoped lang="scss">
+.next-class {
+  margin-bottom: 1em !important;
+}
+</style>

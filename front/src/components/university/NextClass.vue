@@ -30,7 +30,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <section v-if="dataFetched">
+  <section v-if="dataFetched" class="next-class">
     <h2>Prochain cours</h2>
     <TheClass
       :start="nextClass.start"

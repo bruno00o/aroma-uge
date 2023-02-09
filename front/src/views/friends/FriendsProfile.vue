@@ -226,6 +226,7 @@ const deletedFriend = async () => {
     display: flex;
     flex-direction: column;
     gap: 1em;
+    max-width: 500px;
 
     h2 {
       font-size: 1.2rem;

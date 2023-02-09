@@ -67,7 +67,7 @@ const lastName = studentStore.getStudentLastName;
       v-if="
         dataFetched &&
         studentStore.getStudentApprenticeship &&
-        nextEvent === 'À l\'entreprise'
+        nextEvent === 'En entreprise'
       "
     >
       <ToDo h2="Rappels d'entreprise" todoType="apprenticeship" />

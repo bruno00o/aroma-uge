@@ -4,10 +4,14 @@ import { useLoaderStore } from "@/stores/loader";
 import { useUserStore } from "@/stores/user";
 import { useRequestsStore } from "./stores/requests";
 import { ref, onBeforeMount } from "vue";
+import { useRouter } from "vue-router";
+import { useStudentStore } from "./stores/student";
 
 const loaderStore = useLoaderStore();
 const userStore = useUserStore();
 const requestsStore = useRequestsStore();
+const studentStore = useStudentStore();
+const router = useRouter();
 
 const dataFetched = ref(true);
 
@@ -18,6 +22,26 @@ onBeforeMount(async () => {
   }
   loaderStore.stopLoading();
   dataFetched.value = true;
+});
+
+router.beforeEach(async (to, from, next) => {
+  if (to.name === "login" || to.name === "register" || to.name === "forgot") {
+    next();
+  } else {
+    if (!userStore.checkAccessToken()) {
+      try {
+        await userStore.updateAccessToken();
+        next();
+      } catch (error) {
+        userStore.$reset();
+        studentStore.$reset();
+        requestsStore.$reset();
+        next({ name: "login" });
+      }
+    } else {
+      next();
+    }
+  }
 });
 </script>
 

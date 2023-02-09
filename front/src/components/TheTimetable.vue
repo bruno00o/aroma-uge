@@ -117,7 +117,7 @@ onBeforeMount(async () => {
 
 <template>
   <main>
-    <section v-if="dataFetched">
+    <section v-if="dataFetched" class="timetable-selector">
       <h2 v-if="!friendId">
         <BackButton />
         Emploi du temps
@@ -242,6 +242,10 @@ onBeforeMount(async () => {
       }
     }
   }
+}
+
+#app main section.timetable-selector {
+  margin-bottom: 1em;
 }
 
 #app main section.timetable {

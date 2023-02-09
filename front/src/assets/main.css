@@ -32,7 +32,7 @@ body {
 }
 
 #app main section:not(:last-of-type) {
-  margin-bottom: 1em;
+  margin-bottom: 2em;
 }
 
 #app main section {
