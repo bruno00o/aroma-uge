@@ -12,8 +12,8 @@ const getCalendar = async (calendarName, monday = false) => {
         return { error: 'Calendar not found', code: 404 };
     }
     let file;
-    if (monday) file = './src/calendar/' + calendarURLsJson[calendarName].jsonFileName.replace(".json", "_monday.json");
-    else file = './src/calendar/' + calendarURLsJson[calendarName].jsonFileName;
+    if (monday) file = './src/calendar/monday/' + calendarURLsJson[calendarName].jsonFileName.replace(".json", "_monday.json");
+    else file = './src/calendar/json/' + calendarURLsJson[calendarName].jsonFileName;
 
     const calendar = readFileSync(file, 'utf8');
     if (!calendar) {
@@ -287,7 +287,7 @@ const getActualDay = async (user) => {
 const getEndOfDay = async (user) => {
     const actualDay = await getActualDay(user);
     if (actualDay === null) {
-        return null;
+        return new Date(new Date().setHours(18, 0, 0, 0));
     }
     let maxEnd = actualDay[Object.keys(actualDay)[0]][0].end;
     actualDay[Object.keys(actualDay)[0]].forEach(event => {

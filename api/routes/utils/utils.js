@@ -26,8 +26,19 @@ const checkUser = async (user) => {
     return false;
 };
 
+const isApprentice = async (user) => {
+    const students = await getStudents();
+    if (students.hasOwnProperty(user)) {
+        if (students[user].hasOwnProperty('ALTERNANCE') && students[user]['ALTERNANCE'] == "ALTERNANCE") {
+            return true;
+        }
+    }
+    return false;
+};
+
 module.exports = {
     getStudents,
     getUsers,
-    checkUser
+    checkUser,
+    isApprentice
 };

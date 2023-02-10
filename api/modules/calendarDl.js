@@ -11,7 +11,7 @@ var access = fs.createWriteStream('./access.log', { flags: 'a' })
  * @param {*} icsLines 
  * @returns 
  */
-function createEvents(icsLines) {
+const createEvents = (icsLines) => {
     let events = [];
     let event = {};
     icsLines.forEach(function (line) {
@@ -46,16 +46,16 @@ function createEvents(icsLines) {
  * @param {*} calendarFolder 
  * @returns 
  */
-async function icsToJson(calendarURLs, cal, calendarFolder) {
+const icsToJson = async (calendarURLs, cal, calendarFolder) => {
     return new Promise((resolve, reject) => {
-        fs.readFile(calendarFolder + calendarURLs[cal].icsFileName, 'utf8', function (err, data) {
+        fs.readFile(calendarFolder + "ics/" + calendarURLs[cal].icsFileName, 'utf8', function (err, data) {
             if (err) {
                 error.write(err + ' ' + new Date() + "\n");
                 reject(err);
             } else {
                 const lines = data.split("\n");
                 const events = createEvents(lines);
-                fs.writeFileSync(calendarFolder + calendarURLs[cal].jsonFileName, JSON.stringify(events), function (err) {
+                fs.writeFileSync(calendarFolder + "json/" + calendarURLs[cal].jsonFileName, JSON.stringify(events), function (err) {
                     if (err) {
                         error.write(err + ' ' + new Date() + "\n");
                         reject(err);
@@ -63,7 +63,7 @@ async function icsToJson(calendarURLs, cal, calendarFolder) {
                 });
                 /* if it is monday copy the file */
                 if (new Date().getDay() == 1) {
-                    let mondayFileName = calendarFolder + calendarURLs[cal].jsonFileName.replace(".json", "_monday.json");
+                    let mondayFileName = calendarFolder + "monday/" + calendarURLs[cal].jsonFileName.replace(".json", "_monday.json");
                     fs.writeFileSync(mondayFileName, JSON.stringify(events), function (err) {
                         if (err) {
                             error.write(err + ' ' + new Date() + "\n");
@@ -83,7 +83,7 @@ async function icsToJson(calendarURLs, cal, calendarFolder) {
  * @param {*} cal 
  * @param {*} calendarFolder 
  */
-function processIcsData(calendarURLs, cal, calendarFolder) {
+const processIcsData = (calendarURLs, cal, calendarFolder) => {
     access.write("Downloaded " + calendarURLs[cal].icsFileName + " at " + new Date() + "\n");
     (async () => await icsToJson(calendarURLs, cal, calendarFolder))().then(() => {
         access.write("Converted " + calendarURLs[cal].icsFileName + " to json at " + new Date() + "\n");
@@ -99,9 +99,9 @@ function processIcsData(calendarURLs, cal, calendarFolder) {
  * @param {*} calendarFolder 
  * @returns Promise
  */
-async function downloadIcs(calendarURLs, cal, calendarFolder) {
-    let url = calendarURLs[cal].url;
-    let file = fs.createWriteStream(calendarFolder + calendarURLs[cal].icsFileName);
+const downloadIcs = async (calendarURLs, cal, calendarFolder) => {
+    const url = calendarURLs[cal].url;
+    const file = fs.createWriteStream(calendarFolder + 'ics/' + calendarURLs[cal].icsFileName);
     return new Promise((resolve, reject) => {
         https.get(url, response => {
             response.pipe(file);
@@ -122,12 +122,12 @@ async function downloadIcs(calendarURLs, cal, calendarFolder) {
  */
 exports.initCronDlCalendar = function () {
     cron.schedule("0 0 */3 * * *", function () {
-        let fileURLs = "./src/calendar/calendarURLs.json";
-        let calendarFolder = "./src/calendar/";
-        let file = fs.readFileSync(fileURLs, 'utf8');
+        const fileURLs = "./src/calendar/calendarURLs.json";
+        const calendarFolder = "./src/calendar/";
+        const file = fs.readFileSync(fileURLs, 'utf8');
         if (file) {
-            let calendarURLs = JSON.parse(file);
-            for (let cal in calendarURLs) {
+            const calendarURLs = JSON.parse(file);
+            for (const cal in calendarURLs) {
                 (async () => await downloadIcs(calendarURLs, cal, calendarFolder))().then(() => {
                     access.write("Downloaded " + calendarURLs[cal].icsFileName + " at " + new Date() + "\n");
                 }).catch((err) => {

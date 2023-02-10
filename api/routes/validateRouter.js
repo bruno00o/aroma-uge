@@ -1,8 +1,9 @@
 const express = require('express');
 const crypto = require('crypto');
 var parseUrl = require('body-parser');
-const { readFile, writeFile } = require('fs');
+const { readFileSync, writeFileSync } = require('fs');
 const router = express.Router();
+const { getUsers } = require('./utils/utils');
 
 let encodeUrl = parseUrl.urlencoded({ extended: false });
 
@@ -22,109 +23,95 @@ router.get('/changepass/favicon.ico', (req, res) => {
     res.sendFile(__dirname + '/views/src/img/favicon.ico');
 });
 
-router.get('/:token', (req, res) => {
-    let params = req.params;
-    let token = params.token;
-    let fileNameValidating = './src/users/validating.json';
-    readFile(fileNameValidating, (err, dataValidating) => {
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else {
-            let validating = JSON.parse(dataValidating);
-            if (validating.hasOwnProperty(token)) {
-                let fileNameUsers = './src/users/users.json';
-                readFile(fileNameUsers, (err, dataUsers) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        let users = JSON.parse(dataUsers);
-                        if (users.hasOwnProperty(validating[token]["username"])) {
-                            res.status(400).send({ error: 'Username already exists' });
-                        } else {
-                            users[validating[token]["username"]] = {
-                                password: validating[token]["password"],
-                                friends: [],
-                                requests: [],
-                                shareSchedule: false,
-                                shareScheduleURL: ""
-                            };
-                            writeFile(fileNameUsers, JSON.stringify(users), (err) => {
-                                if (err) {
-                                    res.status(500).send({ error: 'Internal server error' });
-                                } else {
-                                    delete validating[token];
-                                    writeFile(fileNameValidating, JSON.stringify(validating), (err) => {
-                                        if (err) {
-                                            res.status(500).send({ error: 'Internal server error' });
-                                        } else {
-                                            res.status(200).sendFile('./views/registrationSuccessful.html', { root: __dirname });
-                                        }
-                                    }
-                                    );
-                                }
-                            }
-                            );
-                        }
-                    }
-                });
-            } else {
-                res.status(400).sendFile('./views/registrationFailed.html', { root: __dirname });
-            }
-        }
-    });
+router.get('/:token', async (req, res) => {
+    const params = req.params;
+    const token = params.token;
+    const fileNameValidating = './src/users/validating.json';
+
+    const dataValidating = readFileSync(fileNameValidating, 'utf8');
+
+    if (!dataValidating) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
+    }
+
+    const validating = JSON.parse(dataValidating);
+
+    if (!validating.hasOwnProperty(token)) {
+        res.status(400).sendFile('./views/registrationFailed.html', { root: __dirname });
+        return;
+    }
+
+    const fileNameUsers = './src/users/users.json';
+    const users = await getUsers();
+
+    if (users.hasOwnProperty(validating[token]["username"])) {
+        res.status(400).send({ error: 'Username already exists' });
+        return;
+    }
+
+    users[validating[token]["username"]] = {
+        password: validating[token]["password"],
+        friends: [],
+        requests: [],
+        shareSchedule: false,
+        shareScheduleURL: ""
+    };
+
+    writeFileSync(fileNameUsers, JSON.stringify(users));
+
+    delete validating[token];
+    writeFileSync(fileNameValidating, JSON.stringify(validating));
+
+    res.status(200).sendFile('./views/registrationSuccessful.html', { root: __dirname });
 });
 
-router.post('/changepass/:token', encodeUrl, (req, res) => {
-    let token = req.params.token;
-    let fileNameResetting = './src/users/resetting.json';
-    let params = req.body;
-    readFile(fileNameResetting, (err, dataResetting) => {
-        let paternMin = /[a-z]/;
-        let paternMaj = /[A-Z]/;
-        let paternNum = /[0-9]/;
-        let paternLength = /.{8,}/;
-        if (err) {
-            res.status(500).send({ error: 'Internal server error' });
-        } else if (!paternMin.test(params.password) || !paternMaj.test(params.password) || !paternNum.test(params.password) || !paternLength.test(
-            params.password)) {
-            res.status(400).send({ error: 'Password is not strong enough' });
-        } else {
-            let resetting = JSON.parse(dataResetting);
-            if (resetting.hasOwnProperty(token)) {
-                let fileNameUsers = './src/users/users.json';
-                readFile(fileNameUsers, (err, dataUsers) => {
-                    if (err) {
-                        res.status(500).send({ error: 'Internal server error' });
-                    } else {
-                        let users = JSON.parse(dataUsers);
-                        if (users.hasOwnProperty(resetting[token])) {
-                            users[resetting[token]].password = crypto.createHash('sha256').update(params.password).digest('hex');
-                            writeFile(fileNameUsers, JSON.stringify(users), (err) => {
-                                if (err) {
-                                    res.status(500).send({ error: 'Internal server error' });
-                                } else {
-                                    delete resetting[token];
-                                    writeFile(fileNameResetting, JSON.stringify(resetting), (err) => {
-                                        if (err) {
-                                            res.status(500).send({ error: 'Internal server error' });
-                                        } else {
-                                            res.status(200).sendFile('./views/passwordChanged.html', { root: __dirname });
-                                        }
-                                    }
-                                    );
-                                }
-                            }
-                            );
-                        } else {
-                            res.status(400).send({ error: 'User not found' });
-                        }
-                    }
-                });
-            } else {
-                res.status(400).sendFile('./views/passwordChangeFailed.html', { root: __dirname });
-            }
-        }
-    });
+router.post('/changepass/:token', encodeUrl, async (req, res) => {
+    const token = req.params.token;
+    const fileNameResetting = './src/users/resetting.json';
+    const params = req.body;
+
+    const paternMin = /[a-z]/;
+    const paternMaj = /[A-Z]/;
+    const paternNum = /[0-9]/;
+    const paternLength = /.{8,}/;
+
+    if (!paternMin.test(params.password) || !paternMaj.test(params.password) || !paternNum.test(params.password) || !paternLength.test(
+        params.password)) {
+        res.status(400).send({ error: 'Password is not strong enough' });
+        return;
+    }
+
+    const dataResetting = readFileSync(fileNameResetting, 'utf8');
+
+    if (!dataResetting) {
+        res.status(500).send({ error: 'Internal server error' });
+        return;
+    }
+
+    const resetting = JSON.parse(dataResetting);
+
+    if (!resetting.hasOwnProperty(token)) {
+        res.status(400).sendFile('./views/passwordChangeFailed.html', { root: __dirname });
+        return;
+    }
+
+    const fileNameUsers = './src/users/users.json';
+    const users = await getUsers();
+
+    if (!users.hasOwnProperty(resetting[token])) {
+        res.status(400).send({ error: 'User not found' });
+        return;
+    }
+
+    users[resetting[token]].password = crypto.createHash('sha256').update(params.password).digest('hex');
+
+    writeFileSync(fileNameUsers, JSON.stringify(users));
+
+    delete resetting[token];
+    writeFileSync(fileNameResetting, JSON.stringify(resetting));
+
+    res.status(200).sendFile('./views/passwordChanged.html', { root: __dirname });
 });
 
 module.exports = router;
