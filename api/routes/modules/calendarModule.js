@@ -270,7 +270,9 @@ const getWeekTimetable = async (user, date) => {
 
 const getActualDay = async (user) => {
     let date = new Date();
-    const weekTimetable = await getWeekTimetable(user, date);
+    let prevMonday = new Date();
+    prevMonday.setDate(date.getDate() - date.getDay() + 1);
+    const weekTimetable = await getWeekTimetable(user, prevMonday);
     let day = date.getDay();
     let dayName = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
     let dayEvents = weekTimetable[dayName[day]];
