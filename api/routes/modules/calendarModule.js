@@ -151,9 +151,17 @@ const getTimetable = async (username, monday = false) => {
     }
     const user = students[username];
     if (user.ALTERNANCE === 'ALTERNANCE') {
-        return await getApprenticeTimetable(username, monday);
+        const calendar = await getApprenticeTimetable(username, monday);
+        if (calendar.length === 0) {
+            return await getApprenticeTimetable(username, true);
+        }
+        return calendar;
     } else {
-        return await getTimetableByGroup(username, monday);
+        const calendar = await getTimetableByGroup(username, monday);
+        if (calendar.length === 0) {
+            return await getTimetableByGroup(username, true);
+        }
+        return calendar;
     }
 };
 
