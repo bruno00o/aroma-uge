@@ -146,10 +146,20 @@ a:hover {
 }
 
 @media screen and (prefers-color-scheme: dark) {
-  body {
+  body:not(.light) {
     background-color: var(--dark-bg-color);
     color: var(--light-bg-color);
   }
+
+  input {
+    color: var(--dark-bg-color);
+    background-color: white;
+  }
+}
+
+body.dark {
+  background-color: var(--dark-bg-color);
+  color: var(--light-bg-color);
 }
 
 .error-text {
@@ -198,4 +208,9 @@ a:hover {
   header nav {
     display: block;
   }
+}
+
+.vc-header .vc-title, .vc-header .vc-prev, .vc-header .vc-next {
+  background-color: var(--primary-color);
+  color: white;
 }

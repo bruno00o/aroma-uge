@@ -20,7 +20,7 @@ let props = defineProps<{
 const router = useRouter();
 
 const getColor = () => {
-  if (props.summary.includes("Cours")) {
+  if (props.summary.includes("CM")) {
     return "var(--timetable-cours)";
   } else if (props.summary.includes("TD")) {
     return "var(--timetable-td)";

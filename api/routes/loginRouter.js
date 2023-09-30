@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const { readFile } = require('fs');
 const router = express.Router();
 const accessDurationExp = '1800s';
-const refreshDurationExp = '7d';
+const refreshDurationExp = '14d';
 const { getUsers } = require('./utils/utils');
 
 /**
@@ -60,13 +60,14 @@ function generateRefreshToken(user) {
  *                 required: true
  */
 router.post('/', async (req, res) => {
-    const user = req.body.username;
+    let user = req.body.username;
     const passHash = crypto.createHash('sha256').update(req.body.password).digest('hex');
     if (user.includes('@')) {
         if (user.split('@')[1] !== 'edu.univ-eiffel.fr') {
             res.status(401).send({ error: 'Utilisateur ou mot de passe incorrect' });
             return;
         }
+        user = user.split('@')[0];
     }
     const users = await getUsers();
     if (users.hasOwnProperty(user) && users[user]["password"] === passHash) {

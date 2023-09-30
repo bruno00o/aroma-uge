@@ -14,12 +14,15 @@ const getCalendar = async (calendarName, monday = false) => {
     let file;
     if (monday) file = './src/calendar/monday/' + calendarURLsJson[calendarName].jsonFileName.replace(".json", "_monday.json");
     else file = './src/calendar/json/' + calendarURLsJson[calendarName].jsonFileName;
-
-    const calendar = readFileSync(file, 'utf8');
-    if (!calendar) {
+    try {
+        const calendar = readFileSync(file, 'utf8');
+        if (!calendar) {
+            return { error: 'Internal server error', code: 500 };
+        }
+        return JSON.parse(calendar);
+    } catch (err) {
         return { error: 'Internal server error', code: 500 };
     }
-    return JSON.parse(calendar);
 };
 
 const checkSameEvent = (calendar, event) => {
@@ -32,6 +35,9 @@ const checkSameEvent = (calendar, event) => {
 };
 
 const addCalendar = (calendar, resCalendar) => {
+    if (resCalendar.length === 0) {
+        return calendar;
+    }
     calendar.forEach((event) => {
         if (!checkSameEvent(resCalendar, event)) {
             resCalendar.push(event);
@@ -41,6 +47,9 @@ const addCalendar = (calendar, resCalendar) => {
 };
 
 const dateFormat = (strDate) => {
+    if (typeof strDate !== 'string') {
+        return strDate;
+    }
     const date = strDate.split('T')[0];
     const time = strDate.split('T')[1];
     const year = date.substring(0, 4);
@@ -54,6 +63,9 @@ const dateFormat = (strDate) => {
 };
 
 const sortCalendarByDate = (calendar) => {
+    if (calendar.length === 0) {
+        return calendar;
+    }
     calendar.sort((a, b) => {
         let dateA = dateFormat(a.start);
         let dateB = dateFormat(b.start);
@@ -84,7 +96,7 @@ const deleteSameEvents = (calendar) => {
     return calendar;
 };
 
-const getApprenticeTimetable = async (username, monday = false) => {
+/* const getApprenticeTimetable = async (username, monday = false) => {
     const students = await getStudents();
     if (students.error) {
         return { error: students.error, code: students.code };
@@ -107,7 +119,7 @@ const getApprenticeTimetable = async (username, monday = false) => {
     const changedDateCalendar = changeDateCalendar(sortedCalendar);
     return changedDateCalendar;
 };
-
+ */
 const getTimetableByGroup = async (username, monday = false) => {
     const students = await getStudents();
     if (students.error) {
@@ -117,7 +129,25 @@ const getTimetableByGroup = async (username, monday = false) => {
         return { error: 'User not found', code: 404 };
     }
     const user = students[username];
-    if (!user.GROUPE) {
+
+    let calendar = [];
+
+    if (user.hasOwnProperty('CALENDARS') && user.CALENDARS.length > 0) {
+        for (calendarName of user.CALENDARS) {
+            const toAddCalendar = await getCalendar(calendarName, monday);
+            if (calendar.error) {
+                return { error: calendar.error, code: calendar.code };
+            }
+            calendar = addCalendar(toAddCalendar, calendar);
+            calendar = sortCalendarByDate(calendar);
+            calendar = changeDateCalendar(calendar);
+            calendar = deleteSameEvents(calendar);
+        }
+    }
+
+    return calendar;
+
+    /* if (!user.GROUPE) {
         return { error: 'User not found', code: 404 };
     }
     const calendar = await getCalendar(user.GROUPE, monday);
@@ -138,7 +168,7 @@ const getTimetableByGroup = async (username, monday = false) => {
         const sortedCalendar = sortCalendarByDate(calendar);
         const changedDateCalendar = changeDateCalendar(sortedCalendar);
         return changedDateCalendar;
-    }
+    } */
 };
 
 const getTimetable = async (username, monday = false) => {
@@ -149,7 +179,7 @@ const getTimetable = async (username, monday = false) => {
     if (!students.hasOwnProperty(username)) {
         return { error: 'User not found', code: 404 };
     }
-    const user = students[username];
+    /* const user = students[username];
     if (user.ALTERNANCE === 'ALTERNANCE') {
         const calendar = await getApprenticeTimetable(username, monday);
         if (calendar.length === 0) {
@@ -157,12 +187,12 @@ const getTimetable = async (username, monday = false) => {
         }
         return calendar;
     } else {
-        const calendar = await getTimetableByGroup(username, monday);
-        if (calendar.length === 0) {
-            return await getTimetableByGroup(username, true);
-        }
-        return calendar;
+    } */
+    const calendar = await getTimetableByGroup(username, monday);
+    if (calendar.length === 0) {
+        return await getTimetableByGroup(username, true);
     }
+    return calendar;
 };
 
 const addWeekDays = (calendar) => {

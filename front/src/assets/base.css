@@ -61,40 +61,64 @@
 }
 
 .rose-theme {
-  --primary-color: #EF959D;
-  --primary-color-hover: #E87F87;
-  --secondary-color: #F3B61F;
-  --secondary-color-hover: #E9AA0C;
-  --main-text-color: #460B10;
-  --light-bg-color: #FCEDEF;
-  --dark-bg-color: #460B10;
+  --primary-color: #FFAFCC;
+  --primary-color-hover: #f798bb;
+  --secondary-color: #389efd;
+  --secondary-color-hover: #2b85d9;
+  --main-text-color: #2d0514;
+  --light-bg-color: #fff4f7;
+  --dark-bg-color: #14213D;
 }
 
 
 @media screen and (prefers-color-scheme: dark) {
-  :root {
+  /* :root {
+    --main-text-color: white;
+  }
+ */
+  .vert-theme:not(.light) {
     --main-text-color: white;
   }
 
-  .vert-theme {
+  .violet-theme:not(.light) {
     --main-text-color: white;
   }
 
-  .violet-theme {
+  .rouge-theme:not(.light) {
     --main-text-color: white;
   }
 
-  .rouge-theme {
+  .rose-theme:not(.light) {
     --main-text-color: white;
   }
 
-  .rose-theme {
+  .bleu-theme:not(.light) {
     --main-text-color: white;
   }
+}
 
-  .bleu-theme {
-    --main-text-color: white;
-  }
+.dark {
+  --main-text-color: white;
+}
+
+.vert-theme.dark {
+  --main-text-color: white;
+}
+
+.violet-theme.dark {
+  --main-text-color: white;
+}
+
+.rouge-theme.dark {
+  --main-text-color: white;
+}
+
+.rose-theme.dark {
+  --main-text-color: white;
+}
+
+.bleu-theme.dark {
+  --main-text-color: white;
 }
 
 @media screen and (min-width: 768px) {

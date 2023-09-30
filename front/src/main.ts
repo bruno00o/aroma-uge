@@ -1,6 +1,11 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { changeTheme, getSavedTheme } from "./utils/utils";
+import {
+  changeTheme,
+  getSavedTheme,
+  getThemeMode,
+  setThemeMode,
+} from "./utils/utils";
 import cloneDeep from "lodash.clonedeep";
 import SetupCalendar from "v-calendar";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
@@ -21,9 +26,14 @@ window.addEventListener("resize", appHeight);
 appHeight();
 
 const { theme, color } = getSavedTheme();
+const themeMode = getThemeMode();
 
 if (theme && color) {
   changeTheme(theme, color);
+}
+
+if (themeMode) {
+  setThemeMode(themeMode);
 }
 
 const startApp = async () => {

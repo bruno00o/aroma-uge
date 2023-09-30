@@ -62,8 +62,9 @@ const icsToJson = async (calendarURLs, cal, calendarFolder) => {
                     }
                 });
                 /* if it is monday copy the file */
-                if (new Date().getDay() == 1) {
-                    let mondayFileName = calendarFolder + "monday/" + calendarURLs[cal].jsonFileName.replace(".json", "_monday.json");
+                let mondayFileName = calendarFolder + "monday/" + calendarURLs[cal].jsonFileName.replace(".json", "_monday.json");
+                let fileExists = fs.existsSync(mondayFileName);
+                if (new Date().getDay() == 1 || !fileExists) {
                     fs.writeFileSync(mondayFileName, JSON.stringify(events), function (err) {
                         if (err) {
                             error.write(err + ' ' + new Date() + "\n");

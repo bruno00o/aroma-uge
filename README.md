@@ -10,4 +10,4 @@ Aroma UGE is a web application and a PWA that allows students of the Gustave Eif
 
 This project was a great opportunity for me to learn about PWA, Vue.js, Express.js and JWT.
 
-[API Documentation](https://api.aroma-uge.tech/docs)
+[API Documentation](https://api.aroma-uge.ninja/docs)

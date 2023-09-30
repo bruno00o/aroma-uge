@@ -131,12 +131,10 @@ export const getSavedTheme = () => {
 export const changeTheme = (theme: string, color: string) => {
   const body = document.querySelector("body");
   const classNames = theme.replace("--", "");
-  if (body?.classList.length) {
-    body.classList.forEach((className) => {
-      body?.classList.remove(className);
-    });
-  }
+  const themeMode = getThemeMode();
+  body?.removeAttribute("class");
   body?.classList.add(classNames);
+  setThemeMode(themeMode);
   const metaThemeColor = document.querySelector("meta[name=theme-color]");
   if (metaThemeColor) {
     metaThemeColor.setAttribute("content", color);
@@ -168,4 +166,16 @@ export const isIOS = () => {
     // iPad on iOS 13 detection
     (navigator.userAgent.includes("Mac") && "ontouchend" in document)
   );
+};
+
+export const setThemeMode = (theme: string) => {
+  const body = document.querySelector("body");
+  if (body) {
+    body.classList.remove("light", "dark", "auto");
+    body.classList.add(theme);
+  }
+};
+
+export const getThemeMode = (): string => {
+  return localStorage.getItem("themeMode") || "auto";
 };

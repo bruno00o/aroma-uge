@@ -85,14 +85,15 @@ onBeforeMount(async () => {
       <DatePicker
         :selected-attributes="selectedAttributes"
         :attributes="calendar"
+        :is-dark="false"
         v-model="date"
-        :is-expanded="true"
         :locale="{
           firstDayOfWeek: 2,
           weekdays: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
         }"
+        expanded
       />
-      <h2 v-if="date">{{ dateToShortFrDate(date) }}</h2>
+      <h2 id="date" v-if="date">{{ dateToShortFrDate(date) }}</h2>
       <h3 v-if="date">{{ getEvent(date) }}</h3>
     </section>
     <section v-if="dataFetched">
@@ -130,6 +131,10 @@ onBeforeMount(async () => {
   .vc-container {
     margin-bottom: 1em;
   }
+}
+
+#date {
+  margin-top: 1em;
 }
 
 .caption {
