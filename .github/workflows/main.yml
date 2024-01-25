@@ -15,7 +15,7 @@ jobs:
       
     - name: 🔨 Build Front
       run: |
-        cd front && npm run build
+        cd front && npm install && npm run build
     
     - name: 📂 Sync Front
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
