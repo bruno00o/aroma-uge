@@ -118,26 +118,30 @@ const downloadIcs = async (calendarURLs, cal, calendarFolder) => {
     });
 }
 
+exports.DlCalendar = function () {
+    const fileURLs = "./src/calendar/calendarURLs.json";
+    const calendarFolder = "./src/calendar/";
+    const file = fs.readFileSync(fileURLs, 'utf8');
+    if (file) {
+        const calendarURLs = JSON.parse(file);
+        for (const cal in calendarURLs) {
+            (async () => await downloadIcs(calendarURLs, cal, calendarFolder))().then(() => {
+                access.write("Downloaded " + calendarURLs[cal].icsFileName + " at " + new Date() + "\n");
+            }).catch((err) => {
+                error.write(err + ' ' + new Date() + "\n");
+            });
+        }
+    } else {
+        error.write("Error while reading " + fileURLs + " at " + new Date() + "\n");
+    }
+}
+
 /**
  * Define the cron job to download the calendars
  */
 exports.initCronDlCalendar = function () {
     cron.schedule("0 0 */3 * * *", function () {
-        const fileURLs = "./src/calendar/calendarURLs.json";
-        const calendarFolder = "./src/calendar/";
-        const file = fs.readFileSync(fileURLs, 'utf8');
-        if (file) {
-            const calendarURLs = JSON.parse(file);
-            for (const cal in calendarURLs) {
-                (async () => await downloadIcs(calendarURLs, cal, calendarFolder))().then(() => {
-                    access.write("Downloaded " + calendarURLs[cal].icsFileName + " at " + new Date() + "\n");
-                }).catch((err) => {
-                    error.write(err + ' ' + new Date() + "\n");
-                });
-            }
-        } else {
-            error.write("Error while reading " + fileURLs + " at " + new Date() + "\n");
-        }
+        exports.DlCalendar();
     });
 
 }

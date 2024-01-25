@@ -11,7 +11,7 @@
   --vert-theme: #77B28C;
   --violet-theme: #8C77B2;
   --rouge-theme: #D64933;
-  --rose-theme: #EF959D;
+  --rose-theme: #f092cd;
 
   --error-color: #E3655B;
   --success-color: #62C332;
@@ -61,13 +61,13 @@
 }
 
 .rose-theme {
-  --primary-color: #FFAFCC;
-  --primary-color-hover: #f798bb;
-  --secondary-color: #389efd;
-  --secondary-color-hover: #2b85d9;
+  --primary-color: #f092cd;
+  --primary-color-hover: rgb(229, 134, 169);
+  --secondary-color: #9caaf0;
+  --secondary-color-hover: rgb(41, 116, 185);
   --main-text-color: #2d0514;
   --light-bg-color: #fff4f7;
-  --dark-bg-color: #14213D;
+  --dark-bg-color: #3f2635;
 }
 
 

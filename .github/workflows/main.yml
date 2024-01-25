@@ -1,0 +1,34 @@
+on: push
+name: 🚀 Deploy project on push
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v3
+
+    - name: Use Node.js 16
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+      
+    - name: 🔨 Build Front
+      run: |
+        cd front && npm run build
+    
+    - name: 📂 Sync Front
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.ftp_server_front }}
+        username: ${{ secrets.ftp_username_front }}
+        password: ${{ secrets.ftp_password_front }}
+        local-dir: ./front/dist
+
+    - name: 📂 Sync API
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.ftp_server_api }}
+        username: ${{ secrets.ftp_username_api }}
+        password: ${{ secrets.ftp_password_api }}
+        local-dir: ./api

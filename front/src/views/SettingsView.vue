@@ -87,20 +87,23 @@ const getCSSCustomPropIndex = (): Array<[any, any]> =>
         finalArr.concat(
           Array.from(sheet.cssRules)
             .filter(isStyleRule)
-            .reduce((propValArr, rule) => {
-              const props = Array.from(rule.style)
-                .map((propName: any) => [
-                  propName.trim(),
-                  (rule.style as CSSStyleDeclaration)
-                    .getPropertyValue(propName)
-                    .trim(),
-                ])
-                .filter(([propName]) => propName.indexOf("--") === 0);
+            .reduce(
+              (propValArr, rule) => {
+                const props = Array.from(rule.style)
+                  .map((propName: any) => [
+                    propName.trim(),
+                    (rule.style as CSSStyleDeclaration)
+                      .getPropertyValue(propName)
+                      .trim(),
+                  ])
+                  .filter(([propName]) => propName.indexOf("--") === 0);
 
-              return [...propValArr, ...props];
-            }, [] as Array<[any, any]>)
+                return [...propValArr, ...props];
+              },
+              [] as Array<[any, any]>,
+            ),
         ),
-      []
+      [],
     );
 
 const getCSSThemes = (): Array<{

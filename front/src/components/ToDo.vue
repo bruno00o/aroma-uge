@@ -28,7 +28,7 @@ const loadTodos = async () => {
   todos.value = [];
   const res = await getTodoList(
     userStore.getAccessToken,
-    props.todoType as string
+    props.todoType as string,
   ).catch(() => {
     loaderStore.stopLoading();
     dataFetched.value = true;
@@ -98,7 +98,7 @@ const addTodoToList = async () => {
             userStore.getAccessToken,
             props.todoType as string,
             todo.id,
-            todo.done
+            todo.done,
           )
         "
       />
@@ -109,7 +109,7 @@ const addTodoToList = async () => {
             deleteTodo(
               userStore.getAccessToken,
               props.todoType as string,
-              todo.id
+              todo.id,
             ),
               todos.splice(todos.indexOf(todo), 1)
           "

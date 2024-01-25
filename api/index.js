@@ -49,6 +49,9 @@ app.get('/', (req, res) => {
     res.redirect('/docs');
 });
 
+/* download calendar every time the app is reloaded */
+calendarDl.DlCalendar();
+
 /* initialize the cron to download calendars */
 calendarDl.initCronDlCalendar();
  

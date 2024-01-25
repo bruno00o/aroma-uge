@@ -21,7 +21,7 @@ const props = defineProps<{
   weekTimetable: (
     accessToken: string,
     date: string,
-    friendId?: string
+    friendId?: string,
   ) => Promise<any>;
 }>();
 
@@ -70,7 +70,7 @@ const checkPreviousWeek = async () => {
     const timetable = await props.weekTimetable(
       userStore.getAccessToken,
       urlFrDate(prevMonday),
-      friendId
+      friendId,
     );
     previousWeek.value = !isEmptyTimetable(timetable);
   } else {
@@ -85,7 +85,7 @@ const loadTimeTable = async () => {
   const res = await props.weekTimetable(
     userStore.getAccessToken,
     urlFrDate(monday.value),
-    friendId
+    friendId,
   );
   timetable.value = res;
 

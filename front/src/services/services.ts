@@ -22,7 +22,7 @@ export const refreshToken = async (refreshToken: String) => {
           headers: {
             Authorization: `Bearer ${refreshToken}`,
           },
-        }
+        },
       )
       .then((response) => {
         if (
@@ -83,7 +83,7 @@ export const getNextDayApprentice = async (accessToken: String) => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -117,7 +117,7 @@ export const shareSchedule = async (accessToken: String, share: Boolean) => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -154,7 +154,7 @@ export const getWeekTimetable = async (accessToken: string, date: string) => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -172,7 +172,7 @@ export const getFriends = async (accessToken: String) => {
 
 export const getFriendNextClass = async (
   accessToken: String,
-  friendId: String
+  friendId: String,
 ) => {
   const response = await axios.get(
     `${API_URL}/friends/next-class/${friendId}`,
@@ -180,7 +180,7 @@ export const getFriendNextClass = async (
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -208,7 +208,7 @@ export const friendsRequests = async (accessToken: String) => {
 
 export const acceptFriendRequest = async (
   accessToken: String,
-  friendId: String
+  friendId: String,
 ) => {
   const response = await axios.post(
     `${API_URL}/friends/accept/${friendId}`,
@@ -217,7 +217,7 @@ export const acceptFriendRequest = async (
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -225,7 +225,7 @@ export const acceptFriendRequest = async (
 
 export const declineFriendRequest = async (
   accessToken: String,
-  friendId: String
+  friendId: String,
 ) => {
   const response = await axios.post(
     `${API_URL}/friends/decline/${friendId}`,
@@ -234,7 +234,7 @@ export const declineFriendRequest = async (
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -250,7 +250,7 @@ export const requestFriend = async (accessToken: String, friendId: String) => {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       )
       .then((response) => {
         console.log(response);
@@ -265,7 +265,7 @@ export const requestFriend = async (accessToken: String, friendId: String) => {
 export const getFriendWeekTimetable = async (
   accessToken: string,
   date: string,
-  friendId: string
+  friendId: string,
 ) => {
   const pattern = new RegExp(/^\d{1,2}-\d{1,2}-\d{4}$/);
   if (!pattern.test(date)) {
@@ -277,7 +277,7 @@ export const getFriendWeekTimetable = async (
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -296,7 +296,7 @@ export const getTodoList = async (accessToken: String, todoType: String) => {
 export const addTodo = async (
   accessToken: String,
   todoType: String,
-  todo: String[]
+  todo: String[],
 ) => {
   const response = await axios.post(`${API_URL}/todo/${todoType}/add`, todo, {
     headers: {
@@ -310,7 +310,7 @@ export const addTodo = async (
 export const todoneTodo = async (
   accessToken: String,
   todoType: String,
-  todoId: String
+  todoId: String,
 ) => {
   const response = await axios.post(
     `${API_URL}/todo/${todoType}/todone/${todoId}`,
@@ -319,7 +319,7 @@ export const todoneTodo = async (
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -328,7 +328,7 @@ export const todoneTodo = async (
 export const toactiveTodo = async (
   accessToken: String,
   todoType: String,
-  todoId: String
+  todoId: String,
 ) => {
   const response = await axios.post(
     `${API_URL}/todo/${todoType}/toactive/${todoId}`,
@@ -337,7 +337,7 @@ export const toactiveTodo = async (
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -347,7 +347,7 @@ export const toggleTodo = async (
   accessToken: String,
   todoType: String,
   todoId: String,
-  done: Boolean
+  done: Boolean,
 ) => {
   const path = done ? "todone" : "toactive";
   const response = await axios.post(
@@ -357,7 +357,7 @@ export const toggleTodo = async (
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -366,7 +366,7 @@ export const toggleTodo = async (
 export const deleteTodo = async (
   accessToken: String,
   todoType: String,
-  todoId: String
+  todoId: String,
 ) => {
   const response = await axios.delete(
     `${API_URL}/todo/${todoType}/delete/${todoId}`,
@@ -374,7 +374,7 @@ export const deleteTodo = async (
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }
+    },
   );
 
   return response.data;
