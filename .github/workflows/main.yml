@@ -23,7 +23,7 @@ jobs:
         server: ${{ secrets.ftp_server_front }}
         username: ${{ secrets.ftp_username_front }}
         password: ${{ secrets.ftp_password_front }}
-        local-dir: ./front/dist
+        local-dir: ./front/dist/
 
     - name: 📂 Sync API
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -31,4 +31,4 @@ jobs:
         server: ${{ secrets.ftp_server_api }}
         username: ${{ secrets.ftp_username_api }}
         password: ${{ secrets.ftp_password_api }}
-        local-dir: ./api
+        local-dir: ./api/
